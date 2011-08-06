@@ -1,7 +1,7 @@
 package yapto.datasource;
 
 /**
- * An interface describing a tag associated to an image.
+ * An interface describing a tag associated to an {@link IPicture}.
  * 
  * @author benobiwan
  * 
