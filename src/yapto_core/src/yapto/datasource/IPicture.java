@@ -19,8 +19,9 @@ public interface IPicture
 	 * @return the list of {@link ITag}s associated with this {@link IPicture}.
 	 */
 	List<ITag> getTagList();
-	
+
 	Image getImageData() throws IOException;
+
 	long getTimestamp();
 
 }
