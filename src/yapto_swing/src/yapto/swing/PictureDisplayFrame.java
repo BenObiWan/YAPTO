@@ -2,19 +2,16 @@ package yapto.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class PictureDisplayFrame extends JFrame
 {
+	/**
+	 * serialVersionUID for Serialization.
+	 */
 	private static final long serialVersionUID = -4401831166047624407L;
 
 	private final PictureDisplayComponent _pictureComponent = new PictureDisplayComponent();
@@ -30,7 +27,7 @@ public class PictureDisplayFrame extends JFrame
 		{
 			_pictureComponent.loadPicture();
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
