@@ -1,37 +1,79 @@
 package yapto.datasource;
 
-public class OperationNotSupportedException extends Exception
+/**
+ * Exception telling that the asked operation is unsupported.
+ * 
+ * @author benobiwan
+ * 
+ */
+public final class OperationNotSupportedException extends Exception
 {
 	/**
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 8690054180170377993L;
 
+	/**
+	 * Creates a new OperationNotSupportedException.
+	 */
 	public OperationNotSupportedException()
 	{
 		super();
 	}
 
-	public OperationNotSupportedException(final String arg0)
+	/**
+	 * Creates a new OperationNotSupportedException.
+	 * 
+	 * @param message
+	 *            the detail message of the exception.
+	 */
+	public OperationNotSupportedException(final String message)
 	{
-		super(arg0);
+		super(message);
 	}
 
-	public OperationNotSupportedException(final Throwable arg0)
+	/**
+	 * Creates a new OperationNotSupportedException.
+	 * 
+	 * @param cause
+	 *            the cause of the exception.
+	 */
+	public OperationNotSupportedException(final Throwable cause)
 	{
-		super(arg0);
+		super(cause);
 	}
 
-	public OperationNotSupportedException(final String arg0,
-			final Throwable arg1)
+	/**
+	 * Creates a new OperationNotSupportedException.
+	 * 
+	 * @param message
+	 *            the detail message of the exception.
+	 * @param cause
+	 *            the cause of the exception.
+	 */
+	public OperationNotSupportedException(final String message,
+			final Throwable cause)
 	{
-		super(arg0, arg1);
+		super(message, cause);
 	}
 
-	public OperationNotSupportedException(final String arg0,
-			final Throwable arg1, final boolean arg2, final boolean arg3)
+	/**
+	 * Creates a new OperationNotSupportedException.
+	 * 
+	 * @param message
+	 *            the detail message of the exception.
+	 * @param cause
+	 *            the cause of the exception.
+	 * @param enableSuppression
+	 *            whether or not suppression is enabled or disabled.
+	 * @param writableStackTrace
+	 *            whether or not the stack trace should be writable
+	 */
+	public OperationNotSupportedException(final String message,
+			final Throwable cause, final boolean enableSuppression,
+			final boolean writableStackTrace)
 	{
-		super(arg0, arg1, arg2, arg3);
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
 }
