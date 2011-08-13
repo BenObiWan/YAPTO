@@ -25,23 +25,30 @@ public final class DummyPicture implements IPicture
 	private BufferedImage _img;
 
 	/**
+	 * Path to the file holding the image.
+	 */
+	private final String _strPath;
+
+	/**
 	 * Lock protecting the access to the image.
 	 */
 	private final Object _lockImage = new Object();
 
 	/**
 	 * Creates a new DummyPicture.
+	 * 
+	 * @param strPath
+	 *            the path to the image file.
 	 */
-	public DummyPicture()
+	public DummyPicture(final String strPath)
 	{
-		// TODO Auto-generated constructor stub
+		_strPath = strPath;
 	}
 
 	@Override
 	public String getId()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _strPath;
 	}
 
 	@Override
@@ -58,7 +65,7 @@ public final class DummyPicture implements IPicture
 		{
 			if (_img == null)
 			{
-				_img = ImageIO.read(new File("/tmp/picture.jpg"));
+				_img = ImageIO.read(new File(_strPath));
 			}
 			return _img;
 		}
@@ -69,6 +76,12 @@ public final class DummyPicture implements IPicture
 	{
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public int compareTo(final IPicture otherPicture)
+	{
+		return getId().compareTo(otherPicture.getId());
 	}
 
 }
