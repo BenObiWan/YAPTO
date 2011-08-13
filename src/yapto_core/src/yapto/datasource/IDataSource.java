@@ -21,6 +21,10 @@ public interface IDataSource extends IPictureList
 	 *             if the file isn't found.
 	 * @throws IOException
 	 *             if an IO error occurs during the calculation of the checksum.
+	 * @throws OperationNotSupportedException
+	 *             if this operation isn't supported by this {@link IDataSource}
+	 *             .
 	 */
-	void addPicture(File picturePath) throws FileNotFoundException, IOException;
+	void addPicture(File picturePath) throws OperationNotSupportedException,
+			FileNotFoundException, IOException;
 }

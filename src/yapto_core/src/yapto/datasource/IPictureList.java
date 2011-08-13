@@ -14,8 +14,11 @@ public interface IPictureList
 	 * Get the number of {@link IPicture} in this {@link IPictureList}.
 	 * 
 	 * @return the number of {@link IPicture} in this {@link IPictureList}.
+	 * @throws OperationNotSupportedException
+	 *             if this operation isn't supported by this
+	 *             {@link IPictureList}.
 	 */
-	int getPictureCount();
+	int getPictureCount() throws OperationNotSupportedException;
 
 	/**
 	 * Filter the list of {@link IPicture} in this {@link IPictureList} with the
@@ -26,8 +29,12 @@ public interface IPictureList
 	 *            {@link IPicture}.
 	 * @return a {@link IPictureList} based on the current {@link IPictureList}
 	 *         and the specified {@link IPictureFilter}.
+	 * @throws OperationNotSupportedException
+	 *             if this operation isn't supported by this
+	 *             {@link IPictureList}.
 	 */
-	IPictureList filterList(IPictureFilter filter);
+	IPictureList filterList(IPictureFilter filter)
+			throws OperationNotSupportedException;
 
 	/**
 	 * Merge this {@link IPictureList} with another {@link IPictureList}.
@@ -36,13 +43,20 @@ public interface IPictureList
 	 *            the {@link IPictureList} to merge with.
 	 * @return a {@link IPictureList} containing the {@link IPicture} of the two
 	 *         specified list.
+	 * @throws OperationNotSupportedException
+	 *             if this operation isn't supported by this
+	 *             {@link IPictureList}.
 	 */
-	IPictureList mergeList(IPictureList otherList);
+	IPictureList mergeList(IPictureList otherList)
+			throws OperationNotSupportedException;
 
 	/**
 	 * Get the list of parents of this {@link IPictureList}.
 	 * 
 	 * @return the list of parents of this {@link IPictureList}.
+	 * @throws OperationNotSupportedException
+	 *             if this operation isn't supported by this
+	 *             {@link IPictureList}.
 	 */
-	List<IPictureList> getParent();
+	List<IPictureList> getParent() throws OperationNotSupportedException;
 }
