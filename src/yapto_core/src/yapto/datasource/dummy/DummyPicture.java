@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.ITag;
 
@@ -35,14 +36,24 @@ public final class DummyPicture implements IPicture
 	private final Object _lockImage = new Object();
 
 	/**
+	 * The {@link IDataSource} from which this {@link IPicture} is coming.
+	 */
+	private final IDataSource _dataSource;
+
+	/**
 	 * Creates a new DummyPicture.
+	 * 
+	 * @param dataSource
+	 *            the {@link IDataSource} from which this {@link IPicture} is
+	 *            coming.
 	 * 
 	 * @param strPath
 	 *            the path to the image file.
 	 */
-	public DummyPicture(final String strPath)
+	public DummyPicture(final IDataSource dataSource, final String strPath)
 	{
 		_strPath = strPath;
+		_dataSource = dataSource;
 	}
 
 	@Override
@@ -84,4 +95,9 @@ public final class DummyPicture implements IPicture
 		return getId().compareTo(otherPicture.getId());
 	}
 
+	@Override
+	public IDataSource getDataSource()
+	{
+		return _dataSource;
+	}
 }

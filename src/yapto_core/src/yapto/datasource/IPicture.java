@@ -42,4 +42,11 @@ public interface IPicture extends Comparable<IPicture>
 	 */
 	long getTimestamp();
 
+	/**
+	 * Get the {@link IDataSource} from which this {@link IPicture} is coming.
+	 * 
+	 * @return the {@link IDataSource} from which this {@link IPicture} is
+	 *         coming.
+	 */
+	IDataSource getDataSource();
 }

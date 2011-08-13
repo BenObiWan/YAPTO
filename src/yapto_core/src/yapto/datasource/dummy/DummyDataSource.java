@@ -10,6 +10,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
+import yapto.datasource.ITag;
 import yapto.datasource.OperationNotSupportedException;
 
 /**
@@ -63,6 +64,12 @@ public final class DummyDataSource implements IDataSource
 	public void addPicture(final File picturePath)
 			throws FileNotFoundException, IOException,
 			OperationNotSupportedException
+	{
+		throw new OperationNotSupportedException();
+	}
+
+	@Override
+	public List<ITag> getTagList() throws OperationNotSupportedException
 	{
 		throw new OperationNotSupportedException();
 	}
