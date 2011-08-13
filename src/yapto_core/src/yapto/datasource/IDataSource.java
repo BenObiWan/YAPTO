@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * An interface describing a source for {@link IPicture}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public interface IDataSource extends IPictureList
 {
 	/**
