@@ -10,7 +10,7 @@ import java.util.List;
  * @author benobiwan
  * 
  */
-public interface IPicture
+public interface IPicture extends Comparable<IPicture>
 {
 	/**
 	 * Get the id of this {@link IPicture}.
