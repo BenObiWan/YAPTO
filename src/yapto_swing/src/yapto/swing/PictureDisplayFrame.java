@@ -17,15 +17,19 @@ public class PictureDisplayFrame extends JFrame
 
 	private final PictureDisplayComponent _pictureComponent = new PictureDisplayComponent();
 
+	private final PictureInformationPanel _pictureInfoPanel = new PictureInformationPanel();
+
 	public PictureDisplayFrame()
 	{
 		super("yapto");
-		final JPanel imagePane = new JPanel(new BorderLayout());
-		setContentPane(imagePane);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		final JPanel contentPane = new JPanel(new BorderLayout());
+		setContentPane(contentPane);
 		JScrollPane spPicture = new JScrollPane(_pictureComponent);
 		spPicture.setPreferredSize(new Dimension(400, 300));
-		
-		imagePane.add(spPicture, BorderLayout.CENTER);
+
+		contentPane.add(spPicture, BorderLayout.CENTER);
+		contentPane.add(_pictureInfoPanel, BorderLayout.PAGE_END);
 		try
 		{
 			_pictureComponent.loadPicture();
