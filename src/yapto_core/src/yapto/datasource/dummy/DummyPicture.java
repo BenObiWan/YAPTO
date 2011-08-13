@@ -28,7 +28,7 @@ public final class DummyPicture implements IPicture
 	/**
 	 * Path to the file holding the image.
 	 */
-	private final String _strPath;
+	private final File _imagePath;
 
 	/**
 	 * Lock protecting the access to the image.
@@ -47,19 +47,19 @@ public final class DummyPicture implements IPicture
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
 	 * 
-	 * @param strPath
+	 * @param imagePath
 	 *            the path to the image file.
 	 */
-	public DummyPicture(final IDataSource dataSource, final String strPath)
+	public DummyPicture(final IDataSource dataSource, final File imagePath)
 	{
-		_strPath = strPath;
+		_imagePath = imagePath;
 		_dataSource = dataSource;
 	}
 
 	@Override
 	public String getId()
 	{
-		return _strPath;
+		return _imagePath.toString();
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public final class DummyPicture implements IPicture
 		{
 			if (_img == null)
 			{
-				_img = ImageIO.read(new File(_strPath));
+				_img = ImageIO.read(_imagePath);
 			}
 			return _img;
 		}
