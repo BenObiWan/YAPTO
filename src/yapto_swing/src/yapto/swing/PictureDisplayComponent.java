@@ -1,5 +1,6 @@
 package yapto.swing;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -42,6 +43,7 @@ public class PictureDisplayComponent extends JComponent
 	public void loadPicture() throws IOException
 	{
 		_img = ImageIO.read(new File("/tmp/picture.jpg"));
+		setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
 	}
 
 	@Override

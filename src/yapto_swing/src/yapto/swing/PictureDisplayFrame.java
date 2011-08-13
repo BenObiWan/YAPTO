@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class PictureDisplayFrame extends JFrame
 {
@@ -21,8 +22,10 @@ public class PictureDisplayFrame extends JFrame
 		super("yapto");
 		final JPanel imagePane = new JPanel(new BorderLayout());
 		setContentPane(imagePane);
-		_pictureComponent.setPreferredSize(new Dimension(400, 300));
-		imagePane.add(_pictureComponent, BorderLayout.CENTER);
+		JScrollPane spPicture = new JScrollPane(_pictureComponent);
+		spPicture.setPreferredSize(new Dimension(400, 300));
+		
+		imagePane.add(spPicture, BorderLayout.CENTER);
 		try
 		{
 			_pictureComponent.loadPicture();
