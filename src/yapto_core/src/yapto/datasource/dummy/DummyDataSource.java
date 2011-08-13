@@ -31,7 +31,25 @@ public final class DummyDataSource implements IDataSource
 	 */
 	public DummyDataSource()
 	{
-		// TODO Auto-generated constructor stub
+		String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg" };
+
+		for (String file : fileList)
+		{
+			try
+			{
+				addPicture(new File(file));
+			}
+			catch (FileNotFoundException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
