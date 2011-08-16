@@ -19,6 +19,9 @@ public class PictureDisplayFrame extends JFrame
 
 	private final PictureInformationPanel _pictureInfoPanel = new PictureInformationPanel();
 
+	/**
+	 * Creates a new PictureDisplayFrame.
+	 */
 	public PictureDisplayFrame()
 	{
 		super("yapto");
