@@ -7,8 +7,15 @@ import java.io.IOException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 
+/**
+ * Panel displaying an {@link IPicture} and its information.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class MainPictureDisplayPanel extends JPanel
 {
 	/**
@@ -16,8 +23,16 @@ public final class MainPictureDisplayPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 5806024455179560922L;
 
+	/**
+	 * {@link PictureDisplayComponent} used to display the current
+	 * {@link IPicture}.
+	 */
 	private final PictureDisplayComponent _pictureComponent;
 
+	/**
+	 * {@link PictureInformationPanel} used to display informations about the
+	 * current {@link IPicture}.
+	 */
 	private final PictureInformationPanel _pictureInfoPanel;
 
 	/**

@@ -8,7 +8,7 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.ITag;
 
 /**
- * Panel displaying the information of an {@link IPicture}.
+ * Panel displaying the informations of an {@link IPicture}.
  * 
  * @author benobiwan
  * 

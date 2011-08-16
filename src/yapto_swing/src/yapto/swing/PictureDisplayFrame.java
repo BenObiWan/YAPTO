@@ -9,6 +9,13 @@ import yapto.datasource.IPicture;
 import yapto.datasource.dummy.DummyDataSource;
 import yapto.datasource.dummy.DummyPictureBrowser;
 
+/**
+ * {@link JFrame} used to display an picture and it's information. Main frame of
+ * the application and starting class.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class PictureDisplayFrame extends JFrame
 {
 	/**
