@@ -1,6 +1,6 @@
 package yapto.datasource;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public interface IPicture extends Comparable<IPicture>
 	 * @throws IOException
 	 *             if an error occurs during reading.
 	 */
-	Image getImageData() throws IOException;
+	BufferedImage getImageData() throws IOException;
 
 	/**
 	 * Get the time stamp of the last modification of this {@link IPicture}.

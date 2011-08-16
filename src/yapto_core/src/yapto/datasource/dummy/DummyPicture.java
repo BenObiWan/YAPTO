@@ -1,6 +1,5 @@
 package yapto.datasource.dummy;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +69,7 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public Image getImageData() throws IOException
+	public BufferedImage getImageData() throws IOException
 	{
 		synchronized (_lockImage)
 		{
