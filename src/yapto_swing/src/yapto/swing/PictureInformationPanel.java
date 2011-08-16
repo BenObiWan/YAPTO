@@ -12,7 +12,7 @@ import yapto.datasource.ITag;
  * @author benobiwan
  * 
  */
-public class PictureInformationPanel extends JPanel
+public final class PictureInformationPanel extends JPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -48,7 +48,7 @@ public class PictureInformationPanel extends JPanel
 	 * @param picture
 	 *            the new {@link IPicture} to handle.
 	 */
-	public void setDisplayedPicture(IPicture picture)
+	public void setDisplayedPicture(final IPicture picture)
 	{
 		synchronized (_lockPicture)
 		{

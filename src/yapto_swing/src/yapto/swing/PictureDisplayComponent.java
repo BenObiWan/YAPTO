@@ -15,7 +15,7 @@ import javax.swing.JComponent;
  * @author benobiwan
  * 
  */
-public class PictureDisplayComponent extends JComponent
+public final class PictureDisplayComponent extends JComponent
 {
 	/**
 	 * serialVersionUID for Serialization.
