@@ -31,20 +31,20 @@ public final class DummyDataSource implements IDataSource
 	 */
 	public DummyDataSource()
 	{
-		String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg" };
+		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg" };
 
-		for (String file : fileList)
+		for (final String file : fileList)
 		{
 			try
 			{
 				addPicture(new File(file));
 			}
-			catch (FileNotFoundException e)
+			catch (final FileNotFoundException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			catch (IOException e)
+			catch (final IOException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,7 +82,7 @@ public final class DummyDataSource implements IDataSource
 	public void addPicture(final File picturePath)
 			throws FileNotFoundException, IOException
 	{
-		DummyPicture pict = new DummyPicture(this, picturePath);
+		final DummyPicture pict = new DummyPicture(this, picturePath);
 		_mapPicture.put(pict.getId(), pict);
 	}
 

@@ -34,7 +34,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 * @param sourcePictureList
 	 *            the {@link IPictureList} to use as source.
 	 */
-	public DummyPictureBrowser(IPictureList sourcePictureList)
+	public DummyPictureBrowser(final IPictureList sourcePictureList)
 	{
 		synchronized (_lockSourcePictureList)
 		{
@@ -52,7 +52,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public IPictureList filterList(IPictureFilter filter)
+	public IPictureList filterList(final IPictureFilter filter)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -60,7 +60,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public IPictureList mergeList(IPictureList otherList)
+	public IPictureList mergeList(final IPictureList otherList)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -116,7 +116,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public void changeSourcePictureList(IPictureList source)
+	public void changeSourcePictureList(final IPictureList source)
 	{
 		synchronized (_lockSourcePictureList)
 		{
