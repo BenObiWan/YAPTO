@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 
 import yapto.datasource.IPicture;
+import yapto.datasource.IPictureBrowser;
 import yapto.datasource.ITag;
 
 /**
@@ -20,9 +21,10 @@ public final class PictureInformationPanel extends JPanel
 	private static final long serialVersionUID = -7799432118702150952L;
 
 	/**
-	 * {@link IPicture} from which the information displayed originate.
+	 * The {@link IPictureBrowser} used to display picture on this
+	 * {@link PictureDisplayComponent}.
 	 */
-	private IPicture _displayedPicture;
+	private final IPictureBrowser _pictureBrowser;
 
 	/**
 	 * Object used to control the access on the displayed picture.
@@ -36,23 +38,12 @@ public final class PictureInformationPanel extends JPanel
 
 	/**
 	 * Creates a new PictureInformationPanel.
-	 */
-	public PictureInformationPanel()
-	{
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Change the {@link IPicture} whose information are displayed.
 	 * 
-	 * @param picture
-	 *            the new {@link IPicture} to handle.
+	 * @param pictureBrowser
+	 *            the {@link IPictureBrowser} to use.
 	 */
-	public void setDisplayedPicture(final IPicture picture)
+	public PictureInformationPanel(final IPictureBrowser pictureBrowser)
 	{
-		synchronized (_lockPicture)
-		{
-			_displayedPicture = picture;
-		}
+		_pictureBrowser = pictureBrowser;
 	}
 }

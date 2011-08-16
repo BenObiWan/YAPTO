@@ -16,9 +16,9 @@ public final class MainPictureDisplayPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 5806024455179560922L;
 
-	private final PictureDisplayComponent _pictureComponent = new PictureDisplayComponent();
+	private final PictureDisplayComponent _pictureComponent;
 
-	private final PictureInformationPanel _pictureInfoPanel = new PictureInformationPanel();
+	private final PictureInformationPanel _pictureInfoPanel;
 
 	/**
 	 * The {@link IPictureBrowser} used to display picture on this
@@ -36,6 +36,9 @@ public final class MainPictureDisplayPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;
+		_pictureComponent = new PictureDisplayComponent(_pictureBrowser);
+		_pictureInfoPanel = new PictureInformationPanel(_pictureBrowser);
+
 		final JScrollPane spPicture = new JScrollPane(_pictureComponent);
 		spPicture.setPreferredSize(new Dimension(400, 300));
 

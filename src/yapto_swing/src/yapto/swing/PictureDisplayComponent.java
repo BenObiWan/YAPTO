@@ -3,11 +3,11 @@ package yapto.swing;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+
+import yapto.datasource.IPictureBrowser;
 
 /**
  * Component used to display a picture.
@@ -28,10 +28,20 @@ public final class PictureDisplayComponent extends JComponent
 	private BufferedImage _img;
 
 	/**
-	 * Creates a new {@link PictureDisplayComponent}.
+	 * The {@link IPictureBrowser} used to display picture on this
+	 * {@link PictureDisplayComponent}.
 	 */
-	public PictureDisplayComponent()
+	private final IPictureBrowser _pictureBrowser;
+
+	/**
+	 * Creates a new {@link PictureDisplayComponent}.
+	 * 
+	 * @param pictureBrowser
+	 *            the {@link IPictureBrowser} to use.
+	 */
+	public PictureDisplayComponent(final IPictureBrowser pictureBrowser)
 	{
+		_pictureBrowser = pictureBrowser;
 	}
 
 	/**
@@ -42,7 +52,7 @@ public final class PictureDisplayComponent extends JComponent
 	 */
 	public void loadPicture() throws IOException
 	{
-		_img = ImageIO.read(new File("/tmp/picture.jpg"));
+		_img = _pictureBrowser.getCurrentPicture().getImageData();
 		setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
 	}
 
