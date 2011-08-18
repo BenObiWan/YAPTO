@@ -1,5 +1,6 @@
 package yapto.datasource;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -49,4 +50,25 @@ public interface IPicture extends Comparable<IPicture>
 	 *         coming.
 	 */
 	IDataSource getDataSource();
+
+	/**
+	 * Get the {@link Dimension} of this {@link IPicture}.
+	 * 
+	 * @return the {@link Dimension} of this {@link IPicture}.
+	 */
+	Dimension getDimension();
+
+	/**
+	 * Get the height of this {@link IPicture}.
+	 * 
+	 * @return the height of this {@link IPicture}.
+	 */
+	int getHeight();
+
+	/**
+	 * Get the width of this {@link IPicture}.
+	 * 
+	 * @return the width of this {@link IPicture}.
+	 */
+	int getWidth();
 }

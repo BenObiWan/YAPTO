@@ -1,5 +1,6 @@
 package yapto.datasource.dummy;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -98,5 +99,26 @@ public final class DummyPicture implements IPicture
 	public IDataSource getDataSource()
 	{
 		return _dataSource;
+	}
+
+	@Override
+	public Dimension getDimension()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWidth()
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
