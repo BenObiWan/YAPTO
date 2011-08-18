@@ -1,7 +1,5 @@
 package yapto.swing;
 
-import java.io.IOException;
-
 import javax.swing.JFrame;
 
 import yapto.datasource.IDataSource;
@@ -41,10 +39,12 @@ public final class PictureDisplayFrame extends JFrame
 	}
 
 	/**
+	 * Main function.
+	 * 
 	 * @param args
-	 * @throws IOException
+	 *            command line parameters.
 	 */
-	public static void main(final String[] args) throws IOException
+	public static void main(final String[] args)
 	{
 		final IDataSource dataSource = new DummyDataSource();
 		final PictureDisplayFrame main = new PictureDisplayFrame(dataSource);
