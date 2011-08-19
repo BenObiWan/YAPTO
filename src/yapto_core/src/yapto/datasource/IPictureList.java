@@ -71,4 +71,11 @@ public interface IPictureList
 	 *             {@link IPictureList}.
 	 */
 	List<ITag> getTagList() throws OperationNotSupportedException;
+
+	/**
+	 * Get the {@link List} of all {@link IPicture}.
+	 * 
+	 * @return the {@link List} of all {@link IPicture}.
+	 */
+	List<IPicture> getPictureList();
 }

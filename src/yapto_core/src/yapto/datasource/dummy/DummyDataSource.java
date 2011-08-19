@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
@@ -26,6 +27,8 @@ public final class DummyDataSource implements IDataSource
 	 */
 	private final ConcurrentSkipListMap<String, IPicture> _mapPicture = new ConcurrentSkipListMap<String, IPicture>();
 
+	private final CopyOnWriteArrayList<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
+	
 	/**
 	 * Creates a new DummyDataSource.
 	 */
@@ -84,11 +87,18 @@ public final class DummyDataSource implements IDataSource
 	{
 		final DummyPicture pict = new DummyPicture(this, picturePath);
 		_mapPicture.put(pict.getId(), pict);
+		_listPicture.add(pict);
 	}
 
 	@Override
 	public List<ITag> getTagList() throws OperationNotSupportedException
 	{
 		throw new OperationNotSupportedException();
+	}
+
+	@Override
+	public List<IPicture> getPictureList()
+	{
+		return _listPicture;
 	}
 }

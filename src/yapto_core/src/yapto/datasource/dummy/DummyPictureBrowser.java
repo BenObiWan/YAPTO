@@ -1,6 +1,7 @@
 package yapto.datasource.dummy;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -21,6 +22,16 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 * The {@link IPictureList} used as source for this {@link IPictureBrowser}.
 	 */
 	private IPictureList _sourcePictureList;
+
+	/**
+	 * {@link ListIterator}
+	 */
+	private ListIterator<IPicture> _pictureIterator;
+
+	/**
+	 * The picture currently displayed by this {@link DummyPictureBrowser}.
+	 */
+	private IPicture _currentPicture;
 
 	/**
 	 * Lock used to protect the access to the source {@link IPictureList}.
@@ -77,42 +88,57 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	@Override
 	public List<ITag> getTagList() throws OperationNotSupportedException
 	{
-		return _sourcePictureList.getTagList();
+		synchronized (_lockSourcePictureList)
+		{
+			return _sourcePictureList.getTagList();
+		}
 	}
 
 	@Override
 	public IPicture getCurrentPicture()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		synchronized (_lockSourcePictureList)
+		{
+			return _currentPicture;
+		}
 	}
 
 	@Override
 	public IPicture getNextPicture()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		synchronized (_lockSourcePictureList)
+		{
+			_currentPicture = _pictureIterator.next();
+			return _currentPicture;
+		}
 	}
 
 	@Override
 	public boolean hasNextPicture()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		synchronized (_lockSourcePictureList)
+		{
+			return _pictureIterator.hasNext();
+		}
 	}
 
 	@Override
 	public IPicture getPreviousPicture()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		synchronized (_lockSourcePictureList)
+		{
+			_currentPicture = _pictureIterator.previous();
+			return _currentPicture;
+		}
 	}
 
 	@Override
 	public boolean hasPreviousPicture()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		synchronized (_lockSourcePictureList)
+		{
+			return _pictureIterator.hasPrevious();
+		}
 	}
 
 	@Override
@@ -121,6 +147,17 @@ public final class DummyPictureBrowser implements IPictureBrowser
 		synchronized (_lockSourcePictureList)
 		{
 			_sourcePictureList = source;
+			_pictureIterator = _sourcePictureList.getPictureList()
+					.listIterator();
+		}
+	}
+
+	@Override
+	public List<IPicture> getPictureList()
+	{
+		synchronized (_lockSourcePictureList)
+		{
+			return _sourcePictureList.getPictureList();
 		}
 	}
 
