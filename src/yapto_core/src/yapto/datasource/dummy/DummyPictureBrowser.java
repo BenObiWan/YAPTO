@@ -47,10 +47,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 */
 	public DummyPictureBrowser(final IPictureList sourcePictureList)
 	{
-		synchronized (_lockSourcePictureList)
-		{
-			_sourcePictureList = sourcePictureList;
-		}
+		changeSourcePictureList(sourcePictureList);
 	}
 
 	@Override
@@ -99,6 +96,10 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	{
 		synchronized (_lockSourcePictureList)
 		{
+			if (_currentPicture == null)
+			{
+				_currentPicture = _pictureIterator.next();
+			}
 			return _currentPicture;
 		}
 	}
