@@ -27,8 +27,13 @@ public final class DummyDataSource implements IDataSource
 	 */
 	private final ConcurrentSkipListMap<String, IPicture> _mapPicture = new ConcurrentSkipListMap<String, IPicture>();
 
-	private final CopyOnWriteArrayList<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
-	
+	private final List<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
+
+	/**
+	 * List of {@link ITag} available on this {@link IDataSource}.
+	 */
+	private final List<ITag> _listTags = new CopyOnWriteArrayList<ITag>();
+
 	/**
 	 * Creates a new DummyDataSource.
 	 */
@@ -91,9 +96,9 @@ public final class DummyDataSource implements IDataSource
 	}
 
 	@Override
-	public List<ITag> getTagList() throws OperationNotSupportedException
+	public List<ITag> getTagList()
 	{
-		throw new OperationNotSupportedException();
+		return _listTags;
 	}
 
 	@Override
