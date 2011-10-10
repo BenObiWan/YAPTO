@@ -66,18 +66,7 @@ public final class TagEditorPanel extends JPanel
 			if (_pictureList != pictureList)
 			{
 				_pictureList = pictureList;
-				if (_pictureList == null)
-				{
-					removeAllAvailableTags();
-				}
-				else
-				{
-					updateAvailableTags();
-					if (_picture != null)
-					{
-						selectAppropriateTags();
-					}
-				}
+				updateAvailableTags();
 			}
 		}
 	}
@@ -96,48 +85,47 @@ public final class TagEditorPanel extends JPanel
 			if (_picture != picture)
 			{
 				_picture = picture;
-				if (_pictureList != null)
-				{
-					unselectAllTags();
-					if (_picture != null)
-					{
-						selectAppropriateTags();
-					}
-				}
+				selectAppropriateTags();
 			}
 		}
-	}
-
-	/**
-	 * Remove all the available {@link ITag}s.
-	 */
-	private void removeAllAvailableTags()
-	{
-
 	}
 
 	/**
 	 * Update the list of available {@link ITag}s according to those available
 	 * in the {@link IPictureList}.
 	 */
-	private void updateAvailableTags()
+	public void updateAvailableTags()
 	{
+		synchronized (_lock)
+		{
+			// TODO remove all available tags
+			if (_pictureList != null)
+			{
+				// TODO update available tags.
 
-	}
-
-	/**
-	 * Unselect all {@link ITag}s.
-	 */
-	private void unselectAllTags()
-	{
-
+				if (_picture != null)
+				{
+					selectAppropriateTags();
+				}
+			}
+		}
 	}
 
 	/**
 	 * Select the {@link ITag}s appropriate to the selected {@link IPicture}.
 	 */
-	private void selectAppropriateTags()
+	public void selectAppropriateTags()
 	{
-
+		synchronized (_lock)
+		{
+			if (_pictureList != null)
+			{
+				// TODO unselect all tags
+				if (_picture != null)
+				{
+					// TODO select appropriate tags
+				}
+			}
+		}
 	}
 }
