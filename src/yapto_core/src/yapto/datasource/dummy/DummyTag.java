@@ -26,6 +26,11 @@ public final class DummyTag implements ITag
 	private final String _strDescription;
 
 	/**
+	 * Whether or not this {@link ITag} is selectable.
+	 */
+	private final boolean _bSelectable;
+
+	/**
 	 * Creates a new DummyTag.
 	 * 
 	 * @param parent
@@ -34,13 +39,16 @@ public final class DummyTag implements ITag
 	 *            the name of this {@link ITag}.
 	 * @param strDescription
 	 *            the description of this {@link ITag}.
+	 * @param bSelectable
+	 *            whether or not this {@link ITag} is selectable.
 	 */
 	public DummyTag(final ITag parent, final String strName,
-			final String strDescription)
+			final String strDescription, final boolean bSelectable)
 	{
 		_parentTag = parent;
 		_strName = strName;
 		_strDescription = strDescription;
+		_bSelectable = bSelectable;
 	}
 
 	@Override
@@ -59,5 +67,11 @@ public final class DummyTag implements ITag
 	public String getDescription()
 	{
 		return _strDescription;
+	}
+
+	@Override
+	public boolean isSelectable()
+	{
+		return _bSelectable;
 	}
 }

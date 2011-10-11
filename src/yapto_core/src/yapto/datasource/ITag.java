@@ -3,6 +3,9 @@ package yapto.datasource;
 /**
  * An interface describing a tag associated to an {@link IPicture}.
  * 
+ * Unselectable {@link ITag}s are aimed at organizing other {@link ITag}s has a
+ * Tree.
+ * 
  * @author benobiwan
  * 
  */
@@ -28,4 +31,11 @@ public interface ITag
 	 * @return the description of this {@link ITag}.
 	 */
 	String getDescription();
+
+	/**
+	 * Check whether this {@link ITag} can be selected or not.
+	 * 
+	 * @return true if this {@link ITag} can be selected.
+	 */
+	boolean isSelectable();
 }
