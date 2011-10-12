@@ -5,7 +5,7 @@ import javax.swing.JTree;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 
 /**
  * Panel displaying the informations of an {@link IPicture}.
@@ -32,7 +32,7 @@ public final class PictureInformationPanel extends JPanel
 	private final Object _lockPicture = new Object();
 
 	/**
-	 * Tree used to display the list of {@link ITag}s.
+	 * Tree used to display the list of {@link Tag}s.
 	 */
 	private final JTree _tagTree = new JTree();
 

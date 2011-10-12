@@ -4,10 +4,10 @@ import javax.swing.JPanel;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureList;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 
 /**
- * Panel displaying the list of {@link ITag} that can be associated with an
+ * Panel displaying the list of {@link Tag} that can be associated with an
  * {@link IPicture}.
  * 
  * @author benobiwan
@@ -21,7 +21,7 @@ public final class TagEditorPanel extends JPanel
 	private static final long serialVersionUID = 5669141686850523799L;
 
 	/**
-	 * The {@link IPictureList} used to load the list of available {@link ITag}
+	 * The {@link IPictureList} used to load the list of available {@link Tag}
 	 * s.
 	 */
 	private IPictureList _pictureList;
@@ -41,10 +41,10 @@ public final class TagEditorPanel extends JPanel
 	 * Creates a new TagEditorPanel.
 	 * 
 	 * @param pictureList
-	 *            the {@link IPictureList} from which {@link ITag}s can be
+	 *            the {@link IPictureList} from which {@link Tag}s can be
 	 *            selected.
 	 * @param picture
-	 *            the picture from which to edit the {@link ITag}s.
+	 *            the picture from which to edit the {@link Tag}s.
 	 */
 	public TagEditorPanel(final IPictureList pictureList, final IPicture picture)
 	{
@@ -53,7 +53,7 @@ public final class TagEditorPanel extends JPanel
 	}
 
 	/**
-	 * Update the list of available {@link ITag}s according the {@link ITag}s of
+	 * Update the list of available {@link Tag}s according the {@link Tag}s of
 	 * the specified {@link IPictureList}.
 	 * 
 	 * @param pictureList
@@ -72,7 +72,7 @@ public final class TagEditorPanel extends JPanel
 	}
 
 	/**
-	 * Change the {@link IPicture} which {@link ITag}s can be changed on this
+	 * Change the {@link IPicture} which {@link Tag}s can be changed on this
 	 * {@link TagEditorPanel}.
 	 * 
 	 * @param picture
@@ -91,7 +91,7 @@ public final class TagEditorPanel extends JPanel
 	}
 
 	/**
-	 * Update the list of available {@link ITag}s according to those available
+	 * Update the list of available {@link Tag}s according to those available
 	 * in the {@link IPictureList}.
 	 */
 	public void updateAvailableTags()
@@ -112,7 +112,7 @@ public final class TagEditorPanel extends JPanel
 	}
 
 	/**
-	 * Select the {@link ITag}s appropriate to the selected {@link IPicture}.
+	 * Select the {@link Tag}s appropriate to the selected {@link IPicture}.
 	 */
 	public void selectAppropriateTags()
 	{
