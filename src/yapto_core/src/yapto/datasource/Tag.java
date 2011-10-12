@@ -1,5 +1,6 @@
 package yapto.datasource;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -58,7 +59,7 @@ public final class Tag
 		_strName = strName;
 		_strDescription = strDescription;
 		_bSelectable = bSelectable;
-		// TODO fill the childre set
+		// TODO fill the children set
 	}
 
 	/**
@@ -104,12 +105,33 @@ public final class Tag
 	/**
 	 * Get the children of this {@link Tag}.
 	 * 
-	 * @return a Set of the {@link Tag}s children of this {@link Tag}.
+	 * @return an unmodifiable set of the {@link Tag}s children of this
+	 *         {@link Tag}.
 	 */
 	public Set<Tag> getChildren()
 	{
-		return _childrenSet;
+		return Collections.unmodifiableSet(_childrenSet);
 	}
 
-	// TODO add method to add and remove child
+	/**
+	 * Add a child to this {@link Tag}.
+	 * 
+	 * @param child
+	 *            the child to add.
+	 */
+	public void addChild(final Tag child)
+	{
+		_childrenSet.add(child);
+	}
+
+	/**
+	 * Remove a child from this {@link Tag}.
+	 * 
+	 * @param child
+	 *            the child to remove.
+	 */
+	public void removeChild(final Tag child)
+	{
+		_childrenSet.remove(child);
+	}
 }
