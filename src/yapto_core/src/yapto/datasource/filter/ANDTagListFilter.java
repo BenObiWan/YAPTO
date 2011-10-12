@@ -5,11 +5,11 @@ import java.util.TreeSet;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 
 /**
  * An {@link IPictureFilter} keeping {@link IPicture} that have all the
- * specified {@link ITag}.
+ * specified {@link Tag}.
  * 
  * @author benobiwan
  * 
@@ -17,19 +17,19 @@ import yapto.datasource.ITag;
 public class ANDTagListFilter implements IPictureFilter
 {
 	/**
-	 * Set of {@link ITag} for this filter.
+	 * Set of {@link Tag} for this filter.
 	 */
-	private final SortedSet<ITag> _tagSet = new TreeSet<ITag>();
+	private final SortedSet<Tag> _tagSet = new TreeSet<Tag>();
 
 	/**
 	 * Creates a new ANDTagListFilter.
 	 * 
 	 * @param tags
-	 *            the list of {@link ITag} to use.
+	 *            the list of {@link Tag} to use.
 	 */
-	public ANDTagListFilter(final ITag... tags)
+	public ANDTagListFilter(final Tag... tags)
 	{
-		for (final ITag tag : tags)
+		for (final Tag tag : tags)
 		{
 			_tagSet.add(tag);
 		}

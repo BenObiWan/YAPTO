@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 
 /**
  * Dummy implementation of the {@link IPicture} interface.
@@ -63,7 +63,7 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public List<ITag> getTagList()
+	public List<Tag> getTagList()
 	{
 		// TODO Auto-generated method stub
 		return null;

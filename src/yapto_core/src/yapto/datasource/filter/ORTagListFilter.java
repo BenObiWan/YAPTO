@@ -5,11 +5,11 @@ import java.util.TreeSet;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 
 /**
  * An {@link IPictureFilter} keeping {@link IPicture} that have at least one of
- * the specified {@link ITag}.
+ * the specified {@link Tag}.
  * 
  * @author benobiwan
  * 
@@ -17,19 +17,19 @@ import yapto.datasource.ITag;
 public class ORTagListFilter implements IPictureFilter
 {
 	/**
-	 * List of {@link ITag} for this filter.
+	 * List of {@link Tag} for this filter.
 	 */
-	private final SortedSet<ITag> _tagSet = new TreeSet<ITag>();
+	private final SortedSet<Tag> _tagSet = new TreeSet<Tag>();
 
 	/**
 	 * Creates a new ORTagListFilter.
 	 * 
 	 * @param tags
-	 *            the list of {@link ITag} to use.
+	 *            the list of {@link Tag} to use.
 	 */
-	public ORTagListFilter(final ITag... tags)
+	public ORTagListFilter(final Tag... tags)
 	{
-		for (final ITag tag : tags)
+		for (final Tag tag : tags)
 		{
 			_tagSet.add(tag);
 		}
@@ -38,7 +38,7 @@ public class ORTagListFilter implements IPictureFilter
 	@Override
 	public boolean filterPicture(final IPicture picture)
 	{
-		for (final ITag tag : picture.getTagList())
+		for (final Tag tag : picture.getTagList())
 		{
 			if (_tagSet.contains(tag))
 			{

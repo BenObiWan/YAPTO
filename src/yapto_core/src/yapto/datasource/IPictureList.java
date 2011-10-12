@@ -61,16 +61,16 @@ public interface IPictureList
 	List<IPictureList> getParent() throws OperationNotSupportedException;
 
 	/**
-	 * Get the list of {@link ITag}s associated with {@link IPicture} in this
+	 * Get the list of {@link Tag}s associated with {@link IPicture} in this
 	 * {@link IPictureList}.
 	 * 
-	 * @return the list of {@link ITag}s associated with {@link IPicture} in
+	 * @return the list of {@link Tag}s associated with {@link IPicture} in
 	 *         this {@link IPictureList}.
 	 * @throws OperationNotSupportedException
 	 *             if this operation isn't supported by this
 	 *             {@link IPictureList}.
 	 */
-	List<ITag> getTagList() throws OperationNotSupportedException;
+	List<Tag> getTagList() throws OperationNotSupportedException;
 
 	/**
 	 * Get the {@link List} of all {@link IPicture}.

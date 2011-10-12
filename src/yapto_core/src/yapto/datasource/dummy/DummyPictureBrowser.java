@@ -7,7 +7,7 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 import yapto.datasource.OperationNotSupportedException;
 
 /**
@@ -83,7 +83,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public List<ITag> getTagList() throws OperationNotSupportedException
+	public List<Tag> getTagList() throws OperationNotSupportedException
 	{
 		synchronized (_lockSourcePictureList)
 		{

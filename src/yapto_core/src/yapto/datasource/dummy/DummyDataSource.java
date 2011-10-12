@@ -11,7 +11,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
-import yapto.datasource.ITag;
+import yapto.datasource.Tag;
 import yapto.datasource.OperationNotSupportedException;
 
 /**
@@ -30,9 +30,9 @@ public final class DummyDataSource implements IDataSource
 	private final List<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
 
 	/**
-	 * List of {@link ITag} available on this {@link IDataSource}.
+	 * List of {@link Tag} available on this {@link IDataSource}.
 	 */
-	private final List<ITag> _listTags = new CopyOnWriteArrayList<ITag>();
+	private final List<Tag> _listTags = new CopyOnWriteArrayList<Tag>();
 
 	/**
 	 * Creates a new DummyDataSource.
@@ -96,7 +96,7 @@ public final class DummyDataSource implements IDataSource
 	}
 
 	@Override
-	public List<ITag> getTagList()
+	public List<Tag> getTagList()
 	{
 		return _listTags;
 	}

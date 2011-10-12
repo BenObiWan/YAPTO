@@ -21,11 +21,11 @@ public interface IPicture extends Comparable<IPicture>
 	String getId();
 
 	/**
-	 * Get the list of {@link ITag}s associated with this {@link IPicture}.
+	 * Get the list of {@link Tag}s associated with this {@link IPicture}.
 	 * 
-	 * @return the list of {@link ITag}s associated with this {@link IPicture}.
+	 * @return the list of {@link Tag}s associated with this {@link IPicture}.
 	 */
-	List<ITag> getTagList();
+	List<Tag> getTagList();
 
 	/**
 	 * Get the data of the main image of this {@link IPicture}.
