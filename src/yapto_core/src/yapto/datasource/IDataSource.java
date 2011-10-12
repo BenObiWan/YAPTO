@@ -27,4 +27,13 @@ public interface IDataSource extends IPictureList
 	 */
 	void addPicture(File picturePath) throws OperationNotSupportedException,
 			FileNotFoundException, IOException;
+
+	/**
+	 * Add a {@link Tag} to the list of {@link Tag}s know to this
+	 * {@link IDataSource}.
+	 * 
+	 * @param newTag
+	 *            the {@link Tag} to add.
+	 */
+	void addTag(Tag newTag);
 }

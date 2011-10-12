@@ -71,4 +71,15 @@ public interface IPicture extends Comparable<IPicture>
 	 * @return the width of this {@link IPicture}.
 	 */
 	int getWidth();
+
+	/**
+	 * Add a {@link Tag} to this {@link IPicture}.
+	 * 
+	 * The {@link Tag} must be added to the list of {@link Tag}s known to the
+	 * {@link IDataSource}.
+	 * 
+	 * @param newTag
+	 *            the {@link Tag} to add to the picture.
+	 */
+	void addTag(Tag newTag);
 }
