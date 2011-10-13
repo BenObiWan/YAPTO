@@ -59,7 +59,31 @@ public final class Tag
 		_strName = strName;
 		_strDescription = strDescription;
 		_bSelectable = bSelectable;
-		// TODO fill the children set
+	}
+
+	/**
+	 * Creates a new DummyTag.
+	 * 
+	 * @param parent
+	 *            the parent of this {@link Tag}.
+	 * @param strName
+	 *            the name of this {@link Tag}.
+	 * @param strDescription
+	 *            the description of this {@link Tag}.
+	 * @param bSelectable
+	 *            whether or not this {@link Tag} is selectable.
+	 * @param children
+	 *            the children of this {@link Tag}.
+	 */
+	public Tag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable,
+			final Set<Tag> children)
+	{
+		_parentTag = parent;
+		_strName = strName;
+		_strDescription = strDescription;
+		_bSelectable = bSelectable;
+		_childrenSet.addAll(children);
 	}
 
 	/**
