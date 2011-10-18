@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.imageio.ImageIO;
 
@@ -36,6 +38,12 @@ public final class DummyPicture implements IPicture
 	private final Object _lockImage = new Object();
 
 	/**
+	 * Set containing all the {@link Tag}s associated with this
+	 * {@link DummyPicture}.
+	 */
+	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<Tag>();
+
+	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.
 	 */
 	private final IDataSource _dataSource;
@@ -63,10 +71,9 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public List<Tag> getTagList()
+	public Set<Tag> getTagSet()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableSet(_tagSet);
 	}
 
 	@Override
@@ -120,5 +127,11 @@ public final class DummyPicture implements IPicture
 	{
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void addTag(Tag newTag)
+	{
+		_tagSet.add(newTag);
 	}
 }

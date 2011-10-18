@@ -3,7 +3,7 @@ package yapto.datasource;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * An interface describing a picture.
@@ -25,7 +25,7 @@ public interface IPicture extends Comparable<IPicture>
 	 * 
 	 * @return the list of {@link Tag}s associated with this {@link IPicture}.
 	 */
-	List<Tag> getTagList();
+	Set<Tag> getTagSet();
 
 	/**
 	 * Get the data of the main image of this {@link IPicture}.
