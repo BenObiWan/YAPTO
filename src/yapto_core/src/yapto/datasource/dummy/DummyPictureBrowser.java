@@ -2,6 +2,7 @@ package yapto.datasource.dummy;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -83,11 +84,11 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public List<Tag> getTagList() throws OperationNotSupportedException
+	public Set<Tag> getTagSet() throws OperationNotSupportedException
 	{
 		synchronized (_lockSourcePictureList)
 		{
-			return _sourcePictureList.getTagList();
+			return _sourcePictureList.getTagSet();
 		}
 	}
 
