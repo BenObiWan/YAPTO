@@ -82,4 +82,12 @@ public interface IPicture extends Comparable<IPicture>
 	 *            the {@link Tag} to add to the picture.
 	 */
 	void addTag(Tag newTag);
+
+	/**
+	 * Remove a {@link Tag} from this {@link IPicture}.
+	 * 
+	 * @param tag
+	 *            the {@link Tag} to remove from the picture.
+	 */
+	void removeTag(Tag tag);
 }
