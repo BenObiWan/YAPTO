@@ -38,7 +38,7 @@ public class ANDTagListFilter implements IPictureFilter
 	@Override
 	public boolean filterPicture(final IPicture picture)
 	{
-		return picture.getTagList().containsAll(_tagSet);
+		return picture.getTagSet().containsAll(_tagSet);
 	}
 
 }

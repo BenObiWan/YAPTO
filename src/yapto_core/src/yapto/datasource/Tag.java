@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author benobiwan
  * 
  */
-public final class Tag
+public final class Tag implements Comparable<Tag>
 {
 	/**
 	 * The parent of this {@link Tag}.
@@ -157,5 +157,33 @@ public final class Tag
 	public void removeChild(final Tag child)
 	{
 		_childrenSet.remove(child);
+	}
+
+	@Override
+	public int compareTo(Tag arg0)
+	{
+		int iComp = 0;
+		iComp = _strName.compareTo(arg0.getName());
+		if (iComp == 0)
+		{
+			iComp = _strDescription.compareTo(arg0.getDescription());
+			if (iComp == 0)
+			{
+				if (_bSelectable == arg0.isSelectable())
+				{
+					iComp = _parentTag.getName().compareTo(
+							arg0.getParent().getName());
+				}
+				else if (_bSelectable)
+				{
+					iComp = 1;
+				}
+				else
+				{
+					iComp = -1;
+				}
+			}
+		}
+		return iComp;
 	}
 }

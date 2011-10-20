@@ -3,8 +3,11 @@ package yapto.datasource.dummy;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import yapto.datasource.IDataSource;
@@ -27,12 +30,15 @@ public final class DummyDataSource implements IDataSource
 	 */
 	private final ConcurrentSkipListMap<String, IPicture> _mapPicture = new ConcurrentSkipListMap<String, IPicture>();
 
+	/**
+	 * List of {@link IPicture} of this {@link DummyDataSource}.
+	 */
 	private final List<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
 
 	/**
-	 * List of {@link Tag} available on this {@link IDataSource}.
+	 * Set of all the {@link Tag}s available on this {@link IDataSource}.
 	 */
-	private final List<Tag> _listTags = new CopyOnWriteArrayList<Tag>();
+	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<Tag>();
 
 	/**
 	 * Creates a new DummyDataSource.
@@ -96,14 +102,20 @@ public final class DummyDataSource implements IDataSource
 	}
 
 	@Override
-	public List<Tag> getTagList()
+	public Set<Tag> getTagSet()
 	{
-		return _listTags;
+		return Collections.unmodifiableSet(_tagSet);
 	}
 
 	@Override
 	public List<IPicture> getPictureList()
 	{
 		return _listPicture;
+	}
+
+	@Override
+	public void addTag(Tag newTag)
+	{
+		_tagSet.add(newTag);
 	}
 }

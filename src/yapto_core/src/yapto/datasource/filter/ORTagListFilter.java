@@ -38,7 +38,7 @@ public class ORTagListFilter implements IPictureFilter
 	@Override
 	public boolean filterPicture(final IPicture picture)
 	{
-		for (final Tag tag : picture.getTagList())
+		for (final Tag tag : picture.getTagSet())
 		{
 			if (_tagSet.contains(tag))
 			{

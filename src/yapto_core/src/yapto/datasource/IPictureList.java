@@ -1,6 +1,7 @@
 package yapto.datasource;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A list of {@link IPicture}.
@@ -64,13 +65,13 @@ public interface IPictureList
 	 * Get the list of {@link Tag}s associated with {@link IPicture} in this
 	 * {@link IPictureList}.
 	 * 
-	 * @return the list of {@link Tag}s associated with {@link IPicture} in
-	 *         this {@link IPictureList}.
+	 * @return the list of {@link Tag}s associated with {@link IPicture} in this
+	 *         {@link IPictureList}.
 	 * @throws OperationNotSupportedException
 	 *             if this operation isn't supported by this
 	 *             {@link IPictureList}.
 	 */
-	List<Tag> getTagList() throws OperationNotSupportedException;
+	Set<Tag> getTagSet() throws OperationNotSupportedException;
 
 	/**
 	 * Get the {@link List} of all {@link IPicture}.
