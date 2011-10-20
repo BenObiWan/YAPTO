@@ -74,6 +74,14 @@ public interface IPictureList
 	Set<Tag> getTagSet() throws OperationNotSupportedException;
 
 	/**
+	 * Get the root {@link Tag} associated with {@link IPicture} in this
+	 * {@link IPictureList}.
+	 * 
+	 * @return the root {@link Tag}.
+	 */
+	Tag getRootTag();
+
+	/**
 	 * Get the {@link List} of all {@link IPicture}.
 	 * 
 	 * @return the {@link List} of all {@link IPicture}.

@@ -160,7 +160,7 @@ public final class Tag implements Comparable<Tag>
 	}
 
 	@Override
-	public int compareTo(Tag arg0)
+	public int compareTo(final Tag arg0)
 	{
 		int iComp = 0;
 		iComp = _strName.compareTo(arg0.getName());

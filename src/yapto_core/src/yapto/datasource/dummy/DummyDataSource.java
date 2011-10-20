@@ -14,8 +14,8 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
-import yapto.datasource.Tag;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.Tag;
 
 /**
  * Dummy implementation of the {@link IDataSource} interface.
@@ -41,11 +41,17 @@ public final class DummyDataSource implements IDataSource
 	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<Tag>();
 
 	/**
+	 * The root {@link Tag} of this {@link DummyDataSource}.
+	 */
+	private final Tag _rootTag;
+
+	/**
 	 * Creates a new DummyDataSource.
 	 */
 	public DummyDataSource()
 	{
 		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg" };
+		_rootTag = new Tag(null, "root", "", false);
 
 		for (final String file : fileList)
 		{
@@ -114,8 +120,14 @@ public final class DummyDataSource implements IDataSource
 	}
 
 	@Override
-	public void addTag(Tag newTag)
+	public void addTag(final Tag newTag)
 	{
 		_tagSet.add(newTag);
+	}
+
+	@Override
+	public Tag getRootTag()
+	{
+		return _rootTag;
 	}
 }

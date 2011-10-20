@@ -130,13 +130,13 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public void addTag(Tag newTag)
+	public void addTag(final Tag newTag)
 	{
 		_tagSet.add(newTag);
 	}
 
 	@Override
-	public void removeTag(Tag tag)
+	public void removeTag(final Tag tag)
 	{
 		_tagSet.remove(tag);
 	}

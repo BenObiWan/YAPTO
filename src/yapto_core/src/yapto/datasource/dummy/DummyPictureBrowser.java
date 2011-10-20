@@ -8,8 +8,8 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
-import yapto.datasource.Tag;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.Tag;
 
 /**
  * Dummy implementation of {@link IPictureBrowser}.
@@ -163,4 +163,9 @@ public final class DummyPictureBrowser implements IPictureBrowser
 		}
 	}
 
+	@Override
+	public Tag getRootTag()
+	{
+		return _sourcePictureList.getRootTag();
+	}
 }
