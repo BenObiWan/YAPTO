@@ -58,7 +58,7 @@ public final class MainPictureDisplayPanel extends JPanel
 		spPicture.setPreferredSize(new Dimension(400, 300));
 
 		add(spPicture, BorderLayout.CENTER);
-		add(_pictureInfoPanel, BorderLayout.PAGE_END);
+		add(_pictureInfoPanel, BorderLayout.LINE_END);
 		try
 		{
 			_pictureComponent.loadPicture();

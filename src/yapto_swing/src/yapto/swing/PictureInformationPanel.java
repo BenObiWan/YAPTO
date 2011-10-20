@@ -1,11 +1,11 @@
 package yapto.swing;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
-import javax.swing.JTree;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.Tag;
 
 /**
  * Panel displaying the informations of an {@link IPicture}.
@@ -31,10 +31,7 @@ public final class PictureInformationPanel extends JPanel
 	 */
 	private final Object _lockPicture = new Object();
 
-	/**
-	 * Tree used to display the list of {@link Tag}s.
-	 */
-	private final JTree _tagTree = new JTree();
+	private final TagEditorPanel _tagPanel;
 
 	/**
 	 * Creates a new PictureInformationPanel.
@@ -44,6 +41,10 @@ public final class PictureInformationPanel extends JPanel
 	 */
 	public PictureInformationPanel(final IPictureBrowser pictureBrowser)
 	{
+		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;
+		_tagPanel = new TagEditorPanel(_pictureBrowser,
+				_pictureBrowser.getCurrentPicture());
+		add(_tagPanel, BorderLayout.CENTER);
 	}
 }
