@@ -108,7 +108,8 @@ public final class DummyPictureBrowser implements IPictureBrowser
 		{
 			if (_currentPicture == null)
 			{
-				_currentPicture = _pictureIterator.next();
+				_pictureIterator.next();
+				_currentPicture = _pictureIterator.previous();
 				_bus.post(new PictureChangedEvent());
 			}
 			return _currentPicture;
@@ -122,6 +123,10 @@ public final class DummyPictureBrowser implements IPictureBrowser
 		{
 			if (_pictureIterator.hasNext())
 			{
+				if (!_pictureIterator.hasPrevious())
+				{
+					_pictureIterator.next();
+				}
 				_currentPicture = _pictureIterator.next();
 				_bus.post(new PictureChangedEvent());
 			}
@@ -145,6 +150,10 @@ public final class DummyPictureBrowser implements IPictureBrowser
 		{
 			if (_pictureIterator.hasPrevious())
 			{
+				if (!_pictureIterator.hasNext())
+				{
+					_pictureIterator.previous();
+				}
 				_currentPicture = _pictureIterator.previous();
 				_bus.post(new PictureChangedEvent());
 			}
