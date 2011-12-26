@@ -8,6 +8,9 @@ import java.io.IOException;
 import javax.swing.JComponent;
 
 import yapto.datasource.IPictureBrowser;
+import yapto.datasource.PictureChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Component used to display a picture.
@@ -60,5 +63,28 @@ public final class PictureDisplayComponent extends JComponent
 	public void paint(final Graphics g)
 	{
 		g.drawImage(_img, 0, 0, null);
+	}
+
+	/**
+	 * Method called when the selected picture has changed.
+	 * 
+	 * @param e
+	 *            the event signaling the change of the picture.
+	 */
+	@Subscribe
+	public void handlePictureChanged(
+			@SuppressWarnings("unused") final PictureChangedEvent e)
+	{
+		System.out.println("PictureDisplayComponent pict changed");
+
+		try
+		{
+			loadPicture();
+		}
+		catch (final IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

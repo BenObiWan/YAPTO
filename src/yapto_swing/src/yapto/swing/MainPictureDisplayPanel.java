@@ -36,6 +36,12 @@ public final class MainPictureDisplayPanel extends JPanel
 	private final PictureInformationPanel _pictureInfoPanel;
 
 	/**
+	 * The {@link PictureBrowserPanel} used to control the
+	 * {@link IPictureBrowser}.
+	 */
+	private final PictureBrowserPanel _pictureBrowserPanel;
+
+	/**
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link MainPictureDisplayPanel}.
 	 */
@@ -52,13 +58,18 @@ public final class MainPictureDisplayPanel extends JPanel
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;
 		_pictureComponent = new PictureDisplayComponent(_pictureBrowser);
+		_pictureBrowser.register(_pictureComponent);
 		_pictureInfoPanel = new PictureInformationPanel(_pictureBrowser);
+		_pictureBrowser.register(_pictureInfoPanel);
+		_pictureBrowserPanel = new PictureBrowserPanel(_pictureBrowser);
+		_pictureBrowser.register(_pictureBrowserPanel);
 
 		final JScrollPane spPicture = new JScrollPane(_pictureComponent);
 		spPicture.setPreferredSize(new Dimension(400, 300));
 
 		add(spPicture, BorderLayout.CENTER);
 		add(_pictureInfoPanel, BorderLayout.LINE_END);
+		add(_pictureBrowserPanel, BorderLayout.PAGE_END);
 		try
 		{
 			_pictureComponent.loadPicture();

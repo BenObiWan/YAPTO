@@ -6,6 +6,9 @@ import javax.swing.JPanel;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
+import yapto.datasource.PictureChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Panel displaying the informations of an {@link IPicture}.
@@ -31,6 +34,10 @@ public final class PictureInformationPanel extends JPanel
 	 */
 	private final Object _lockPicture = new Object();
 
+	/**
+	 * The {@link TagEditorPanel} used to view and modify the tags associated
+	 * with the current picture.
+	 */
 	private final TagEditorPanel _tagPanel;
 
 	/**
@@ -46,5 +53,18 @@ public final class PictureInformationPanel extends JPanel
 		_tagPanel = new TagEditorPanel(_pictureBrowser,
 				_pictureBrowser.getCurrentPicture());
 		add(_tagPanel, BorderLayout.CENTER);
+	}
+
+	/**
+	 * Method called when the selected picture has changed.
+	 * 
+	 * @param e
+	 *            the event signaling the change of the picture.
+	 */
+	@Subscribe
+	public void handlePictureChanged(
+			@SuppressWarnings("unused") final PictureChangedEvent e)
+	{
+		System.out.println("PictureInformationPanel pict changed");
 	}
 }
