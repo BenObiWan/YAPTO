@@ -9,7 +9,10 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.Tag;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * Dummy implementation of {@link IPictureBrowser}.
@@ -38,6 +41,12 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 * Lock used to protect the access to the source {@link IPictureList}.
 	 */
 	private final Object _lockSourcePictureList = new Object();
+
+	/**
+	 * {@link EventBus} used to signal registered objects of changes in this
+	 * {@link DummyPictureBrowser}.
+	 */
+	private final EventBus _bus = new EventBus();
 
 	/**
 	 * Creates a new DummyPictureBrowser using the specified
@@ -100,6 +109,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 			if (_currentPicture == null)
 			{
 				_currentPicture = _pictureIterator.next();
+				_bus.post(new PictureChangedEvent());
 			}
 			return _currentPicture;
 		}
@@ -110,7 +120,11 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	{
 		synchronized (_lockSourcePictureList)
 		{
-			_currentPicture = _pictureIterator.next();
+			if (_pictureIterator.hasNext())
+			{
+				_currentPicture = _pictureIterator.next();
+				_bus.post(new PictureChangedEvent());
+			}
 			return _currentPicture;
 		}
 	}
@@ -129,7 +143,11 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	{
 		synchronized (_lockSourcePictureList)
 		{
-			_currentPicture = _pictureIterator.previous();
+			if (_pictureIterator.hasPrevious())
+			{
+				_currentPicture = _pictureIterator.previous();
+				_bus.post(new PictureChangedEvent());
+			}
 			return _currentPicture;
 		}
 	}
@@ -167,5 +185,11 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	public Tag getRootTag()
 	{
 		return _sourcePictureList.getRootTag();
+	}
+
+	@Override
+	public void register(final Object object)
+	{
+		_bus.register(object);
 	}
 }

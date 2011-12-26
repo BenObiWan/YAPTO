@@ -53,4 +53,13 @@ public interface IPictureBrowser extends IPictureList
 	 *            the new {@link IPictureList} to use as source.
 	 */
 	void changeSourcePictureList(IPictureList source);
+
+	/**
+	 * Register an object to the listen for change in this
+	 * {@link IPictureBrowser}.
+	 * 
+	 * @param object
+	 *            the object to register.
+	 */
+	void register(Object object);
 }
