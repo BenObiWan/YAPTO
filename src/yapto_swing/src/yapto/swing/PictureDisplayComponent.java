@@ -57,6 +57,7 @@ public final class PictureDisplayComponent extends JComponent
 	{
 		_img = _pictureBrowser.getCurrentPicture().getImageData();
 		setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
+		repaint();
 	}
 
 	@Override
@@ -75,8 +76,6 @@ public final class PictureDisplayComponent extends JComponent
 	public void handlePictureChanged(
 			@SuppressWarnings("unused") final PictureChangedEvent e)
 	{
-		System.out.println("PictureDisplayComponent pict changed");
-
 		try
 		{
 			loadPicture();
