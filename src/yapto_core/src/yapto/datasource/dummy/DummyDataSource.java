@@ -50,7 +50,8 @@ public final class DummyDataSource implements IDataSource
 	 */
 	public DummyDataSource()
 	{
-		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg" };
+		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg",
+				"/tmp/picture3.jpg" };
 		_rootTag = new Tag(null, "root", "", false);
 		final Tag child1 = new Tag(_rootTag, "node1", "node1 desc", false);
 		_rootTag.addChild(child1);
