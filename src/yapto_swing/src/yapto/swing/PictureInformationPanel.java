@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.PictureChangedEvent;
@@ -22,6 +25,12 @@ public final class PictureInformationPanel extends JPanel
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = -7799432118702150952L;
+
+	/**
+	 * Logger object.
+	 */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(PictureInformationPanel.class);
 
 	/**
 	 * The {@link IPictureBrowser} used to display picture on this
@@ -65,6 +74,6 @@ public final class PictureInformationPanel extends JPanel
 	public void handlePictureChanged(
 			@SuppressWarnings("unused") final PictureChangedEvent e)
 	{
-		System.out.println("PictureInformationPanel pict changed");
+		LOGGER.info("PictureInformationPanel pict changed");
 	}
 }

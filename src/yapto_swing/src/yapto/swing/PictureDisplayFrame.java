@@ -2,6 +2,8 @@ package yapto.swing;
 
 import javax.swing.JFrame;
 
+import org.apache.log4j.BasicConfigurator;
+
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.dummy.DummyDataSource;
@@ -32,6 +34,8 @@ public final class PictureDisplayFrame extends JFrame
 	{
 		super("yapto");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		BasicConfigurator.configure();
 
 		final MainPictureDisplayPanel contentPane = new MainPictureDisplayPanel(
 				new DummyPictureBrowser(dataSource));
