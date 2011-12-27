@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
@@ -22,6 +25,12 @@ import com.google.common.eventbus.EventBus;
  */
 public final class DummyPictureBrowser implements IPictureBrowser
 {
+	/**
+	 * Logger object.
+	 */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DummyPictureBrowser.class);
+
 	/**
 	 * The {@link IPictureList} used as source for this {@link IPictureBrowser}.
 	 */
@@ -46,7 +55,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 * {@link EventBus} used to signal registered objects of changes in this
 	 * {@link DummyPictureBrowser}.
 	 */
-	private final EventBus _bus = new EventBus();
+	private final EventBus _bus;
 
 	/**
 	 * Creates a new DummyPictureBrowser using the specified
@@ -54,9 +63,14 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 * 
 	 * @param sourcePictureList
 	 *            the {@link IPictureList} to use as source.
+	 * @param bus
+	 *            the {@link EventBus} used to signal registered objects of
+	 *            changes in this {@link DummyPictureBrowser}.
 	 */
-	public DummyPictureBrowser(final IPictureList sourcePictureList)
+	public DummyPictureBrowser(final IPictureList sourcePictureList,
+			final EventBus bus)
 	{
+		_bus = bus;
 		changeSourcePictureList(sourcePictureList);
 	}
 
