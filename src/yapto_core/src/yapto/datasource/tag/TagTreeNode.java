@@ -3,7 +3,7 @@ package yapto.datasource.tag;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import common.SelectableTreeNode;
+import common.ISelectableTreeNode;
 
 /**
  * A {@link TreeNode} based on a {@link Tag}.
@@ -12,7 +12,7 @@ import common.SelectableTreeNode;
  * 
  */
 public class TagTreeNode extends DefaultMutableTreeNode implements
-		SelectableTreeNode
+		ISelectableTreeNode
 {
 	/**
 	 * serialVersionUID for Serialization.
