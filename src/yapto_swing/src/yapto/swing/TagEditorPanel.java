@@ -10,7 +10,7 @@ import javax.swing.tree.MutableTreeNode;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureList;
-import yapto.datasource.Tag;
+import yapto.datasource.tag.Tag;
 
 /**
  * Panel displaying the list of {@link Tag} that can be associated with an

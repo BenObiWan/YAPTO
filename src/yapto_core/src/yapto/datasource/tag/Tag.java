@@ -1,8 +1,10 @@
-package yapto.datasource;
+package yapto.datasource.tag;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+
+import yapto.datasource.IPicture;
 
 /**
  * An class describing a tag associated to an {@link IPicture}.

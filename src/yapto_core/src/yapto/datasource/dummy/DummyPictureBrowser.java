@@ -13,7 +13,7 @@ import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureChangedEvent;
-import yapto.datasource.Tag;
+import yapto.datasource.tag.Tag;
 
 import com.google.common.eventbus.EventBus;
 

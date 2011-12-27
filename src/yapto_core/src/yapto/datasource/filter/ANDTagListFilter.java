@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
-import yapto.datasource.Tag;
+import yapto.datasource.tag.Tag;
 
 /**
  * An {@link IPictureFilter} keeping {@link IPicture} that have all the

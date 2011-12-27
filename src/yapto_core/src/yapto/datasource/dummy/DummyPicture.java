@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
-import yapto.datasource.Tag;
+import yapto.datasource.tag.Tag;
 
 /**
  * Dummy implementation of the {@link IPicture} interface.

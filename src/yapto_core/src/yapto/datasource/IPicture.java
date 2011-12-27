@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Set;
 
+import yapto.datasource.tag.Tag;
+
 /**
  * An interface describing a picture.
  * 

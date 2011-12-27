@@ -3,6 +3,8 @@ package yapto.datasource;
 import java.util.List;
 import java.util.Set;
 
+import yapto.datasource.tag.Tag;
+
 /**
  * A list of {@link IPicture}.
  * 

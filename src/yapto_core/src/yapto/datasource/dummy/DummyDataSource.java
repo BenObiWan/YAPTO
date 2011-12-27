@@ -15,7 +15,7 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
-import yapto.datasource.Tag;
+import yapto.datasource.tag.Tag;
 
 /**
  * Dummy implementation of the {@link IDataSource} interface.

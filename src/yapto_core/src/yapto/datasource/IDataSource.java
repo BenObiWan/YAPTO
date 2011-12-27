@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import yapto.datasource.tag.Tag;
+
 /**
  * An interface describing a source for {@link IPicture}.
  * 
