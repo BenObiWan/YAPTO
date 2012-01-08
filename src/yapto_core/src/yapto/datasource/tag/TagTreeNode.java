@@ -50,7 +50,7 @@ public class TagTreeNode extends DefaultMutableTreeNode implements
 	 * @param tag
 	 *            the {@link Tag} to use.
 	 */
-	public TagTreeNode(Tag tag)
+	public TagTreeNode(final Tag tag)
 	{
 		this(tag.getName(), tag.getDescription(), tag.isSelectable(), false);
 	}
@@ -65,8 +65,8 @@ public class TagTreeNode extends DefaultMutableTreeNode implements
 	 * @param bSelectable
 	 *            whether or not this {@link TagTreeNode} is selectable.
 	 */
-	public TagTreeNode(String strName, String strDescription,
-			boolean bSelectable)
+	public TagTreeNode(final String strName, final String strDescription,
+			final boolean bSelectable)
 	{
 		this(strName, strDescription, bSelectable, false);
 	}
@@ -83,8 +83,8 @@ public class TagTreeNode extends DefaultMutableTreeNode implements
 	 * @param bSelected
 	 *            whether or not this {@link TagTreeNode} is selected.
 	 */
-	public TagTreeNode(String strName, String strDescription,
-			boolean bSelectable, boolean bSelected)
+	public TagTreeNode(final String strName, final String strDescription,
+			final boolean bSelectable, final boolean bSelected)
 	{
 		super(strName);
 		_strName = strName;
@@ -109,7 +109,7 @@ public class TagTreeNode extends DefaultMutableTreeNode implements
 	}
 
 	@Override
-	public void setSelected(boolean bSelected)
+	public void setSelected(final boolean bSelected)
 	{
 		if (_bSelectable)
 		{
