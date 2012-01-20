@@ -19,7 +19,7 @@ import yapto.datasource.tag.Tag;
  * @author benobiwan
  * 
  */
-public final class TagEditorPanel extends JPanel
+public final class TreeTagEditorPanel extends JPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -62,7 +62,7 @@ public final class TagEditorPanel extends JPanel
 	 * @param picture
 	 *            the picture from which to edit the {@link Tag}s.
 	 */
-	public TagEditorPanel(final IPictureList pictureList, final IPicture picture)
+	public TreeTagEditorPanel(final IPictureList pictureList, final IPicture picture)
 	{
 		super(new BorderLayout());
 		_rootNode = new DefaultMutableTreeNode();
@@ -94,7 +94,7 @@ public final class TagEditorPanel extends JPanel
 
 	/**
 	 * Change the {@link IPicture} which {@link Tag}s can be changed on this
-	 * {@link TagEditorPanel}.
+	 * {@link TreeTagEditorPanel}.
 	 * 
 	 * @param picture
 	 *            the new {@link IPicture}.
