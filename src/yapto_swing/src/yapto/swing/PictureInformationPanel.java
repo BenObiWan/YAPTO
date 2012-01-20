@@ -44,10 +44,10 @@ public final class PictureInformationPanel extends JPanel
 	private final Object _lockPicture = new Object();
 
 	/**
-	 * The {@link TreeTagEditorPanel} used to view and modify the tags associated
-	 * with the current picture.
+	 * The {@link TreeTagEditorPanel} used to view and modify the tags
+	 * associated with the current picture.
 	 */
-	private final TreeTagEditorPanel _tagPanel;
+	private final AbstractTagEditorPanel _tagPanel;
 
 	/**
 	 * Creates a new PictureInformationPanel.
