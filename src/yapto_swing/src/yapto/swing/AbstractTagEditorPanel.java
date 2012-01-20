@@ -65,7 +65,17 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	 * @param picture
 	 *            the new {@link IPicture}.
 	 */
-	public abstract void changePicture(final IPicture picture);
+	public final void changePicture(final IPicture picture)
+	{
+		synchronized (_lock)
+		{
+			if (_picture != picture)
+			{
+				_picture = picture;
+				selectAppropriateTags();
+			}
+		}
+	}
 
 	/**
 	 * Update the list of available {@link Tag}s according the {@link Tag}s of
@@ -74,5 +84,15 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	 * @param pictureList
 	 *            the new {@link IPictureList}.
 	 */
-	public abstract void changePictureList(final IPictureList pictureList);
+	public final void changePictureList(final IPictureList pictureList)
+	{
+		synchronized (_lock)
+		{
+			if (_pictureList != pictureList)
+			{
+				_pictureList = pictureList;
+				updateAvailableTags();
+			}
+		}
+	}
 }

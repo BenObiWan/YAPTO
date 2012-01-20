@@ -56,32 +56,6 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	}
 
 	@Override
-	public void changePictureList(final IPictureList pictureList)
-	{
-		synchronized (_lock)
-		{
-			if (_pictureList != pictureList)
-			{
-				_pictureList = pictureList;
-				updateAvailableTags();
-			}
-		}
-	}
-
-	@Override
-	public void changePicture(final IPicture picture)
-	{
-		synchronized (_lock)
-		{
-			if (_picture != picture)
-			{
-				_picture = picture;
-				selectAppropriateTags();
-			}
-		}
-	}
-
-	@Override
 	public void updateAvailableTags()
 	{
 		synchronized (_lock)
