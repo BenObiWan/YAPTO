@@ -44,7 +44,7 @@ public final class PictureInformationPanel extends JPanel
 	private final Object _lockPicture = new Object();
 
 	/**
-	 * The {@link TreeTagEditorPanel} used to view and modify the tags
+	 * The {@link AbstractTagEditorPanel} used to view and modify the tags
 	 * associated with the current picture.
 	 */
 	private final AbstractTagEditorPanel _tagPanel;
@@ -59,7 +59,7 @@ public final class PictureInformationPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;
-		_tagPanel = new TreeTagEditorPanel(_pictureBrowser,
+		_tagPanel = new ListTagEditorPanel(_pictureBrowser,
 				_pictureBrowser.getCurrentPicture());
 		add(_tagPanel, BorderLayout.CENTER);
 	}
