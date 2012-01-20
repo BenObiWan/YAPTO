@@ -108,6 +108,12 @@ public final class Tag implements Comparable<Tag>
 		return _strName;
 	}
 
+	@Override
+	public String toString()
+	{
+		return getName();
+	}
+
 	/**
 	 * Get the description of this {@link Tag}.
 	 * 
