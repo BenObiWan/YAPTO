@@ -38,4 +38,11 @@ public interface IDataSource extends IPictureList
 	 *            the {@link Tag} to add.
 	 */
 	void addTag(Tag newTag);
+
+	/**
+	 * Get the id of this {@link IDataSource}.
+	 * 
+	 * @return the id of this {@link IDataSource}.
+	 */
+	int getId();
 }

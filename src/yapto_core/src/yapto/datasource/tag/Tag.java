@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 
 /**
@@ -38,13 +39,27 @@ public final class Tag implements Comparable<Tag>
 	private final boolean _bSelectable;
 
 	/**
+	 * Id of the {@link IDataSource}.
+	 */
+	private final int _iDatasourceId;
+
+	/**
+	 * Id of this {@link Tag}.
+	 */
+	private final int _iTagId;
+
+	/**
 	 * Set containing the children of this {@link Tag}.
 	 */
 	private final ConcurrentSkipListSet<Tag> _childrenSet = new ConcurrentSkipListSet<Tag>();
 
 	/**
-	 * Creates a new DummyTag.
+	 * Creates a new Tag.
 	 * 
+	 * @param iDatasourceId
+	 *            id of the {@link IDataSource}.
+	 * @param iTagId
+	 *            id of this {@link Tag}.
 	 * @param parent
 	 *            the parent of this {@link Tag}.
 	 * @param strName
@@ -54,9 +69,12 @@ public final class Tag implements Comparable<Tag>
 	 * @param bSelectable
 	 *            whether or not this {@link Tag} is selectable.
 	 */
-	public Tag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable)
+	public Tag(final int iDatasourceId, final int iTagId, final Tag parent,
+			final String strName, final String strDescription,
+			final boolean bSelectable)
 	{
+		_iDatasourceId = iDatasourceId;
+		_iTagId = iTagId;
 		_parentTag = parent;
 		_strName = strName;
 		_strDescription = strDescription;
@@ -64,8 +82,12 @@ public final class Tag implements Comparable<Tag>
 	}
 
 	/**
-	 * Creates a new DummyTag.
+	 * Creates a new Tag.
 	 * 
+	 * @param iDatasourceId
+	 *            id of the {@link IDataSource}.
+	 * @param iTagId
+	 *            id of this {@link Tag}.
 	 * @param parent
 	 *            the parent of this {@link Tag}.
 	 * @param strName
@@ -77,10 +99,12 @@ public final class Tag implements Comparable<Tag>
 	 * @param children
 	 *            the children of this {@link Tag}.
 	 */
-	public Tag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable,
-			final Set<Tag> children)
+	public Tag(final int iDatasourceId, final int iTagId, final Tag parent,
+			final String strName, final String strDescription,
+			final boolean bSelectable, final Set<Tag> children)
 	{
+		_iDatasourceId = iDatasourceId;
+		_iTagId = iTagId;
 		_parentTag = parent;
 		_strName = strName;
 		_strDescription = strDescription;
@@ -193,5 +217,25 @@ public final class Tag implements Comparable<Tag>
 			}
 		}
 		return iComp;
+	}
+
+	/**
+	 * Get the id of the {@link IDataSource}.
+	 * 
+	 * @return the id of the {@link IDataSource}.
+	 */
+	public int getDatasourceId()
+	{
+		return _iDatasourceId;
+	}
+
+	/**
+	 * Get the id of this {@link Tag}.
+	 * 
+	 * @return the id of this {@link Tag}.
+	 */
+	public int getTagId()
+	{
+		return _iTagId;
 	}
 }

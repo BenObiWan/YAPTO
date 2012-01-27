@@ -52,20 +52,27 @@ public final class DummyDataSource implements IDataSource
 	{
 		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg",
 				"/tmp/picture3.jpg" };
-		_rootTag = new Tag(null, "root", "", false);
-		final Tag child1 = new Tag(_rootTag, "node1", "node1 desc", false);
+		int iId = 0;
+		_rootTag = new Tag(getId(), iId++, null, "root", "", false);
+		final Tag child1 = new Tag(getId(), iId++, _rootTag, "node1",
+				"node1 desc", false);
 		_rootTag.addChild(child1);
-		final Tag child11 = new Tag(child1, "node1.1", "node1.1 desc", true);
+		final Tag child11 = new Tag(getId(), iId++, child1, "node1.1",
+				"node1.1 desc", true);
 		child1.addChild(child11);
-		final Tag child12 = new Tag(child1, "node1.2", "node1.2 desc", true);
+		final Tag child12 = new Tag(getId(), iId++, child1, "node1.2",
+				"node1.2 desc", true);
 		child1.addChild(child12);
 
-		final Tag child121 = new Tag(child1, "node1.2.1", "node1.2 desc", true);
+		final Tag child121 = new Tag(getId(), iId++, child1, "node1.2.1",
+				"node1.2 desc", true);
 		child12.addChild(child121);
-		final Tag child122 = new Tag(child1, "node1.2.2", "node1.2 desc", true);
+		final Tag child122 = new Tag(getId(), iId++, child1, "node1.2.2",
+				"node1.2 desc", true);
 		child12.addChild(child122);
 
-		final Tag child2 = new Tag(_rootTag, "node2", "node2 desc", true);
+		final Tag child2 = new Tag(getId(), iId++, _rootTag, "node2",
+				"node2 desc", true);
 		_rootTag.addChild(child2);
 
 		for (final String file : fileList)
@@ -144,5 +151,11 @@ public final class DummyDataSource implements IDataSource
 	public Tag getRootTag()
 	{
 		return _rootTag;
+	}
+
+	@Override
+	public int getId()
+	{
+		return 1;
 	}
 }
