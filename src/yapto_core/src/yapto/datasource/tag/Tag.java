@@ -195,24 +195,34 @@ public final class Tag implements Comparable<Tag>
 	public int compareTo(final Tag arg0)
 	{
 		int iComp = 0;
-		iComp = _strName.compareTo(arg0.getName());
+		iComp += _iDatasourceId;
+		iComp -= arg0.getDatasourceId();
 		if (iComp == 0)
 		{
-			iComp = _strDescription.compareTo(arg0.getDescription());
+			iComp += _iTagId;
+			iComp -= arg0.getTagId();
 			if (iComp == 0)
 			{
-				if (_bSelectable == arg0.isSelectable())
+				iComp = _strName.compareTo(arg0.getName());
+				if (iComp == 0)
 				{
-					iComp = _parentTag.getName().compareTo(
-							arg0.getParent().getName());
-				}
-				else if (_bSelectable)
-				{
-					iComp = 1;
-				}
-				else
-				{
-					iComp = -1;
+					iComp = _strDescription.compareTo(arg0.getDescription());
+					if (iComp == 0)
+					{
+						if (_bSelectable == arg0.isSelectable())
+						{
+							iComp = _parentTag.getName().compareTo(
+									arg0.getParent().getName());
+						}
+						else if (_bSelectable)
+						{
+							iComp = 1;
+						}
+						else
+						{
+							iComp = -1;
+						}
+					}
 				}
 			}
 		}
