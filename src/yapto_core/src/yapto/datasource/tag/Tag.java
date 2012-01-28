@@ -21,7 +21,12 @@ public final class Tag implements Comparable<Tag>
 	/**
 	 * The parent of this {@link Tag}.
 	 */
-	private final Tag _parentTag;
+	private Tag _parentTag;
+
+	/**
+	 * Lock to protect access to the parent {@link Tag}.
+	 */
+	private final Object _parentLock = new Object();
 
 	/**
 	 * The name of this {@link Tag}.
@@ -75,7 +80,10 @@ public final class Tag implements Comparable<Tag>
 	{
 		_iDatasourceId = iDatasourceId;
 		_iTagId = iTagId;
-		_parentTag = parent;
+		synchronized (_parentLock)
+		{
+			_parentTag = parent;
+		}
 		_strName = strName;
 		_strDescription = strDescription;
 		_bSelectable = bSelectable;
@@ -103,13 +111,53 @@ public final class Tag implements Comparable<Tag>
 			final String strName, final String strDescription,
 			final boolean bSelectable, final Set<Tag> children)
 	{
-		_iDatasourceId = iDatasourceId;
-		_iTagId = iTagId;
-		_parentTag = parent;
-		_strName = strName;
-		_strDescription = strDescription;
-		_bSelectable = bSelectable;
+		this(iDatasourceId, iTagId, parent, strName, strDescription,
+				bSelectable);
 		_childrenSet.addAll(children);
+	}
+
+	/**
+	 * Creates a new Tag.
+	 * 
+	 * @param iDatasourceId
+	 *            id of the {@link IDataSource}.
+	 * @param iTagId
+	 *            id of this {@link Tag}.
+	 * @param strName
+	 *            the name of this {@link Tag}.
+	 * @param strDescription
+	 *            the description of this {@link Tag}.
+	 * @param bSelectable
+	 *            whether or not this {@link Tag} is selectable.
+	 */
+	public Tag(final int iDatasourceId, final int iTagId, final String strName,
+			final String strDescription, final boolean bSelectable)
+	{
+		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable);
+	}
+
+	/**
+	 * Creates a new Tag.
+	 * 
+	 * @param iDatasourceId
+	 *            id of the {@link IDataSource}.
+	 * @param iTagId
+	 *            id of this {@link Tag}.
+	 * @param strName
+	 *            the name of this {@link Tag}.
+	 * @param strDescription
+	 *            the description of this {@link Tag}.
+	 * @param bSelectable
+	 *            whether or not this {@link Tag} is selectable.
+	 * @param children
+	 *            the children of this {@link Tag}.
+	 */
+	public Tag(final int iDatasourceId, final int iTagId, final String strName,
+			final String strDescription, final boolean bSelectable,
+			final Set<Tag> children)
+	{
+		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable,
+				children);
 	}
 
 	/**
@@ -119,7 +167,24 @@ public final class Tag implements Comparable<Tag>
 	 */
 	public Tag getParent()
 	{
-		return _parentTag;
+		synchronized (_parentLock)
+		{
+			return _parentTag;
+		}
+	}
+
+	/**
+	 * Set the parent of this {@link Tag}.
+	 * 
+	 * @param parentTag
+	 *            the new parent of this {@link Tag}.
+	 */
+	public void setParent(final Tag parentTag)
+	{
+		synchronized (_parentLock)
+		{
+			_parentTag = parentTag;
+		}
 	}
 
 	/**
@@ -211,8 +276,11 @@ public final class Tag implements Comparable<Tag>
 					{
 						if (_bSelectable == arg0.isSelectable())
 						{
-							iComp = _parentTag.getName().compareTo(
-									arg0.getParent().getName());
+							synchronized (_parentLock)
+							{
+								iComp = _parentTag.getName().compareTo(
+										arg0.getParent().getName());
+							}
 						}
 						else if (_bSelectable)
 						{
