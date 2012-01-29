@@ -21,6 +21,7 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
 /**
@@ -83,19 +84,29 @@ public class SQLFileDataSource implements IDataSource
 	private final Map<Integer, Tag> _tagMap = new TreeMap<Integer, Tag>();
 
 	/**
+	 * Configuration for this {@link SQLFileDataSource}.
+	 */
+	private final ISQLFileDataSourceConfiguration _conf;
+
+	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
+	 * @param conf
+	 *            configuration for this {@link SQLFileDataSource}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the connection to the
 	 *             database.
 	 * @throws ClassNotFoundException
 	 *             if the database driver class can't be found.
 	 */
-	public SQLFileDataSource() throws SQLException, ClassNotFoundException
+	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf)
+			throws SQLException, ClassNotFoundException
 	{
+		_conf = conf;
 		Class.forName("org.sqlite.JDBC");
 
-		_connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		_connection = DriverManager.getConnection("jdbc:sqlite:"
+				+ _conf.getDatabaseFileName());
 		_psInsertTag = _connection.prepareStatement("insert into "
 				+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + ", "
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
@@ -172,8 +183,7 @@ public class SQLFileDataSource implements IDataSource
 	@Override
 	public int getId()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return _conf.getDataSourceId();
 	}
 
 	/**
