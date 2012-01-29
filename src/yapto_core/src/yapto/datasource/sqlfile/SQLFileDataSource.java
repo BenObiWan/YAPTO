@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
@@ -33,6 +36,12 @@ import yapto.datasource.tag.Tag;
  */
 public class SQLFileDataSource implements IDataSource
 {
+	/**
+	 * Logger object.
+	 */
+	private static transient final Logger LOGGER = LoggerFactory
+			.getLogger(SQLFileDataSource.class);
+
 	/**
 	 * Name for the 'tag' table.
 	 */
@@ -112,6 +121,9 @@ public class SQLFileDataSource implements IDataSource
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") values(?, ?, ?, ?, ?)");
+
+		createTagTable();
+		loadTags();
 	}
 
 	@Override
@@ -176,8 +188,20 @@ public class SQLFileDataSource implements IDataSource
 	@Override
 	public void addTag(final Tag newTag)
 	{
-		// TODO Auto-generated method stub
-
+		final Integer tagId = Integer.valueOf(newTag.getTagId());
+		if (!_tagMap.containsKey(tagId))
+		{
+			_tagSet.add(newTag);
+			_tagMap.put(tagId, newTag);
+			try
+			{
+				saveTagToDatabase(newTag);
+			}
+			catch (final SQLException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
 	}
 
 	@Override
@@ -195,9 +219,10 @@ public class SQLFileDataSource implements IDataSource
 	private void createTagTable() throws SQLException
 	{
 		final Statement statement = _connection.createStatement();
-		statement.executeUpdate("create table " + TAG_TABLE_NAME + " ("
-				+ TAG_ID_COLUMN_NAME + " integer, " + TAG_NAME_COLUMN_NAME
-				+ " text, " + TAG_DESCRIPTION_COLUMN_NAME + " text, "
+		statement.executeUpdate("create table " + TAG_TABLE_NAME
+				+ " if not exists (" + TAG_ID_COLUMN_NAME + " integer, "
+				+ TAG_NAME_COLUMN_NAME + " text, "
+				+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
 				+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
 				+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
 	}
