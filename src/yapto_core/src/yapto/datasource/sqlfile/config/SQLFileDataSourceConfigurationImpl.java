@@ -20,7 +20,7 @@ public class SQLFileDataSourceConfigurationImpl extends
 		AbstractConfigurationBranch implements ISQLFileDataSourceConfiguration
 {
 	/**
-	 * Leaf configuring the datasource id.
+	 * Leaf configuring the DataSource id.
 	 */
 	private final ConfigurationInteger _leafDataSourceId;
 
@@ -165,7 +165,7 @@ public class SQLFileDataSourceConfigurationImpl extends
 	@Override
 	public String getDescription()
 	{
-		return "";
+		return "Configuration for the DataSource based on an SQLite file for the metadatas, and a filesystem for the pictures.";
 	}
 
 	@Override
