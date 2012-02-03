@@ -13,6 +13,11 @@ import common.config.IConfigurationBranch;
 public interface IDataSourceConfiguration extends IConfigurationBranch
 {
 	/**
+	 * Tag for the DataSource id.
+	 */
+	String DATASOURCE_ID_TAG = "DataSourceId";
+
+	/**
 	 * Get the id of this {@link IDataSource}.
 	 * 
 	 * @return the id of this {@link IDataSource}.
