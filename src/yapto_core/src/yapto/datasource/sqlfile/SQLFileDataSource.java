@@ -107,9 +107,12 @@ public class SQLFileDataSource implements IDataSource
 	 *             database.
 	 * @throws ClassNotFoundException
 	 *             if the database driver class can't be found.
+	 * @throws IOException
+	 *             if there is an error in creating the required picture
+	 *             directories.
 	 */
 	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf)
-			throws SQLException, ClassNotFoundException
+			throws SQLException, ClassNotFoundException, IOException
 	{
 		_conf = conf;
 		Class.forName("org.sqlite.JDBC");
@@ -122,6 +125,12 @@ public class SQLFileDataSource implements IDataSource
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") values(?, ?, ?, ?, ?)");
 
+		if (!checkAndCreateDirectories())
+		{
+			throw new IOException(
+					"Error creating the required picture directories : "
+							+ _conf.getPictureDirectory());
+		}
 		createTagTable();
 		loadTags();
 	}
