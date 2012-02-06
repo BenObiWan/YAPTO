@@ -299,4 +299,48 @@ public class SQLFileDataSource implements IDataSource
 			}
 		}
 	}
+
+	/**
+	 * Check the existence of all the required directories, and creates them if
+	 * they don't exists. Also check if they are readable and writable.
+	 * 
+	 * @return true if every required directory exists.
+	 */
+	private boolean checkAndCreateDirectories()
+	{
+		final File fBaseDirectory = new File(_conf.getPictureDirectory());
+		boolean bRes = checkDirectory(fBaseDirectory);
+		if (bRes)
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				bRes &= checkDirectory(new File(fBaseDirectory,
+						Integer.toHexString(i)));
+			}
+		}
+		return bRes;
+	}
+
+	/**
+	 * Check if the specified directory exists, tries to create it if it
+	 * doesn't. Also check if it's readable and writable.
+	 * 
+	 * @param fDirectory
+	 *            the directory to check.
+	 * @return if the directory exists, and is readable and writable.
+	 */
+	private boolean checkDirectory(final File fDirectory)
+	{
+		boolean bRes = true;
+		if (!fDirectory.exists())
+		{
+			bRes = fDirectory.mkdir();
+		}
+		else
+		{
+			bRes &= fDirectory.canRead();
+			bRes &= fDirectory.canWrite();
+		}
+		return bRes;
+	}
 }
