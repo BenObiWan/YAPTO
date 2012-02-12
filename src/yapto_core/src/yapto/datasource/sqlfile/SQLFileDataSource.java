@@ -24,8 +24,13 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * {@link IDataSource} using an SQLite file to stock the meta-informations, and
@@ -73,6 +78,26 @@ public class SQLFileDataSource implements IDataSource
 	private static final String TAG_SELECTABLE_COLUMN_NAME = "selectable";
 
 	/**
+	 * Name for the 'picture' table.
+	 */
+	private static final String PICTURE_TABLE_NAME = "picture";
+
+	/**
+	 * Name for the 'picture_tag' table.
+	 */
+	private static final String PICTURE_TAG_TABLE_NAME = "picture_tag";
+
+	/**
+	 * Name for the 'tagId' column of the 'picture_tag' table.
+	 */
+	private static final String PICTURE_TAG_TAG_ID_COLUMN_NAME = "tagId";
+
+	/**
+	 * Name for the 'pictureId' column of the 'picture_tag' table.
+	 */
+	private static final String PICTURE_TAG_PICTURE_ID_COLUMN_NAME = "pictureId";
+
+	/**
 	 * Connection to the database.
 	 */
 	private final Connection _connection;
@@ -81,6 +106,23 @@ public class SQLFileDataSource implements IDataSource
 	 * Statement to insert a {@link Tag}.
 	 */
 	private final PreparedStatement _psInsertTag;
+
+	/**
+	 * Statement to count the number of {@link IPicture}s having a given
+	 * {@link Tag}.
+	 */
+	private final PreparedStatement _countPicturesByTag;
+
+	/**
+	 * Statement to count the total number of {@link IPicture}s in this
+	 * {@link SQLFileDataSource}.
+	 */
+	private final PreparedStatement _countPictures;
+
+	/**
+	 * Statement to select all the {@link IPicture}s having a given {@link Tag}.
+	 */
+	private final PreparedStatement _selectPicturesByTag;
 
 	/**
 	 * Set containing all the {@link Tag}s.
@@ -97,6 +139,8 @@ public class SQLFileDataSource implements IDataSource
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
 
+	private final LoadingCache<String, FsPicture> _pictureCache;
+
 	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
@@ -111,12 +155,16 @@ public class SQLFileDataSource implements IDataSource
 	 *             if there is an error in creating the required picture
 	 *             directories.
 	 */
-	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf)
+	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf,
+			final FsPictureCacheLoaderConfiguration cacheLoaderConf)
 			throws SQLException, ClassNotFoundException, IOException
 	{
 		_conf = conf;
 		Class.forName("org.sqlite.JDBC");
+		final CacheLoader<String, FsPicture> loader = new FsPictureCacheLoader(
+				cacheLoaderConf);
 
+		_pictureCache = CacheBuilder.newBuilder().build(loader);
 		_connection = DriverManager.getConnection("jdbc:sqlite:"
 				+ _conf.getDatabaseFileName());
 		_psInsertTag = _connection.prepareStatement("insert into "
@@ -124,6 +172,16 @@ public class SQLFileDataSource implements IDataSource
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") values(?, ?, ?, ?, ?)");
+		_countPicturesByTag = _connection.prepareStatement("select count("
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE "
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_selectPicturesByTag = _connection.prepareStatement("select "
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE "
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_countPictures = _connection.prepareStatement("select count(" + "TODO"
+				+ ") FROM " + PICTURE_TABLE_NAME);
 
 		if (!checkAndCreateDirectories())
 		{
@@ -131,7 +189,7 @@ public class SQLFileDataSource implements IDataSource
 					"Error creating the required picture directories : "
 							+ _conf.getPictureDirectory());
 		}
-		createTagTable();
+		createTables();
 		loadTags();
 	}
 
@@ -220,20 +278,28 @@ public class SQLFileDataSource implements IDataSource
 	}
 
 	/**
-	 * Create the {@link Tag} database.
+	 * Create the tables of this database.
 	 * 
 	 * @throws SQLException
-	 *             if an SQL error occurred during the creation of the table.
+	 *             if an SQL error occurred during the creation of the tables.
 	 */
-	private void createTagTable() throws SQLException
+	private void createTables() throws SQLException
 	{
 		final Statement statement = _connection.createStatement();
+		// Tag table
 		statement.executeUpdate("create table " + TAG_TABLE_NAME
 				+ " if not exists (" + TAG_ID_COLUMN_NAME + " integer, "
 				+ TAG_NAME_COLUMN_NAME + " text, "
 				+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
 				+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
 				+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
+		// picture table
+
+		// picture_tag table
+		statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
+				+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
+				+ " integer, " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME
+				+ " integer)");
 	}
 
 	/**
