@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-
-import javax.imageio.ImageIO;
+import java.util.concurrent.ExecutionException;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.tag.Tag;
+
+import com.google.common.cache.LoadingCache;
 
 /**
  * Implementation of the {@link IPicture} interface.
@@ -23,19 +24,9 @@ import yapto.datasource.tag.Tag;
 public final class FsPicture implements IPicture
 {
 	/**
-	 * Image displayed by this {@link FsPicture}.
-	 */
-	private BufferedImage _img;
-
-	/**
 	 * Path to the file holding the image.
 	 */
 	private final File _imagePath;
-
-	/**
-	 * Lock protecting the access to the image.
-	 */
-	private final Object _lockImage = new Object();
 
 	/**
 	 * Set containing all the {@link Tag}s associated with this
@@ -49,17 +40,26 @@ public final class FsPicture implements IPicture
 	private final IDataSource _dataSource;
 
 	/**
+	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 */
+	private final LoadingCache<File, BufferedImage> _imageCache;
+
+	/**
 	 * Creates a new FsPicture.
 	 * 
+	 * @param imageCache
+	 *            the {@link LoadingCache} used to load the
+	 *            {@link BufferedImage}.
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
-	 * 
 	 * @param imagePath
 	 *            the path to the image file.
 	 */
-	public FsPicture(final IDataSource dataSource, final File imagePath)
+	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
+			final IDataSource dataSource, final File imagePath)
 	{
+		_imageCache = imageCache;
 		_imagePath = imagePath;
 		_dataSource = dataSource;
 	}
@@ -79,13 +79,13 @@ public final class FsPicture implements IPicture
 	@Override
 	public BufferedImage getImageData() throws IOException
 	{
-		synchronized (_lockImage)
+		try
 		{
-			if (_img == null)
-			{
-				_img = ImageIO.read(_imagePath);
-			}
-			return _img;
+			return _imageCache.get(_imagePath);
+		}
+		catch (final ExecutionException e)
+		{
+			throw new IOException(e);
 		}
 	}
 
