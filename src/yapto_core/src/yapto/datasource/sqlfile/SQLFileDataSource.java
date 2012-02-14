@@ -1,5 +1,6 @@
 package yapto.datasource.sqlfile;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -139,13 +140,24 @@ public class SQLFileDataSource implements IDataSource
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
 
+	/**
+	 * {@link LoadingCache} used to load the {@link FsPicture}.
+	 */
 	private final LoadingCache<String, FsPicture> _pictureCache;
+
+	/**
+	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 */
+	private final LoadingCache<File, BufferedImage> _imageCache;
 
 	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
 	 * @param conf
 	 *            configuration for this {@link SQLFileDataSource}.
+	 * @param cacheLoaderConf
+	 *            configuration for the
+	 *            {@link FsPictureCacheLoaderConfiguration}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the connection to the
 	 *             database.
@@ -161,10 +173,12 @@ public class SQLFileDataSource implements IDataSource
 	{
 		_conf = conf;
 		Class.forName("org.sqlite.JDBC");
-		final CacheLoader<String, FsPicture> loader = new FsPictureCacheLoader(
+		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
 				cacheLoaderConf);
+		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
+		_pictureCache = CacheBuilder.newBuilder().build(pictureLoader);
+		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
-		_pictureCache = CacheBuilder.newBuilder().build(loader);
 		_connection = DriverManager.getConnection("jdbc:sqlite:"
 				+ _conf.getDatabaseFileName());
 		_psInsertTag = _connection.prepareStatement("insert into "
