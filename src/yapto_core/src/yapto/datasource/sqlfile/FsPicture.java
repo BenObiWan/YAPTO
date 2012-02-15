@@ -60,6 +60,11 @@ public final class FsPicture implements IPicture
 	private final Object _timestampLock = new Object();
 
 	/**
+	 * Boolean telling whether this FsPicture has been modified or not.
+	 */
+	private boolean _bModified = false;
+
+	/**
 	 * Creates a new FsPicture.
 	 * 
 	 * @param imageCache
@@ -161,6 +166,7 @@ public final class FsPicture implements IPicture
 		synchronized (_timestampLock)
 		{
 			_lTimestamp = System.currentTimeMillis();
+			_bModified = true;
 		}
 		_tagSet.add(newTag);
 	}
@@ -171,7 +177,21 @@ public final class FsPicture implements IPicture
 		synchronized (_timestampLock)
 		{
 			_lTimestamp = System.currentTimeMillis();
+			_bModified = true;
 		}
 		_tagSet.remove(tag);
+	}
+
+	/**
+	 * Check whether this FsPicture has been modified or not.
+	 * 
+	 * @return true if this FsPicture has been modified.
+	 */
+	public boolean hasBeenModified()
+	{
+		synchronized (_timestampLock)
+		{
+			return _bModified;
+		}
 	}
 }
