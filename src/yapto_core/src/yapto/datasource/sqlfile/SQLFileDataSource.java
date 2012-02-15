@@ -32,6 +32,7 @@ import yapto.datasource.tag.Tag;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
 
 /**
  * {@link IDataSource} using an SQLite file to stock the meta-informations, and
@@ -175,8 +176,13 @@ public class SQLFileDataSource implements IDataSource
 		Class.forName("org.sqlite.JDBC");
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
 				cacheLoaderConf);
+		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener();
+
 		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
-		_pictureCache = CacheBuilder.newBuilder().build(pictureLoader);
+
+		_pictureCache = CacheBuilder.newBuilder()
+				.removalListener(pictureListener).build(pictureLoader);
+
 		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
 		_connection = DriverManager.getConnection("jdbc:sqlite:"
