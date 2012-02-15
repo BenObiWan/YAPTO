@@ -50,6 +50,16 @@ public final class FsPicture implements IPicture
 	private final Dimension _pictureDimension;
 
 	/**
+	 * The timestamp of the last modification of this picture.
+	 */
+	private long _lTimestamp;
+
+	/**
+	 * Lock protecting the timestamp of the last modification of this picture.
+	 */
+	private final Object _timestampLock = new Object();
+
+	/**
 	 * Creates a new FsPicture.
 	 * 
 	 * @param imageCache
@@ -64,15 +74,21 @@ public final class FsPicture implements IPicture
 	 *            the width of the picture.
 	 * @param iHeight
 	 *            the height of the picture.
+	 * @param lTimestamp
+	 *            the timestamp of the last modification of this picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
 			final IDataSource dataSource, final File imagePath,
-			final int iWidth, final int iHeight)
+			final int iWidth, final int iHeight, final long lTimestamp)
 	{
 		_imageCache = imageCache;
 		_imagePath = imagePath;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
+		synchronized (_timestampLock)
+		{
+			_lTimestamp = lTimestamp;
+		}
 	}
 
 	@Override
@@ -103,8 +119,10 @@ public final class FsPicture implements IPicture
 	@Override
 	public long getTimestamp()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		synchronized (_timestampLock)
+		{
+			return _lTimestamp;
+		}
 	}
 
 	@Override
@@ -140,12 +158,20 @@ public final class FsPicture implements IPicture
 	@Override
 	public void addTag(final Tag newTag)
 	{
+		synchronized (_timestampLock)
+		{
+			_lTimestamp = System.currentTimeMillis();
+		}
 		_tagSet.add(newTag);
 	}
 
 	@Override
 	public void removeTag(final Tag tag)
 	{
+		synchronized (_timestampLock)
+		{
+			_lTimestamp = System.currentTimeMillis();
+		}
 		_tagSet.remove(tag);
 	}
 }
