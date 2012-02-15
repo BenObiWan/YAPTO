@@ -45,6 +45,11 @@ public final class FsPicture implements IPicture
 	private final LoadingCache<File, BufferedImage> _imageCache;
 
 	/**
+	 * Dimension of the picture.
+	 */
+	private final Dimension _pictureDimension;
+
+	/**
 	 * Creates a new FsPicture.
 	 * 
 	 * @param imageCache
@@ -55,13 +60,19 @@ public final class FsPicture implements IPicture
 	 *            coming.
 	 * @param imagePath
 	 *            the path to the image file.
+	 * @param iWidth
+	 *            the width of the picture.
+	 * @param iHeight
+	 *            the height of the picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final IDataSource dataSource, final File imagePath)
+			final IDataSource dataSource, final File imagePath,
+			final int iWidth, final int iHeight)
 	{
 		_imageCache = imageCache;
 		_imagePath = imagePath;
 		_dataSource = dataSource;
+		_pictureDimension = new Dimension(iWidth, iHeight);
 	}
 
 	@Override
@@ -111,22 +122,19 @@ public final class FsPicture implements IPicture
 	@Override
 	public Dimension getDimension()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _pictureDimension;
 	}
 
 	@Override
 	public int getHeight()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return (int) _pictureDimension.getHeight();
 	}
 
 	@Override
 	public int getWidth()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return (int) _pictureDimension.getWidth();
 	}
 
 	@Override
