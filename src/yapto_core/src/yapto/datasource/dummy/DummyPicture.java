@@ -149,7 +149,7 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public void setPictureGrade(int iPictureGrade)
+	public void setPictureGrade(final int iPictureGrade)
 	{
 		// TODO Auto-generated method stub
 
