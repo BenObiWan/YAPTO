@@ -24,6 +24,7 @@ public class SQLFileListConnection
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
 
+	// tag table
 	/**
 	 * Name for the 'tag' table.
 	 */
@@ -54,11 +55,43 @@ public class SQLFileListConnection
 	 */
 	public static final String TAG_SELECTABLE_COLUMN_NAME = "selectable";
 
+	// picture table
 	/**
 	 * Name for the 'picture' table.
 	 */
 	public static final String PICTURE_TABLE_NAME = "picture";
 
+	/**
+	 * Name for the 'id' column of the 'picture' table.
+	 */
+	public static final String PICTURE_ID_COLUMN_NAME = "id";
+
+	/**
+	 * Name for the 'mark' column of the 'picture' table.
+	 */
+	public static final String PICTURE_MARK_COLUMN_NAME = "mark";
+
+	/**
+	 * Name for the 'width' column of the 'picture' table.
+	 */
+	public static final String PICTURE_WIDTH_COLUMN_NAME = "width";
+
+	/**
+	 * Name for the 'mark' column of the 'picture' table.
+	 */
+	public static final String PICTURE_HEIGTH_COLUMN_NAME = "height";
+
+	/**
+	 * Name for the 'timestamp' column of the 'picture' table.
+	 */
+	public static final String PICTURE_TIMESTAMP_COLUMN_NAME = "timestamp";
+
+	/**
+	 * Name for the 'path' column of the 'picture' table.
+	 */
+	public static final String PICTURE_PATH_COLUMN_NAME = "path";
+
+	// picture_tag table
 	/**
 	 * Name for the 'picture_tag' table.
 	 */
@@ -102,6 +135,16 @@ public class SQLFileListConnection
 	private final PreparedStatement _selectPicturesByTag;
 
 	/**
+	 * Statement to insert an {@link IPicture} in the database.
+	 */
+	private final PreparedStatement _insertPicture;
+
+	/**
+	 * Statement to update the mark and the timestamp of the {@link IPicture}.
+	 */
+	private final PreparedStatement _updatePictureMarkAndTimestamp;
+
+	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -132,8 +175,18 @@ public class SQLFileListConnection
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_countPictures = _connection.prepareStatement("select count(" + "TODO"
-				+ ") FROM " + PICTURE_TABLE_NAME);
+		_countPictures = _connection.prepareStatement("select count("
+				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
+		_insertPicture = _connection.prepareStatement("insert into "
+				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
+				+ PICTURE_MARK_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
+				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_PATH_COLUMN_NAME + ") values(?, ?, ?, ?, ?, ?)");
+		_updatePictureMarkAndTimestamp = _connection.prepareStatement("update "
+				+ PICTURE_TABLE_NAME + " set " + PICTURE_MARK_COLUMN_NAME
+				+ "=?, " + PICTURE_TIMESTAMP_COLUMN_NAME + "=? where "
+				+ PICTURE_ID_COLUMN_NAME + "=?");
 	}
 
 	/**
