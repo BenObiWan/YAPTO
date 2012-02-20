@@ -140,4 +140,18 @@ public final class DummyPicture implements IPicture
 	{
 		_tagSet.remove(tag);
 	}
+
+	@Override
+	public int getPictureGrade()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setPictureGrade(int iPictureGrade)
+	{
+		// TODO Auto-generated method stub
+
+	}
 }

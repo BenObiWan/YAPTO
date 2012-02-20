@@ -55,9 +55,15 @@ public final class FsPicture implements IPicture
 	private long _lTimestamp;
 
 	/**
-	 * Lock protecting the timestamp of the last modification of this picture.
+	 * The grade of this picture.
 	 */
-	private final Object _timestampLock = new Object();
+	private int _iPictureGrade;
+
+	/**
+	 * Lock protecting the timestamp of the last modification of this picture
+	 * and the grade of the picture.
+	 */
+	private final Object _lock = new Object();
 
 	/**
 	 * Boolean telling whether this FsPicture has been modified or not.
@@ -90,7 +96,7 @@ public final class FsPicture implements IPicture
 		_imagePath = imagePath;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
-		synchronized (_timestampLock)
+		synchronized (_lock)
 		{
 			_lTimestamp = lTimestamp;
 		}
@@ -124,7 +130,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public long getTimestamp()
 	{
-		synchronized (_timestampLock)
+		synchronized (_lock)
 		{
 			return _lTimestamp;
 		}
@@ -163,7 +169,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public void addTag(final Tag newTag)
 	{
-		synchronized (_timestampLock)
+		synchronized (_lock)
 		{
 			_lTimestamp = System.currentTimeMillis();
 			_bModified = true;
@@ -174,7 +180,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public void removeTag(final Tag tag)
 	{
-		synchronized (_timestampLock)
+		synchronized (_lock)
 		{
 			_lTimestamp = System.currentTimeMillis();
 			_bModified = true;
@@ -189,9 +195,29 @@ public final class FsPicture implements IPicture
 	 */
 	public boolean hasBeenModified()
 	{
-		synchronized (_timestampLock)
+		synchronized (_lock)
 		{
 			return _bModified;
+		}
+	}
+
+	@Override
+	public int getPictureGrade()
+	{
+		synchronized (_lock)
+		{
+			return _iPictureGrade;
+		}
+	}
+
+	@Override
+	public void setPictureGrade(final int iPictureGrade)
+	{
+		synchronized (_lock)
+		{
+			_lTimestamp = System.currentTimeMillis();
+			_bModified = true;
+			_iPictureGrade = iPictureGrade;
 		}
 	}
 }

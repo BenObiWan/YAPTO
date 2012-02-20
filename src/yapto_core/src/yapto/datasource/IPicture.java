@@ -92,4 +92,19 @@ public interface IPicture extends Comparable<IPicture>
 	 *            the {@link Tag} to remove from the picture.
 	 */
 	void removeTag(Tag tag);
+
+	/**
+	 * Get the grade of this picture.
+	 * 
+	 * @return the grade of this picture.
+	 */
+	public int getPictureGrade();
+
+	/**
+	 * Set the grade of this picture.
+	 * 
+	 * @param iPictureGrade
+	 *            the new grade of this picture.
+	 */
+	public void setPictureGrade(final int iPictureGrade);
 }
