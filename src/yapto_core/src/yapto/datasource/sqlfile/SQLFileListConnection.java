@@ -67,9 +67,9 @@ public class SQLFileListConnection
 	public static final String PICTURE_ID_COLUMN_NAME = "id";
 
 	/**
-	 * Name for the 'mark' column of the 'picture' table.
+	 * Name for the 'grade' column of the 'picture' table.
 	 */
-	public static final String PICTURE_MARK_COLUMN_NAME = "mark";
+	public static final String PICTURE_GRADE_COLUMN_NAME = "grade";
 
 	/**
 	 * Name for the 'width' column of the 'picture' table.
@@ -179,12 +179,12 @@ public class SQLFileListConnection
 				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
 		_insertPicture = _connection.prepareStatement("insert into "
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
-				+ PICTURE_MARK_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
+				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_PATH_COLUMN_NAME + ") values(?, ?, ?, ?, ?, ?)");
 		_updatePictureMarkAndTimestamp = _connection.prepareStatement("update "
-				+ PICTURE_TABLE_NAME + " set " + PICTURE_MARK_COLUMN_NAME
+				+ PICTURE_TABLE_NAME + " set " + PICTURE_GRADE_COLUMN_NAME
 				+ "=?, " + PICTURE_TIMESTAMP_COLUMN_NAME + "=? where "
 				+ PICTURE_ID_COLUMN_NAME + "=?");
 	}
@@ -200,6 +200,7 @@ public class SQLFileListConnection
 	 */
 	public void saveTagToDatabase(final Tag tag) throws SQLException
 	{
+		_psInsertTag.clearParameters();
 		_psInsertTag.setInt(1, tag.getTagId());
 		_psInsertTag.setString(2, tag.getName());
 		_psInsertTag.setString(3, tag.getDescription());
@@ -233,8 +234,8 @@ public class SQLFileListConnection
 				+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
 		// picture table
 		statement.executeUpdate("create table " + PICTURE_TABLE_NAME
-				+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " integer, "
-				+ PICTURE_MARK_COLUMN_NAME + " integer, "
+				+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " text, "
+				+ PICTURE_GRADE_COLUMN_NAME + " integer, "
 				+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
 				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + " integer, "
@@ -279,5 +280,25 @@ public class SQLFileListConnection
 		final Statement statementParent = _connection.createStatement();
 		return statementParent.executeQuery("select " + TAG_ID_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
+	}
+
+	/**
+	 * @param picture
+	 *            the {@link FsPicture} to insert.
+	 * @return true if the picture was correctly inserted.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the insertion in the
+	 *             database.
+	 */
+	public boolean insertPicture(final FsPicture picture) throws SQLException
+	{
+		_insertPicture.clearParameters();
+		_insertPicture.setString(1, picture.getId());
+		_insertPicture.setInt(2, picture.getPictureGrade());
+		_insertPicture.setInt(3, picture.getWidth());
+		_insertPicture.setInt(4, picture.getHeight());
+		_insertPicture.setLong(5, picture.getTimestamp());
+		_insertPicture.setString(6, picture.getImagePath().toString());
+		return _insertPicture.executeUpdate() > 0;
 	}
 }
