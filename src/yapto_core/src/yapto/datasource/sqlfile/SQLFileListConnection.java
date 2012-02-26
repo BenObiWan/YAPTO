@@ -232,7 +232,13 @@ public class SQLFileListConnection
 				+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
 				+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
 		// picture table
-
+		statement.executeUpdate("create table " + PICTURE_TABLE_NAME
+				+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " integer, "
+				+ PICTURE_MARK_COLUMN_NAME + " integer, "
+				+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
+				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
+				+ PICTURE_TIMESTAMP_COLUMN_NAME + " integer, "
+				+ PICTURE_PATH_COLUMN_NAME + " text)");
 		// picture_tag table
 		statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
 				+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
