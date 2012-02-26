@@ -220,4 +220,14 @@ public final class FsPicture implements IPicture
 			_iPictureGrade = iPictureGrade;
 		}
 	}
+
+	/**
+	 * Get the path to the file holding the image.
+	 * 
+	 * @return the path to the file holding the image.
+	 */
+	public File getImagePath()
+	{
+		return _imagePath;
+	}
 }
