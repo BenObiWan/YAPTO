@@ -101,8 +101,9 @@ public class SQLFileDataSource implements IDataSource
 		_fileListConnection = new SQLFileListConnection(_conf);
 
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				cacheLoaderConf);
-		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener();
+				cacheLoaderConf, _fileListConnection);
+		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
+				cacheLoaderConf, _fileListConnection);
 
 		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
 

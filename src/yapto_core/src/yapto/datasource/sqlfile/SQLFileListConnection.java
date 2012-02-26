@@ -17,7 +17,7 @@ import yapto.datasource.tag.Tag;
  * @author benobiwan
  * 
  */
-public class SQLFileListConnection
+public final class SQLFileListConnection
 {
 	/**
 	 * Configuration for this {@link SQLFileDataSource}.
@@ -121,28 +121,38 @@ public class SQLFileListConnection
 	 * Statement to count the number of {@link IPicture}s having a given
 	 * {@link Tag}.
 	 */
-	private final PreparedStatement _countPicturesByTag;
+	private final PreparedStatement _psCountPicturesByTag;
 
 	/**
 	 * Statement to count the total number of {@link IPicture}s in this
 	 * {@link SQLFileDataSource}.
 	 */
-	private final PreparedStatement _countPictures;
+	private final PreparedStatement _psCountPictures;
 
 	/**
 	 * Statement to select all the {@link IPicture}s having a given {@link Tag}.
 	 */
-	private final PreparedStatement _selectPicturesByTag;
+	private final PreparedStatement _psSelectPicturesByTag;
 
 	/**
 	 * Statement to insert an {@link IPicture} in the database.
 	 */
-	private final PreparedStatement _insertPicture;
+	private final PreparedStatement _psInsertPicture;
 
 	/**
 	 * Statement to update the mark and the timestamp of the {@link IPicture}.
 	 */
-	private final PreparedStatement _updatePictureMarkAndTimestamp;
+	private final PreparedStatement _psUpdatePictureMarkAndTimestamp;
+
+	/**
+	 * Statement to insert a {@link Tag} for an {@link IPicture}.
+	 */
+	private final PreparedStatement _psInsertTagForPicture;
+
+	/**
+	 * Statement to remove all the {@link Tag}s of an {@link IPicture}.
+	 */
+	private final PreparedStatement _psRemoveTagsForPicture;
 
 	/**
 	 * creates a new SQLFileListConnection.
@@ -167,26 +177,34 @@ public class SQLFileListConnection
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") values(?, ?, ?, ?, ?)");
-		_countPicturesByTag = _connection.prepareStatement("select count("
+		_psCountPicturesByTag = _connection.prepareStatement("select count("
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_selectPicturesByTag = _connection.prepareStatement("select "
+		_psSelectPicturesByTag = _connection.prepareStatement("select "
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_countPictures = _connection.prepareStatement("select count("
+		_psCountPictures = _connection.prepareStatement("select count("
 				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
-		_insertPicture = _connection.prepareStatement("insert into "
+		_psInsertPicture = _connection.prepareStatement("insert into "
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_PATH_COLUMN_NAME + ") values(?, ?, ?, ?, ?, ?)");
-		_updatePictureMarkAndTimestamp = _connection.prepareStatement("update "
-				+ PICTURE_TABLE_NAME + " set " + PICTURE_GRADE_COLUMN_NAME
-				+ "=?, " + PICTURE_TIMESTAMP_COLUMN_NAME + "=? where "
-				+ PICTURE_ID_COLUMN_NAME + "=?");
+		_psUpdatePictureMarkAndTimestamp = _connection
+				.prepareStatement("update " + PICTURE_TABLE_NAME + " set "
+						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
+						+ PICTURE_TIMESTAMP_COLUMN_NAME + "=? where "
+						+ PICTURE_ID_COLUMN_NAME + "=?");
+		_psInsertTagForPicture = _connection.prepareStatement("insert into "
+				+ PICTURE_TAG_TABLE_NAME + " ("
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + ", "
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") values(?, ?)");
+		_psRemoveTagsForPicture = _connection.prepareStatement("delete from "
+				+ PICTURE_TAG_TABLE_NAME + " where "
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
 	}
 
 	/**
@@ -283,6 +301,8 @@ public class SQLFileListConnection
 	}
 
 	/**
+	 * Insert a {@link FsPicture} in the database.
+	 * 
 	 * @param picture
 	 *            the {@link FsPicture} to insert.
 	 * @return true if the picture was correctly inserted.
@@ -292,13 +312,36 @@ public class SQLFileListConnection
 	 */
 	public boolean insertPicture(final FsPicture picture) throws SQLException
 	{
-		_insertPicture.clearParameters();
-		_insertPicture.setString(1, picture.getId());
-		_insertPicture.setInt(2, picture.getPictureGrade());
-		_insertPicture.setInt(3, picture.getWidth());
-		_insertPicture.setInt(4, picture.getHeight());
-		_insertPicture.setLong(5, picture.getTimestamp());
-		_insertPicture.setString(6, picture.getImagePath().toString());
-		return _insertPicture.executeUpdate() > 0;
+		_psInsertPicture.clearParameters();
+		_psInsertPicture.setString(1, picture.getId());
+		_psInsertPicture.setInt(2, picture.getPictureGrade());
+		_psInsertPicture.setInt(3, picture.getWidth());
+		_psInsertPicture.setInt(4, picture.getHeight());
+		_psInsertPicture.setLong(5, picture.getTimestamp());
+		_psInsertPicture.setString(6, picture.getImagePath().toString());
+		return _psInsertPicture.executeUpdate() > 0;
+	}
+
+	/**
+	 * Update the {@link Tag} list of a {@link FsPicture}.
+	 * 
+	 * @param picture
+	 *            the {@link FsPicture} to update.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the insertion in the
+	 *             database.
+	 */
+	public void updateTags(final FsPicture picture) throws SQLException
+	{
+		_psRemoveTagsForPicture.clearParameters();
+		_psRemoveTagsForPicture.setString(1, picture.getId());
+		_psRemoveTagsForPicture.execute();
+		for (final Tag tag : picture.getTagSet())
+		{
+			_psInsertTagForPicture.clearParameters();
+			_psInsertTagForPicture.setInt(1, tag.getTagId());
+			_psInsertTagForPicture.setString(2, picture.getId());
+			_psInsertTagForPicture.executeUpdate();
+		}
 	}
 }
