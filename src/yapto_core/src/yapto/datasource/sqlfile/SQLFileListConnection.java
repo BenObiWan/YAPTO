@@ -344,4 +344,23 @@ public final class SQLFileListConnection
 			_psInsertTagForPicture.executeUpdate();
 		}
 	}
+
+	/**
+	 * Update the meta-informations of the specified picture.
+	 * 
+	 * @param picture
+	 *            the {@link FsPicture} to update.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the insertion in the
+	 *             database.
+	 */
+	public void updatePicture(final FsPicture picture) throws SQLException
+	{
+		_psUpdatePictureMarkAndTimestamp.clearParameters();
+		_psUpdatePictureMarkAndTimestamp.setInt(1, picture.getPictureGrade());
+		_psUpdatePictureMarkAndTimestamp.setLong(2, picture.getTimestamp());
+		_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
+		_psUpdatePictureMarkAndTimestamp.executeUpdate();
+		updateTags(picture);
+	}
 }
