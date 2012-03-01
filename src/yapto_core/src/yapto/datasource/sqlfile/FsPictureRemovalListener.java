@@ -1,5 +1,10 @@
 package yapto.datasource.sqlfile;
 
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 
 import com.google.common.cache.RemovalListener;
@@ -16,6 +21,12 @@ public final class FsPictureRemovalListener implements
 		RemovalListener<String, FsPicture>
 {
 	/**
+	 * Logger object.
+	 */
+	private static transient final Logger LOGGER = LoggerFactory
+			.getLogger(FsPictureRemovalListener.class);
+
+	/**
 	 * The configuration of this FsPictureCacheLoader.
 	 */
 	private final FsPictureCacheLoaderConfiguration _conf;
@@ -27,6 +38,7 @@ public final class FsPictureRemovalListener implements
 	private final SQLFileListConnection _fileListConnection;
 
 	/**
+	 * Creates a new FsPictureRemovalListener.
 	 * 
 	 * @param conf
 	 *            the configuration for this FsPictureCacheLoader.
@@ -48,7 +60,14 @@ public final class FsPictureRemovalListener implements
 	{
 		if (notification.getValue().hasBeenModified())
 		{
-			// TODO save modifications
+			try
+			{
+				_fileListConnection.updatePicture(notification.getValue());
+			}
+			catch (final SQLException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
 	}
 }
