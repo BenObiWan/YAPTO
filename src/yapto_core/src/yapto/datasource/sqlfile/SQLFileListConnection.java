@@ -156,6 +156,11 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psRemoveTagsForPicture;
 
 	/**
+	 * Statement to load a picture.
+	 */
+	private final PreparedStatement _psLoadPicture;
+
+	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -206,6 +211,12 @@ public final class SQLFileListConnection
 		_psRemoveTagsForPicture = _connection.prepareStatement("delete from "
 				+ PICTURE_TAG_TABLE_NAME + " where "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_psLoadPicture = _connection.prepareStatement("select "
+				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
+				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_PATH_COLUMN_NAME + " from " + PICTURE_TABLE_NAME
+				+ " where " + PICTURE_ID_COLUMN_NAME + " =?");
 	}
 
 	/**
@@ -429,4 +440,9 @@ public final class SQLFileListConnection
 		final String[] res = new String[pictureList.size()];
 		return pictureList.toArray(res);
 	}
+//
+//	public FsPicture loadPicture()
+//	{
+//
+//	}
 }
