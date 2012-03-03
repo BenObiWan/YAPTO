@@ -24,6 +24,11 @@ import com.google.common.cache.LoadingCache;
 public final class FsPicture implements IPicture
 {
 	/**
+	 * The id of the picture.
+	 */
+	private final String _strId;
+
+	/**
 	 * Path to the file holding the image.
 	 */
 	private final File _imagePath;
@@ -76,6 +81,8 @@ public final class FsPicture implements IPicture
 	 * @param imageCache
 	 *            the {@link LoadingCache} used to load the
 	 *            {@link BufferedImage}.
+	 * @param strId
+	 *            the id of the picture.
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
@@ -89,9 +96,11 @@ public final class FsPicture implements IPicture
 	 *            the timestamp of the last modification of this picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final IDataSource dataSource, final File imagePath,
-			final int iWidth, final int iHeight, final long lTimestamp)
+			final String strId, final IDataSource dataSource,
+			final File imagePath, final int iWidth, final int iHeight,
+			final long lTimestamp)
 	{
+		_strId = strId;
 		_imageCache = imageCache;
 		_imagePath = imagePath;
 		_dataSource = dataSource;
@@ -105,7 +114,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public String getId()
 	{
-		return _imagePath.toString();
+		return _strId;
 	}
 
 	@Override
