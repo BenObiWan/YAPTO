@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
@@ -362,5 +363,70 @@ public final class SQLFileListConnection
 		_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
 		_psUpdatePictureMarkAndTimestamp.executeUpdate();
 		updateTags(picture);
+	}
+
+	/**
+	 * Count the number of pictures which have a given {@link Tag}.
+	 * 
+	 * @param tag
+	 *            the {@link Tag} to consider.
+	 * @return the number of pictures which have a given {@link Tag}.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public int countPictures(final Tag tag) throws SQLException
+	{
+		_psCountPicturesByTag.clearParameters();
+		_psCountPicturesByTag.setInt(1, tag.getTagId());
+		final ResultSet res = _psCountPicturesByTag.executeQuery();
+		if (res.next())
+		{
+			return res.getInt(PICTURE_TAG_PICTURE_ID_COLUMN_NAME);
+		}
+		return 0;
+	}
+
+	/**
+	 * Count the total number of pictures.
+	 * 
+	 * @return the total number of pictures.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public int countPictures() throws SQLException
+	{
+		final ResultSet res = _psCountPictures.executeQuery();
+		if (res.next())
+		{
+			return res.getInt(PICTURE_ID_COLUMN_NAME);
+		}
+		return 0;
+	}
+
+	/**
+	 * Select the list of pictures which have a given {@link Tag}.
+	 * 
+	 * @param tag
+	 *            the {@link Tag} to consider.
+	 * @return the list of pictures which have a given {@link Tag}.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public String[] selectPictures(final Tag tag) throws SQLException
+	{
+		_psSelectPicturesByTag.clearParameters();
+		_psSelectPicturesByTag.setInt(1, tag.getTagId());
+		final LinkedList<String> pictureList = new LinkedList<String>();
+		final ResultSet response = _psSelectPicturesByTag.executeQuery();
+		while (response.next())
+		{
+			pictureList.add(response
+					.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+		}
+		final String[] res = new String[pictureList.size()];
+		return pictureList.toArray(res);
 	}
 }
