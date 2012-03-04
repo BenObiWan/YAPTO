@@ -161,6 +161,11 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psLoadPicture;
 
 	/**
+	 * Statement to load all the {@link Tag}s of an {@link IPicture}.
+	 */
+	private final PreparedStatement _psLoadTagsOfPicture;
+
+	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -217,6 +222,10 @@ public final class SQLFileListConnection
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_PATH_COLUMN_NAME + " from " + PICTURE_TABLE_NAME
 				+ " where " + PICTURE_ID_COLUMN_NAME + " =?");
+		_psLoadTagsOfPicture = _connection.prepareStatement("select "
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " from "
+				+ PICTURE_TAG_TABLE_NAME + " where "
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
 	}
 
 	/**
@@ -440,9 +449,46 @@ public final class SQLFileListConnection
 		final String[] res = new String[pictureList.size()];
 		return pictureList.toArray(res);
 	}
-//
-//	public FsPicture loadPicture()
-//	{
-//
-//	}
+
+	/**
+	 * Load the information about the specified picture.
+	 * 
+	 * @param strPictureId
+	 *            the id of the picture.
+	 * @return the information about the specified picture.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public ResultSet loadPicture(final String strPictureId) throws SQLException
+	{
+		_psLoadPicture.clearParameters();
+		_psLoadPicture.setString(1, strPictureId);
+		return _psLoadPicture.executeQuery();
+	}
+
+	/**
+	 * Load all the {@link Tag}s of an {@link IPicture}.
+	 * 
+	 * @param strPictureId
+	 *            the id of the picture.
+	 * @return the list of {@link Tag}s of the picture.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public String[] loadTagsOfPicture(final String strPictureId)
+			throws SQLException
+	{
+		_psLoadTagsOfPicture.clearParameters();
+		_psLoadTagsOfPicture.setString(1, strPictureId);
+		final LinkedList<String> tagList = new LinkedList<String>();
+		final ResultSet response = _psLoadTagsOfPicture.executeQuery();
+		while (response.next())
+		{
+			tagList.add(response.getString(PICTURE_TAG_TAG_ID_COLUMN_NAME));
+		}
+		final String[] res = new String[tagList.size()];
+		return tagList.toArray(res);
+	}
 }
