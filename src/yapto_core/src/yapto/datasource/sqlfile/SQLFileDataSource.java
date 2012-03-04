@@ -103,7 +103,7 @@ public class SQLFileDataSource implements IDataSource
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
 				cacheLoaderConf, _fileListConnection);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
-				cacheLoaderConf, _fileListConnection);
+				_fileListConnection);
 
 		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
 
