@@ -166,6 +166,11 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psLoadTagsOfPicture;
 
 	/**
+	 * Dtatement to load a {@link Tag}.
+	 */
+	private final PreparedStatement _psLoadTag;
+
+	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -226,6 +231,11 @@ public final class SQLFileListConnection
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " from "
 				+ PICTURE_TAG_TABLE_NAME + " where "
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
+		_psLoadTag = _connection.prepareStatement("select "
+				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
+				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
+				+ TAG_SELECTABLE_COLUMN_NAME + " from " + TAG_TABLE_NAME
+				+ " where " + TAG_ID_COLUMN_NAME + " =?");
 	}
 
 	/**
@@ -477,18 +487,36 @@ public final class SQLFileListConnection
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.
 	 */
-	public String[] loadTagsOfPicture(final String strPictureId)
+	public Integer[] loadTagsOfPicture(final String strPictureId)
 			throws SQLException
 	{
 		_psLoadTagsOfPicture.clearParameters();
 		_psLoadTagsOfPicture.setString(1, strPictureId);
-		final LinkedList<String> tagList = new LinkedList<String>();
+		final LinkedList<Integer> tagList = new LinkedList<Integer>();
 		final ResultSet response = _psLoadTagsOfPicture.executeQuery();
 		while (response.next())
 		{
-			tagList.add(response.getString(PICTURE_TAG_TAG_ID_COLUMN_NAME));
+			tagList.add(Integer.valueOf(response
+					.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
 		}
-		final String[] res = new String[tagList.size()];
+		final Integer[] res = new Integer[tagList.size()];
 		return tagList.toArray(res);
+	}
+
+	/**
+	 * Load the information about the specified {@link Tag}.
+	 * 
+	 * @param iTagId
+	 *            the id of the {@link Tag}.
+	 * @return the information about the specified {@link Tag}.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public ResultSet loadTag(final int iTagId) throws SQLException
+	{
+		_psLoadTag.clearParameters();
+		_psLoadTag.setInt(1, iTagId);
+		return _psLoadTag.executeQuery();
 	}
 }
