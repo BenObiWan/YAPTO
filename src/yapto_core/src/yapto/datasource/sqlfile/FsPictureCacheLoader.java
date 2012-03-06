@@ -2,6 +2,8 @@ package yapto.datasource.sqlfile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.ResultSet;
+import java.util.LinkedList;
 
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.tag.Tag;
@@ -65,7 +67,18 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	@Override
 	public FsPicture load(final String key) throws Exception
 	{
-		// TODO Auto-generated method stub
+		ResultSet pictureRes = _fileListConnection.loadPicture(key);
+		if (pictureRes != null)
+		{
+			Integer[] tagIds = _fileListConnection.loadTagsOfPicture(key);
+			LinkedList<Tag> tagList = new LinkedList<Tag>();
+			for (Integer tagId : tagIds)
+			{
+				ResultSet tagRes = _fileListConnection
+						.loadTag(tagId.intValue());
+
+			}
+		}
 		return null;
 	}
 }
