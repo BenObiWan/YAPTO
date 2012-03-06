@@ -1,8 +1,13 @@
 package yapto.datasource.sqlfile;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
+import yapto.datasource.tag.Tag;
 
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * A {@link CacheLoader} loading {@link FsPicture} from the file system.
@@ -24,6 +29,16 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	private final SQLFileListConnection _fileListConnection;
 
 	/**
+	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 */
+	private final LoadingCache<File, BufferedImage> _imageCache;
+
+	/**
+	 * {@link LoadingCache} used to load the {@link Tag}.
+	 */
+	private final LoadingCache<Integer, Tag> _tagCache;
+
+	/**
 	 * Creates a new FsPictureCacheLoader.
 	 * 
 	 * @param conf
@@ -31,12 +46,20 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 * @param fileListConnection
 	 *            object holding the connection to the database and the prepared
 	 *            statements.
+	 * @param imageCache
+	 *            {@link LoadingCache} used to load the {@link BufferedImage}.
+	 * @param tagCache
+	 *            {@link LoadingCache} used to load the {@link Tag}.
 	 */
 	public FsPictureCacheLoader(final FsPictureCacheLoaderConfiguration conf,
-			final SQLFileListConnection fileListConnection)
+			final SQLFileListConnection fileListConnection,
+			final LoadingCache<File, BufferedImage> imageCache,
+			final LoadingCache<Integer, Tag> tagCache)
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;
+		_imageCache = imageCache;
+		_tagCache = tagCache;
 	}
 
 	@Override

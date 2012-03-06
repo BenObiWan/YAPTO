@@ -71,6 +71,11 @@ public class SQLFileDataSource implements IDataSource
 	private final LoadingCache<File, BufferedImage> _imageCache;
 
 	/**
+	 * {@link LoadingCache} used to load the {@link Tag}.
+	 */
+	private final LoadingCache<Integer, Tag> _tagCache;
+
+	/**
 	 * Object holding the connection to the database and the prepared
 	 * statements.
 	 */
@@ -100,17 +105,22 @@ public class SQLFileDataSource implements IDataSource
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
 
-		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
+		// tag cache
+		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(
 				cacheLoaderConf, _fileListConnection);
+		_tagCache = CacheBuilder.newBuilder().build(tagLoader);
+
+		// image cache
+		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
+		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
+
+		// picture cache
+		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
+				cacheLoaderConf, _fileListConnection, _imageCache, _tagCache);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
 				_fileListConnection);
-
-		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
-
 		_pictureCache = CacheBuilder.newBuilder()
 				.removalListener(pictureListener).build(pictureLoader);
-
-		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
 		if (!checkAndCreateDirectories())
 		{
