@@ -5,6 +5,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
+import yapto.datasource.IDataSource;
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -41,6 +42,11 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	private final LoadingCache<Integer, Tag> _tagCache;
 
 	/**
+	 * {@link IDataSource} of this FsPictureCacheLoader.
+	 */
+	private final IDataSource _dataSource;
+
+	/**
 	 * Creates a new FsPictureCacheLoader.
 	 * 
 	 * @param conf
@@ -52,32 +58,50 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 *            {@link LoadingCache} used to load the {@link BufferedImage}.
 	 * @param tagCache
 	 *            {@link LoadingCache} used to load the {@link Tag}.
+	 * @param dataSource
+	 *            {@link IDataSource} of this FsPictureCacheLoader.
 	 */
 	public FsPictureCacheLoader(final FsPictureCacheLoaderConfiguration conf,
 			final SQLFileListConnection fileListConnection,
 			final LoadingCache<File, BufferedImage> imageCache,
-			final LoadingCache<Integer, Tag> tagCache)
+			final LoadingCache<Integer, Tag> tagCache,
+			final IDataSource dataSource)
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;
 		_imageCache = imageCache;
 		_tagCache = tagCache;
+		_dataSource = dataSource;
 	}
 
 	@Override
 	public FsPicture load(final String key) throws Exception
 	{
-		ResultSet pictureRes = _fileListConnection.loadPicture(key);
+		final ResultSet pictureRes = _fileListConnection.loadPicture(key);
 		if (pictureRes != null)
 		{
-			Integer[] tagIds = _fileListConnection.loadTagsOfPicture(key);
-			LinkedList<Tag> tagList = new LinkedList<Tag>();
-			for (Integer tagId : tagIds)
+			final Integer[] tagIds = _fileListConnection.loadTagsOfPicture(key);
+			final LinkedList<Tag> tagList = new LinkedList<Tag>();
+			for (final Integer tagId : tagIds)
 			{
-				ResultSet tagRes = _fileListConnection
-						.loadTag(tagId.intValue());
-
+				tagList.add(_tagCache.get(tagId));
 			}
+			return new FsPicture(
+					_imageCache,
+					key,
+					_dataSource,
+					new File(
+							pictureRes
+									.getString(SQLFileListConnection.PICTURE_PATH_COLUMN_NAME)),
+					pictureRes
+							.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
+					pictureRes
+							.getInt(SQLFileListConnection.PICTURE_HEIGTH_COLUMN_NAME),
+					pictureRes
+							.getLong(SQLFileListConnection.PICTURE_TIMESTAMP_COLUMN_NAME),
+					pictureRes
+							.getInt(SQLFileListConnection.PICTURE_GRADE_COLUMN_NAME),
+					tagList);
 		}
 		return null;
 	}

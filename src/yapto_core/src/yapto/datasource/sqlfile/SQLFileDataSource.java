@@ -116,7 +116,8 @@ public class SQLFileDataSource implements IDataSource
 
 		// picture cache
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				cacheLoaderConf, _fileListConnection, _imageCache, _tagCache);
+				cacheLoaderConf, _fileListConnection, _imageCache, _tagCache,
+				this);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
 				_fileListConnection);
 		_pictureCache = CacheBuilder.newBuilder()
