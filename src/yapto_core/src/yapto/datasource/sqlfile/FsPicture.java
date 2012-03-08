@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
@@ -108,6 +109,45 @@ public final class FsPicture implements IPicture
 		synchronized (_lock)
 		{
 			_lTimestamp = lTimestamp;
+		}
+	}
+
+	/**
+	 * Creates a new FsPicture.
+	 * 
+	 * @param imageCache
+	 *            the {@link LoadingCache} used to load the
+	 *            {@link BufferedImage}.
+	 * @param strId
+	 *            the id of the picture.
+	 * @param dataSource
+	 *            the {@link IDataSource} from which this {@link IPicture} is
+	 *            coming.
+	 * @param imagePath
+	 *            the path to the image file.
+	 * @param iWidth
+	 *            the width of the picture.
+	 * @param iHeight
+	 *            the height of the picture.
+	 * @param lTimestamp
+	 *            the timestamp of the last modification of this picture.
+	 * @param tagList
+	 *            list of {@link Tag}s.
+	 * @param iPictureGrade
+	 *            the new grade of this picture.
+	 */
+	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
+			final String strId, final IDataSource dataSource,
+			final File imagePath, final int iWidth, final int iHeight,
+			final long lTimestamp, final int iPictureGrade,
+			final List<Tag> tagList)
+	{
+		this(imageCache, strId, dataSource, imagePath, iWidth, iHeight,
+				lTimestamp);
+		_tagSet.addAll(tagList);
+		synchronized (_lock)
+		{
+			_iPictureGrade = iPictureGrade;
 		}
 	}
 
