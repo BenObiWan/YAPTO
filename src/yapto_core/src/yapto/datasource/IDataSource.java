@@ -45,4 +45,9 @@ public interface IDataSource extends IPictureList
 	 * @return the id of this {@link IDataSource}.
 	 */
 	int getId();
+
+	/**
+	 * Close this {@link IDataSource}.
+	 */
+	void close();
 }

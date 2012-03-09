@@ -158,4 +158,10 @@ public final class DummyDataSource implements IDataSource
 	{
 		return 1;
 	}
+
+	@Override
+	public void close()
+	{
+		// nothing to do
+	}
 }

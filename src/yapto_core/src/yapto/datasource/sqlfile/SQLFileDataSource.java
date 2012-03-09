@@ -302,4 +302,10 @@ public class SQLFileDataSource implements IDataSource
 		}
 		return bRes;
 	}
+
+	@Override
+	public void close()
+	{
+		_pictureCache.invalidateAll();
+	}
 }
