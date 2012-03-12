@@ -319,6 +319,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_pictureCache.invalidateAll();
 	}
 
+	@Override
 	public ListIterator<FsPicture> getPictureIterator()
 	{
 		return new PictureIterator();

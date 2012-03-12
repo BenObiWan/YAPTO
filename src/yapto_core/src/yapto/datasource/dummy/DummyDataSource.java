@@ -166,8 +166,9 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	public void close()
 	{
 		// nothing to do
-        }
+	}
 
+	@Override
 	public ListIterator<DummyPicture> getPictureIterator()
 	{
 		// TODO Auto-generated method stub
