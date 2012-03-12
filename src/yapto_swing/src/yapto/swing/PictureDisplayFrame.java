@@ -11,6 +11,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.dummy.DummyDataSource;
+import yapto.datasource.dummy.DummyPicture;
 import yapto.datasource.dummy.DummyPictureBrowser;
 
 import com.google.common.eventbus.AsyncEventBus;
@@ -37,7 +38,7 @@ public final class PictureDisplayFrame extends JFrame
 	 *            the {@link IPictureBrowser} used as source for the
 	 *            {@link IPicture}.
 	 */
-	public PictureDisplayFrame(final IPictureBrowser pictureBrowser)
+	public PictureDisplayFrame(final IPictureBrowser<?> pictureBrowser)
 	{
 		super("yapto");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -57,11 +58,11 @@ public final class PictureDisplayFrame extends JFrame
 	 */
 	public static void main(final String[] args)
 	{
-		final IDataSource dataSource = new DummyDataSource();
+		final IDataSource<DummyPicture> dataSource = new DummyDataSource();
 		final Executor exec = Executors.newFixedThreadPool(10);
 		final EventBus bus = new AsyncEventBus(exec);
 
-		final IPictureBrowser pictureBrowser = new DummyPictureBrowser(
+		final IPictureBrowser<?> pictureBrowser = new DummyPictureBrowser(
 				dataSource, bus);
 		final PictureDisplayFrame main = new PictureDisplayFrame(pictureBrowser);
 		main.pack();

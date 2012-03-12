@@ -45,7 +45,7 @@ public final class MainPictureDisplayPanel extends JPanel
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link MainPictureDisplayPanel}.
 	 */
-	private final IPictureBrowser _pictureBrowser;
+	private final IPictureBrowser<?> _pictureBrowser;
 
 	/**
 	 * Create a new MainPictureDisplayPanel.
@@ -53,7 +53,7 @@ public final class MainPictureDisplayPanel extends JPanel
 	 * @param pictureBrowser
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public MainPictureDisplayPanel(final IPictureBrowser pictureBrowser)
+	public MainPictureDisplayPanel(final IPictureBrowser<?> pictureBrowser)
 	{
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;

@@ -29,7 +29,7 @@ public final class PictureBrowserPanel extends JPanel
 	 * The {@link IPictureBrowser} which is controlled by this
 	 * {@link PictureBrowserPanel}.
 	 */
-	protected final IPictureBrowser _pictureBrowser;
+	protected final IPictureBrowser<?> _pictureBrowser;
 
 	/**
 	 * {@link JButton} used to select the previous picture.
@@ -47,7 +47,7 @@ public final class PictureBrowserPanel extends JPanel
 	 * @param pictureBrowser
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureBrowserPanel(final IPictureBrowser pictureBrowser)
+	public PictureBrowserPanel(final IPictureBrowser<?> pictureBrowser)
 	{
 		super(new GridLayout(1, 0, 10, 10));
 		_pictureBrowser = pictureBrowser;

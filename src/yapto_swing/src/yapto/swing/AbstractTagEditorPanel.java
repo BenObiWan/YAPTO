@@ -26,7 +26,7 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	 * The {@link IPictureList} used to load the list of available {@link Tag}
 	 * s.
 	 */
-	protected IPictureList _pictureList;
+	protected IPictureList<?> _pictureList;
 
 	/**
 	 * The {@link IPicture} with which to associate the tags.
@@ -84,7 +84,7 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	 * @param pictureList
 	 *            the new {@link IPictureList}.
 	 */
-	public final void changePictureList(final IPictureList pictureList)
+	public final void changePictureList(final IPictureList<?> pictureList)
 	{
 		synchronized (_lock)
 		{

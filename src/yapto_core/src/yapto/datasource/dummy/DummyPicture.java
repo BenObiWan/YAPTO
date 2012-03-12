@@ -58,7 +58,8 @@ public final class DummyPicture implements IPicture
 	 * @param imagePath
 	 *            the path to the image file.
 	 */
-	public DummyPicture(final IDataSource<DummyPicture> dataSource, final File imagePath)
+	public DummyPicture(final IDataSource<DummyPicture> dataSource,
+			final File imagePath)
 	{
 		_imagePath = imagePath;
 		_dataSource = dataSource;
