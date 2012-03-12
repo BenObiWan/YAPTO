@@ -44,7 +44,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	/**
 	 * {@link IDataSource} of this FsPictureCacheLoader.
 	 */
-	private final IDataSource _dataSource;
+	private final IDataSource<FsPicture> _dataSource;
 
 	/**
 	 * Creates a new FsPictureCacheLoader.
@@ -65,7 +65,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 			final SQLFileListConnection fileListConnection,
 			final LoadingCache<File, BufferedImage> imageCache,
 			final LoadingCache<Integer, Tag> tagCache,
-			final IDataSource dataSource)
+			final IDataSource<FsPicture> dataSource)
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;

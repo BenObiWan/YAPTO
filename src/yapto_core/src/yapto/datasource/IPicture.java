@@ -51,7 +51,7 @@ public interface IPicture extends Comparable<IPicture>
 	 * @return the {@link IDataSource} from which this {@link IPicture} is
 	 *         coming.
 	 */
-	IDataSource getDataSource();
+	IDataSource<? extends IPicture> getDataSource();
 
 	/**
 	 * Get the {@link Dimension} of this {@link IPicture}.

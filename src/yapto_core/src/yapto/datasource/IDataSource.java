@@ -10,9 +10,12 @@ import yapto.datasource.tag.Tag;
  * An interface describing a source for {@link IPicture}.
  * 
  * @author benobiwan
+ * @param <PICTURE>
+ *            type of {@link IPicture} of this {@link IDataSource}.
  * 
  */
-public interface IDataSource extends IPictureList
+public interface IDataSource<PICTURE extends IPicture> extends
+		IPictureList<PICTURE>
 {
 	/**
 	 * Add an {@link IPicture} to the {@link IDataSource}.
