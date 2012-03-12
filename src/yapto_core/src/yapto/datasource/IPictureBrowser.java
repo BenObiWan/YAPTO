@@ -4,9 +4,11 @@ package yapto.datasource;
  * An {@link IPictureList} which enable to browse the picture in order.
  * 
  * @author benobiwan
- * 
+ * @param <PICTURE>
+ *            type of {@link IPicture} of this {@link IPictureList}.
  */
-public interface IPictureBrowser extends IPictureList
+public interface IPictureBrowser<PICTURE extends IPicture> extends
+		IPictureList<PICTURE>
 {
 	/**
 	 * Get the current {@link IPicture}.
@@ -52,7 +54,7 @@ public interface IPictureBrowser extends IPictureList
 	 * @param source
 	 *            the new {@link IPictureList} to use as source.
 	 */
-	void changeSourcePictureList(IPictureList source);
+	void changeSourcePictureList(IPictureList<?> source);
 
 	/**
 	 * Register an object to the listen for change in this

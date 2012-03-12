@@ -34,7 +34,7 @@ public final class PictureDisplayComponent extends JComponent
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link PictureDisplayComponent}.
 	 */
-	private final IPictureBrowser _pictureBrowser;
+	private final IPictureBrowser<?> _pictureBrowser;
 
 	/**
 	 * Creates a new {@link PictureDisplayComponent}.
@@ -42,7 +42,7 @@ public final class PictureDisplayComponent extends JComponent
 	 * @param pictureBrowser
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureDisplayComponent(final IPictureBrowser pictureBrowser)
+	public PictureDisplayComponent(final IPictureBrowser<?> pictureBrowser)
 	{
 		_pictureBrowser = pictureBrowser;
 	}

@@ -8,10 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +40,23 @@ import com.google.common.cache.RemovalListener;
  * @author benobiwan
  * 
  */
-public class SQLFileDataSource implements IDataSource
+public class SQLFileDataSource implements IDataSource<FsPicture>
 {
 	/**
 	 * Logger object.
 	 */
-	private static transient final Logger LOGGER = LoggerFactory
+	protected static transient final Logger LOGGER = LoggerFactory
 			.getLogger(SQLFileDataSource.class);
 
 	/**
 	 * Set containing all the {@link Tag}s.
 	 */
 	private final Set<Tag> _tagSet = new TreeSet<Tag>();
+
+	/**
+	 * List of all picture id.
+	 */
+	protected final List<String> _pictureIdList = new Vector<String>();
 
 	/**
 	 * Map containing all the {@link Tag}s.
@@ -63,7 +71,7 @@ public class SQLFileDataSource implements IDataSource
 	/**
 	 * {@link LoadingCache} used to load the {@link FsPicture}.
 	 */
-	private final LoadingCache<String, FsPicture> _pictureCache;
+	protected final LoadingCache<String, FsPicture> _pictureCache;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
@@ -141,7 +149,7 @@ public class SQLFileDataSource implements IDataSource
 	}
 
 	@Override
-	public IPictureList filterList(final IPictureFilter filter)
+	public IPictureList<FsPicture> filterList(final IPictureFilter filter)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -149,7 +157,8 @@ public class SQLFileDataSource implements IDataSource
 	}
 
 	@Override
-	public IPictureList mergeList(final IPictureList otherList)
+	public IPictureList<IPicture> mergeList(
+			final IPictureList<IPicture> otherList)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -157,7 +166,8 @@ public class SQLFileDataSource implements IDataSource
 	}
 
 	@Override
-	public List<IPictureList> getParent() throws OperationNotSupportedException
+	public List<IPictureList<FsPicture>> getParent()
+			throws OperationNotSupportedException
 	{
 		// no parent for a datasource.
 		return null;
@@ -307,5 +317,102 @@ public class SQLFileDataSource implements IDataSource
 	public void close()
 	{
 		_pictureCache.invalidateAll();
+	}
+
+	public ListIterator<FsPicture> getPictureIterator()
+	{
+		return new PictureIterator();
+	}
+
+	/**
+	 * {@link ListIterator} on the
+	 * 
+	 * @author benobiwan
+	 * 
+	 */
+	private final class PictureIterator implements ListIterator<FsPicture>
+	{
+		/**
+		 * {@link ListIterator} on the {@link FsPicture} id.
+		 */
+		private final ListIterator<String> _idIterator;
+
+		/**
+		 * Creates a new {@link PictureIterator}.
+		 */
+		public PictureIterator()
+		{
+			_idIterator = _pictureIdList.listIterator();
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return _idIterator.hasNext();
+		}
+
+		@Override
+		public boolean hasPrevious()
+		{
+			return _idIterator.hasPrevious();
+		}
+
+		@Override
+		public FsPicture next()
+		{
+			try
+			{
+				return _pictureCache.get(_idIterator.next());
+			}
+			catch (final ExecutionException e)
+			{
+				LOGGER.error("can't load next picture.", e);
+				return null;
+			}
+		}
+
+		@Override
+		public int nextIndex()
+		{
+			return _idIterator.nextIndex();
+		}
+
+		@Override
+		public FsPicture previous()
+		{
+			try
+			{
+				return _pictureCache.get(_idIterator.previous());
+			}
+			catch (final ExecutionException e)
+			{
+				LOGGER.error("can't load previous picture.", e);
+				return null;
+			}
+		}
+
+		@Override
+		public int previousIndex()
+		{
+			return _idIterator.previousIndex();
+		}
+
+		@Override
+		public void add(final FsPicture arg0)
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void set(final FsPicture arg0)
+		{
+			throw new UnsupportedOperationException();
+		}
 	}
 }

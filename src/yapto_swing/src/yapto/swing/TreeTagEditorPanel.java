@@ -44,7 +44,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	 * @param picture
 	 *            the picture from which to edit the {@link Tag}s.
 	 */
-	public TreeTagEditorPanel(final IPictureList pictureList,
+	public TreeTagEditorPanel(final IPictureList<?> pictureList,
 			final IPicture picture)
 	{
 		_rootNode = new DefaultMutableTreeNode();

@@ -23,7 +23,7 @@ import com.google.common.eventbus.EventBus;
  * @author benobiwan
  * 
  */
-public final class DummyPictureBrowser implements IPictureBrowser
+public final class DummyPictureBrowser implements IPictureBrowser<DummyPicture>
 {
 	/**
 	 * Logger object.
@@ -34,7 +34,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	/**
 	 * The {@link IPictureList} used as source for this {@link IPictureBrowser}.
 	 */
-	private IPictureList _sourcePictureList;
+	private IPictureList<? extends IPicture> _sourcePictureList;
 
 	/**
 	 * {@link ListIterator}
@@ -67,7 +67,8 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link DummyPictureBrowser}.
 	 */
-	public DummyPictureBrowser(final IPictureList sourcePictureList,
+	public DummyPictureBrowser(
+			final IPictureList<DummyPicture> sourcePictureList,
 			final EventBus bus)
 	{
 		_bus = bus;
@@ -84,7 +85,7 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public IPictureList filterList(final IPictureFilter filter)
+	public IPictureList<DummyPicture> filterList(final IPictureFilter filter)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -92,7 +93,8 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public IPictureList mergeList(final IPictureList otherList)
+	public IPictureList<? extends IPicture> mergeList(
+			final IPictureList<IPicture> otherList)
 			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
@@ -100,7 +102,8 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public List<IPictureList> getParent() throws OperationNotSupportedException
+	public List<IPictureList<DummyPicture>> getParent()
+			throws OperationNotSupportedException
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -185,7 +188,8 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	}
 
 	@Override
-	public void changeSourcePictureList(final IPictureList source)
+	public void changeSourcePictureList(
+			final IPictureList<? extends IPicture> source)
 	{
 		synchronized (_lockSourcePictureList)
 		{
@@ -214,5 +218,12 @@ public final class DummyPictureBrowser implements IPictureBrowser
 	public void register(final Object object)
 	{
 		_bus.register(object);
+	}
+
+	@Override
+	public ListIterator<DummyPicture> getPictureIterator()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

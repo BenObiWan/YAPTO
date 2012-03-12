@@ -1,6 +1,7 @@
 package yapto.datasource;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import yapto.datasource.tag.Tag;
@@ -9,9 +10,11 @@ import yapto.datasource.tag.Tag;
  * A list of {@link IPicture}.
  * 
  * @author benobiwan
+ * @param <PICTURE>
+ *            type of {@link IPicture} of this {@link IPictureList}.
  * 
  */
-public interface IPictureList
+public interface IPictureList<PICTURE extends IPicture>
 {
 	/**
 	 * Get the number of {@link IPicture} in this {@link IPictureList}.
@@ -36,7 +39,7 @@ public interface IPictureList
 	 *             if this operation isn't supported by this
 	 *             {@link IPictureList}.
 	 */
-	IPictureList filterList(IPictureFilter filter)
+	IPictureList<PICTURE> filterList(IPictureFilter filter)
 			throws OperationNotSupportedException;
 
 	/**
@@ -50,7 +53,7 @@ public interface IPictureList
 	 *             if this operation isn't supported by this
 	 *             {@link IPictureList}.
 	 */
-	IPictureList mergeList(IPictureList otherList)
+	IPictureList<? extends IPicture> mergeList(IPictureList<IPicture> otherList)
 			throws OperationNotSupportedException;
 
 	/**
@@ -61,7 +64,8 @@ public interface IPictureList
 	 *             if this operation isn't supported by this
 	 *             {@link IPictureList}.
 	 */
-	List<IPictureList> getParent() throws OperationNotSupportedException;
+	List<IPictureList<PICTURE>> getParent()
+			throws OperationNotSupportedException;
 
 	/**
 	 * Get the list of {@link Tag}s associated with {@link IPicture} in this
@@ -89,4 +93,11 @@ public interface IPictureList
 	 * @return the {@link List} of all {@link IPicture}.
 	 */
 	List<IPicture> getPictureList();
+
+	/**
+	 * Get a {@link ListIterator} of {@link IPicture}.
+	 * 
+	 * @return a {@link ListIterator} of {@link IPicture}.
+	 */
+	ListIterator<PICTURE> getPictureIterator();
 }

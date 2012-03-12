@@ -43,7 +43,7 @@ public final class FsPicture implements IPicture
 	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.
 	 */
-	private final IDataSource _dataSource;
+	private final IDataSource<FsPicture> _dataSource;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
@@ -97,7 +97,7 @@ public final class FsPicture implements IPicture
 	 *            the timestamp of the last modification of this picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final String strId, final IDataSource dataSource,
+			final String strId, final IDataSource<FsPicture> dataSource,
 			final File imagePath, final int iWidth, final int iHeight,
 			final long lTimestamp)
 	{
@@ -137,7 +137,7 @@ public final class FsPicture implements IPicture
 	 *            the new grade of this picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final String strId, final IDataSource dataSource,
+			final String strId, final IDataSource<FsPicture> dataSource,
 			final File imagePath, final int iWidth, final int iHeight,
 			final long lTimestamp, final int iPictureGrade,
 			final List<Tag> tagList)
@@ -192,7 +192,7 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public IDataSource getDataSource()
+	public IDataSource<FsPicture> getDataSource()
 	{
 		return _dataSource;
 	}

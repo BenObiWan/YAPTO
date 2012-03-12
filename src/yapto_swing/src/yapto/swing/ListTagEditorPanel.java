@@ -39,7 +39,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	 * @param picture
 	 *            the picture from which to edit the {@link Tag}s.
 	 */
-	public ListTagEditorPanel(final IPictureList pictureList,
+	public ListTagEditorPanel(final IPictureList<?> pictureList,
 			final IPicture picture)
 	{
 		_tagList = new JList<Tag>();

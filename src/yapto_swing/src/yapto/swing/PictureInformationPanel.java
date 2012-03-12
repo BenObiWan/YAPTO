@@ -36,7 +36,7 @@ public final class PictureInformationPanel extends JPanel
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link PictureDisplayComponent}.
 	 */
-	private final IPictureBrowser _pictureBrowser;
+	private final IPictureBrowser<?> _pictureBrowser;
 
 	/**
 	 * Object used to control the access on the displayed picture.
@@ -55,7 +55,7 @@ public final class PictureInformationPanel extends JPanel
 	 * @param pictureBrowser
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureInformationPanel(final IPictureBrowser pictureBrowser)
+	public PictureInformationPanel(final IPictureBrowser<?> pictureBrowser)
 	{
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;

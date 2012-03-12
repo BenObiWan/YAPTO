@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
+import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
@@ -166,9 +167,14 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psLoadTagsOfPicture;
 
 	/**
-	 * Dtatement to load a {@link Tag}.
+	 * Statement to load a {@link Tag}.
 	 */
 	private final PreparedStatement _psLoadTag;
+
+	/**
+	 * Statement to load the list of {@link IPicture} names.
+	 */
+	private final PreparedStatement _psListPicture;
 
 	/**
 	 * creates a new SQLFileListConnection.
@@ -188,54 +194,56 @@ public final class SQLFileListConnection
 		Class.forName("org.sqlite.JDBC");
 		_connection = DriverManager.getConnection("jdbc:sqlite:"
 				+ _conf.getDatabaseFileName());
-		_psInsertTag = _connection.prepareStatement("insert into "
+		_psInsertTag = _connection.prepareStatement("INSERT INTO "
 				+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + ", "
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
-				+ TAG_SELECTABLE_COLUMN_NAME + ") values(?, ?, ?, ?, ?)");
-		_psCountPicturesByTag = _connection.prepareStatement("select count("
+				+ TAG_SELECTABLE_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?)");
+		_psCountPicturesByTag = _connection.prepareStatement("SELECT COUNT("
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psSelectPicturesByTag = _connection.prepareStatement("select "
+		_psSelectPicturesByTag = _connection.prepareStatement("SELECT "
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psCountPictures = _connection.prepareStatement("select count("
+		_psCountPictures = _connection.prepareStatement("SELECT COUNT("
 				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
-		_psInsertPicture = _connection.prepareStatement("insert into "
+		_psInsertPicture = _connection.prepareStatement("INSERT INTO "
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_PATH_COLUMN_NAME + ") values(?, ?, ?, ?, ?, ?)");
+				+ PICTURE_PATH_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
-				.prepareStatement("update " + PICTURE_TABLE_NAME + " set "
+				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
-						+ PICTURE_TIMESTAMP_COLUMN_NAME + "=? where "
+						+ PICTURE_TIMESTAMP_COLUMN_NAME + "=? WHERE "
 						+ PICTURE_ID_COLUMN_NAME + "=?");
-		_psInsertTagForPicture = _connection.prepareStatement("insert into "
+		_psInsertTagForPicture = _connection.prepareStatement("INSERT INTO "
 				+ PICTURE_TAG_TABLE_NAME + " ("
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + ", "
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") values(?, ?)");
-		_psRemoveTagsForPicture = _connection.prepareStatement("delete from "
-				+ PICTURE_TAG_TABLE_NAME + " where "
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") VALUES(?, ?)");
+		_psRemoveTagsForPicture = _connection.prepareStatement("DELETE FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psLoadPicture = _connection.prepareStatement("select "
+		_psLoadPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_PATH_COLUMN_NAME + " from " + PICTURE_TABLE_NAME
-				+ " where " + PICTURE_ID_COLUMN_NAME + " =?");
-		_psLoadTagsOfPicture = _connection.prepareStatement("select "
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " from "
-				+ PICTURE_TAG_TABLE_NAME + " where "
+				+ PICTURE_PATH_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME
+				+ " WHERE " + PICTURE_ID_COLUMN_NAME + " =?");
+		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
-		_psLoadTag = _connection.prepareStatement("select "
+		_psLoadTag = _connection.prepareStatement("SELECT "
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
-				+ TAG_SELECTABLE_COLUMN_NAME + " from " + TAG_TABLE_NAME
+				+ TAG_SELECTABLE_COLUMN_NAME + " FROM " + TAG_TABLE_NAME
 				+ " where " + TAG_ID_COLUMN_NAME + " =?");
+		_psListPicture = _connection.prepareStatement("SELECT "
+				+ PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
 	}
 
 	/**
@@ -518,5 +526,18 @@ public final class SQLFileListConnection
 		_psLoadTag.clearParameters();
 		_psLoadTag.setInt(1, iTagId);
 		return _psLoadTag.executeQuery();
+	}
+
+	/**
+	 * Load the list of {@link IPicture} of this {@link IDataSource}.
+	 * 
+	 * @return the
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public ResultSet loadPictureList() throws SQLException
+	{
+		return _psListPicture.executeQuery();
 	}
 }

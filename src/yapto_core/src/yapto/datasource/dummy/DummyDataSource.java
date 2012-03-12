@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -23,7 +24,7 @@ import yapto.datasource.tag.Tag;
  * @author benobiwan
  * 
  */
-public final class DummyDataSource implements IDataSource
+public final class DummyDataSource implements IDataSource<DummyPicture>
 {
 	/**
 	 * Map containing all the picture and their id.
@@ -101,21 +102,23 @@ public final class DummyDataSource implements IDataSource
 	}
 
 	@Override
-	public IPictureList filterList(final IPictureFilter filter)
+	public IPictureList<DummyPicture> filterList(final IPictureFilter filter)
 			throws OperationNotSupportedException
 	{
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public IPictureList mergeList(final IPictureList otherList)
+	public IPictureList<? extends IPicture> mergeList(
+			final IPictureList<IPicture> otherList)
 			throws OperationNotSupportedException
 	{
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public List<IPictureList> getParent() throws OperationNotSupportedException
+	public List<IPictureList<DummyPicture>> getParent()
+			throws OperationNotSupportedException
 	{
 		throw new OperationNotSupportedException();
 	}
@@ -163,5 +166,11 @@ public final class DummyDataSource implements IDataSource
 	public void close()
 	{
 		// nothing to do
+        }
+
+	public ListIterator<DummyPicture> getPictureIterator()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

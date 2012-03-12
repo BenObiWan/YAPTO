@@ -46,7 +46,7 @@ public final class DummyPicture implements IPicture
 	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.
 	 */
-	private final IDataSource _dataSource;
+	private final IDataSource<DummyPicture> _dataSource;
 
 	/**
 	 * Creates a new DummyPicture.
@@ -58,7 +58,8 @@ public final class DummyPicture implements IPicture
 	 * @param imagePath
 	 *            the path to the image file.
 	 */
-	public DummyPicture(final IDataSource dataSource, final File imagePath)
+	public DummyPicture(final IDataSource<DummyPicture> dataSource,
+			final File imagePath)
 	{
 		_imagePath = imagePath;
 		_dataSource = dataSource;
@@ -103,7 +104,7 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public IDataSource getDataSource()
+	public IDataSource<DummyPicture> getDataSource()
 	{
 		return _dataSource;
 	}
