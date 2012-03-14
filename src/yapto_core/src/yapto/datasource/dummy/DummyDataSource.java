@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -13,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
+import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
@@ -169,7 +169,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	}
 
 	@Override
-	public ListIterator<DummyPicture> getPictureIterator()
+	public IPictureBrowser<DummyPicture> getPictureIterator()
 	{
 		// TODO Auto-generated method stub
 		return null;

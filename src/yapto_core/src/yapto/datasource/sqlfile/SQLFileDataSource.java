@@ -15,15 +15,19 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import yapto.datasource.AbstractPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
+import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
@@ -32,6 +36,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
+import com.google.common.eventbus.AsyncEventBus;
 
 /**
  * {@link IDataSource} using an SQLite file to stock the meta-informations, and
@@ -320,18 +325,19 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public ListIterator<FsPicture> getPictureIterator()
+	public IPictureBrowser<FsPicture> getPictureIterator()
 	{
 		return new PictureIterator();
 	}
 
 	/**
-	 * {@link ListIterator} on the
+	 * {@link ListIterator} on the list of {@ink FsPicture}.
 	 * 
 	 * @author benobiwan
 	 * 
 	 */
-	private final class PictureIterator implements ListIterator<FsPicture>
+	private final class PictureIterator extends
+			AbstractPictureBrowser<FsPicture>
 	{
 		/**
 		 * {@link ListIterator} on the {@link FsPicture} id.
@@ -343,6 +349,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		 */
 		public PictureIterator()
 		{
+			// TODO remove from there
+			super(new AsyncEventBus(Executors.newFixedThreadPool(10)));
 			_idIterator = _pictureIdList.listIterator();
 		}
 
@@ -361,14 +369,19 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		@Override
 		public FsPicture next()
 		{
-			try
+			synchronized (_lock)
 			{
-				return _pictureCache.get(_idIterator.next());
-			}
-			catch (final ExecutionException e)
-			{
-				LOGGER.error("can't load next picture.", e);
-				return null;
+				try
+				{
+					_currentPicture = _pictureCache.get(_idIterator.next());
+					_bus.post(new PictureChangedEvent());
+					return _currentPicture;
+				}
+				catch (final ExecutionException e)
+				{
+					LOGGER.error("can't load next picture.", e);
+					return null;
+				}
 			}
 		}
 
@@ -381,14 +394,19 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		@Override
 		public FsPicture previous()
 		{
-			try
+			synchronized (_lock)
 			{
-				return _pictureCache.get(_idIterator.previous());
-			}
-			catch (final ExecutionException e)
-			{
-				LOGGER.error("can't load previous picture.", e);
-				return null;
+				try
+				{
+					_currentPicture = _pictureCache.get(_idIterator.previous());
+					_bus.post(new PictureChangedEvent());
+					return _currentPicture;
+				}
+				catch (final ExecutionException e)
+				{
+					LOGGER.error("can't load previous picture.", e);
+					return null;
+				}
 			}
 		}
 
@@ -396,24 +414,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		public int previousIndex()
 		{
 			return _idIterator.previousIndex();
-		}
-
-		@Override
-		public void add(final FsPicture arg0)
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void remove()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void set(final FsPicture arg0)
-		{
-			throw new UnsupportedOperationException();
 		}
 	}
 }

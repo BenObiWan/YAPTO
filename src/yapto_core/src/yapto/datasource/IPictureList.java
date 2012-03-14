@@ -1,7 +1,6 @@
 package yapto.datasource;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import yapto.datasource.tag.Tag;
@@ -95,9 +94,9 @@ public interface IPictureList<PICTURE extends IPicture>
 	List<IPicture> getPictureList();
 
 	/**
-	 * Get a {@link ListIterator} of {@link IPicture}.
+	 * Get a {@link IPictureBrowser}.
 	 * 
-	 * @return a {@link ListIterator} of {@link IPicture}.
+	 * @return a {@link IPictureBrowser}.
 	 */
-	ListIterator<PICTURE> getPictureIterator();
+	IPictureBrowser<PICTURE> getPictureIterator();
 }
