@@ -331,7 +331,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	/**
-	 * {@link ListIterator} on the list of {@ink FsPicture}.
+	 * {@link IPictureBrowser} on the list of {@ink FsPicture}.
 	 * 
 	 * @author benobiwan
 	 * 

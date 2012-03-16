@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.swing.JComponent;
 
+import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.PictureChangedEvent;
 
@@ -34,17 +35,18 @@ public final class PictureDisplayComponent extends JComponent
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link PictureDisplayComponent}.
 	 */
-	private final IPictureBrowser<?> _pictureBrowser;
+	private final IPictureBrowser<? extends IPicture> _pictureIterator;
 
 	/**
 	 * Creates a new {@link PictureDisplayComponent}.
 	 * 
-	 * @param pictureBrowser
+	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureDisplayComponent(final IPictureBrowser<?> pictureBrowser)
+	public PictureDisplayComponent(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
-		_pictureBrowser = pictureBrowser;
+		_pictureIterator = pictureIterator;
 	}
 
 	/**
@@ -55,7 +57,7 @@ public final class PictureDisplayComponent extends JComponent
 	 */
 	public void loadPicture() throws IOException
 	{
-		_img = _pictureBrowser.getCurrentPicture().getImageData();
+		_img = _pictureIterator.getCurrentPicture().getImageData();
 		setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
 		repaint();
 	}

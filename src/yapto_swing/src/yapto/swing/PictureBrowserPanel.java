@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.PictureChangedEvent;
 
@@ -29,7 +30,7 @@ public final class PictureBrowserPanel extends JPanel
 	 * The {@link IPictureBrowser} which is controlled by this
 	 * {@link PictureBrowserPanel}.
 	 */
-	protected final IPictureBrowser<?> _pictureBrowser;
+	protected final IPictureBrowser<? extends IPicture> _pictureIterator;
 
 	/**
 	 * {@link JButton} used to select the previous picture.
@@ -44,20 +45,21 @@ public final class PictureBrowserPanel extends JPanel
 	/**
 	 * Creates a new PictureBrowserPanel.
 	 * 
-	 * @param pictureBrowser
+	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureBrowserPanel(final IPictureBrowser<?> pictureBrowser)
+	public PictureBrowserPanel(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(new GridLayout(1, 0, 10, 10));
-		_pictureBrowser = pictureBrowser;
+		_pictureIterator = pictureIterator;
 		_jbPrevious = new JButton("<");
 		_jbPrevious.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(final ActionEvent arg0)
 			{
-				_pictureBrowser.getPreviousPicture();
+				_pictureIterator.previous();
 			}
 		});
 		add(_jbPrevious);
@@ -68,7 +70,7 @@ public final class PictureBrowserPanel extends JPanel
 			@Override
 			public void actionPerformed(final ActionEvent arg0)
 			{
-				_pictureBrowser.getNextPicture();
+				_pictureIterator.next();
 			}
 		});
 		add(_jbNext);
@@ -81,8 +83,8 @@ public final class PictureBrowserPanel extends JPanel
 	 */
 	private void updateButtonEnableState()
 	{
-		_jbPrevious.setEnabled(_pictureBrowser.hasPreviousPicture());
-		_jbNext.setEnabled(_pictureBrowser.hasNextPicture());
+		_jbPrevious.setEnabled(_pictureIterator.hasPrevious());
+		_jbNext.setEnabled(_pictureIterator.hasNext());
 	}
 
 	/**
