@@ -36,4 +36,11 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 *            the object to unregister.
 	 */
 	void unRegister(Object object);
+
+	/**
+	 * Get the source {@link IPictureList} for this {@link IPictureBrowser}.
+	 * 
+	 * @return the source {@link IPictureList} for this {@link IPictureBrowser}.
+	 */
+	IPictureList<PICTURE> getSourcePictureList();
 }

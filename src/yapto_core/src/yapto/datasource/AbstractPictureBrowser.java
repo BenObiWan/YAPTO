@@ -29,15 +29,25 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	protected final EventBus _bus;
 
 	/**
+	 * The source {@link IPictureList} for this {@link IPictureBrowser}.
+	 */
+	protected final IPictureList<PICTURE> _sourcePictureList;
+
+	/**
 	 * Creates a new AbstractPictureBrowser.
 	 * 
+	 * @param sourcePictureList
+	 *            the source {@link IPictureList} for this
+	 *            {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link AbstractPictureBrowser}.
 	 */
-	protected AbstractPictureBrowser(final EventBus bus)
+	protected AbstractPictureBrowser(
+			final IPictureList<PICTURE> sourcePictureList, final EventBus bus)
 	{
 		_bus = bus;
+		_sourcePictureList = sourcePictureList;
 	}
 
 	@Override
@@ -81,5 +91,11 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	public void unRegister(final Object object)
 	{
 		_bus.unregister(object);
+	}
+
+	@Override
+	public IPictureList<PICTURE> getSourcePictureList()
+	{
+		return _sourcePictureList;
 	}
 }

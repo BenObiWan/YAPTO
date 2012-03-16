@@ -350,7 +350,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		public PictureIterator()
 		{
 			// TODO remove from there
-			super(new AsyncEventBus(Executors.newFixedThreadPool(10)));
+			super(SQLFileDataSource.this, new AsyncEventBus(
+					Executors.newFixedThreadPool(10)));
 			_idIterator = _pictureIdList.listIterator();
 		}
 

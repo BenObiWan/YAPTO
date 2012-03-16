@@ -36,13 +36,18 @@ public final class DummyPictureBrowser extends
 	 * Creates a new DummyPictureBrowser using the specified
 	 * {@link IPictureList} as source.
 	 * 
+	 * @param sourcePictureList
+	 *            the source {@link IPictureList} for this
+	 *            {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link DummyPictureBrowser}.
 	 */
-	public DummyPictureBrowser(final EventBus bus)
+	public DummyPictureBrowser(
+			final IPictureList<DummyPicture> sourcePictureList,
+			final EventBus bus)
 	{
-		super(bus);
+		super(sourcePictureList, bus);
 	}
 
 	@Override
