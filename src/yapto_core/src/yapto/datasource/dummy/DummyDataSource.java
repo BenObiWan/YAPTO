@@ -5,18 +5,24 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
 
+import yapto.datasource.AbstractPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.tag.Tag;
+
+import com.google.common.eventbus.AsyncEventBus;
 
 /**
  * Dummy implementation of the {@link IDataSource} interface.
@@ -34,7 +40,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	/**
 	 * List of {@link IPicture} of this {@link DummyDataSource}.
 	 */
-	private final List<IPicture> _listPicture = new CopyOnWriteArrayList<IPicture>();
+	protected final List<DummyPicture> _listPicture = new CopyOnWriteArrayList<DummyPicture>();
 
 	/**
 	 * Set of all the {@link Tag}s available on this {@link IDataSource}.
@@ -141,7 +147,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	@Override
 	public List<IPicture> getPictureList()
 	{
-		return _listPicture;
+		return null;
 	}
 
 	@Override
@@ -171,7 +177,93 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	@Override
 	public IPictureBrowser<DummyPicture> getPictureIterator()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new DummyPictureBrowser();
 	}
+
+	/**
+	 * Dummy implementation of {@link IPictureBrowser}.
+	 * 
+	 * @author benobiwan
+	 * 
+	 */
+	private final class DummyPictureBrowser extends
+			AbstractPictureBrowser<DummyPicture>
+	{
+		/**
+		 * {@link ListIterator}
+		 */
+		private final ListIterator<DummyPicture> _pictureIterator;
+
+		/**
+		 * Creates a new DummyPictureBrowser using the specified
+		 * {@link IPictureList} as source.
+		 */
+		public DummyPictureBrowser()
+		{
+			super(DummyDataSource.this, new AsyncEventBus(
+					Executors.newFixedThreadPool(10)));
+			_pictureIterator = _listPicture.listIterator();
+		}
+
+		@Override
+		public DummyPicture next()
+		{
+			synchronized (_lock)
+			{
+				if (_pictureIterator.hasNext())
+				{
+					if (!_pictureIterator.hasPrevious())
+					{
+						_pictureIterator.next();
+					}
+					_currentPicture = _pictureIterator.next();
+					_bus.post(new PictureChangedEvent());
+				}
+				return _currentPicture;
+			}
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return _pictureIterator.hasNext();
+		}
+
+		@Override
+		public DummyPicture previous()
+		{
+			synchronized (_lock)
+			{
+				if (_pictureIterator.hasPrevious())
+				{
+					if (!_pictureIterator.hasNext())
+					{
+						_pictureIterator.previous();
+					}
+					_currentPicture = _pictureIterator.previous();
+					_bus.post(new PictureChangedEvent());
+				}
+				return _currentPicture;
+			}
+		}
+
+		@Override
+		public boolean hasPrevious()
+		{
+			return _pictureIterator.hasPrevious();
+		}
+
+		@Override
+		public int nextIndex()
+		{
+			return _pictureIterator.nextIndex();
+		}
+
+		@Override
+		public int previousIndex()
+		{
+			return _pictureIterator.previousIndex();
+		}
+	}
+
 }
