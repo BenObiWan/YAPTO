@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.AbstractPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
@@ -32,6 +35,12 @@ import com.google.common.eventbus.AsyncEventBus;
  */
 public final class DummyDataSource implements IDataSource<DummyPicture>
 {
+	/**
+	 * Logger object.
+	 */
+	protected static final Logger LOGGER = LoggerFactory
+			.getLogger(DummyDataSource.class);
+
 	/**
 	 * Map containing all the picture and their id.
 	 */
@@ -58,7 +67,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	public DummyDataSource()
 	{
 		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg",
-				"/tmp/picture3.jpg" };
+				"/tmp/picture3.jpg", "/tmp/picture4.jpg" };
 		int iId = 0;
 		_rootTag = new Tag(getId(), iId++, null, "root", "", false);
 		final Tag child1 = new Tag(getId(), iId++, _rootTag, "node1",
@@ -90,13 +99,11 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 			}
 			catch (final FileNotFoundException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getLocalizedMessage(), e);
 			}
 			catch (final IOException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -210,14 +217,26 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		{
 			synchronized (_lock)
 			{
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("before next");
+					LOGGER.debug("has previous " + hasPrevious()
+							+ " previous id " + previousIndex());
+					LOGGER.debug("has next " + hasNext() + " next id "
+							+ nextIndex());
+				}
 				if (_pictureIterator.hasNext())
 				{
-					if (!_pictureIterator.hasPrevious())
-					{
-						_pictureIterator.next();
-					}
 					_currentPicture = _pictureIterator.next();
 					_bus.post(new PictureChangedEvent());
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("after next");
+					LOGGER.debug("has previous " + hasPrevious()
+							+ " previous id " + previousIndex());
+					LOGGER.debug("has next " + hasNext() + " next id "
+							+ nextIndex());
 				}
 				return _currentPicture;
 			}
@@ -226,7 +245,10 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		@Override
 		public boolean hasNext()
 		{
-			return _pictureIterator.hasNext();
+			synchronized (_lock)
+			{
+				return _pictureIterator.hasNext();
+			}
 		}
 
 		@Override
@@ -234,14 +256,28 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		{
 			synchronized (_lock)
 			{
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("before previous");
+					LOGGER.debug("has previous " + hasPrevious()
+							+ " previous id " + previousIndex());
+					LOGGER.debug("has next " + hasNext() + " next id "
+							+ nextIndex());
+				}
 				if (_pictureIterator.hasPrevious())
 				{
-					if (!_pictureIterator.hasNext())
-					{
-						_pictureIterator.previous();
-					}
-					_currentPicture = _pictureIterator.previous();
+					_pictureIterator.previous();
+					_pictureIterator.previous();
+					_currentPicture = _pictureIterator.next();
 					_bus.post(new PictureChangedEvent());
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("after previous");
+					LOGGER.debug("has previous " + hasPrevious()
+							+ " previous id " + previousIndex());
+					LOGGER.debug("has next " + hasNext() + " next id "
+							+ nextIndex());
 				}
 				return _currentPicture;
 			}
@@ -250,7 +286,14 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		@Override
 		public boolean hasPrevious()
 		{
-			return _pictureIterator.hasPrevious();
+			synchronized (_lock)
+			{
+				if (_pictureIterator.hasPrevious())
+				{
+					return _pictureIterator.previousIndex() != 0;
+				}
+				return false;
+			}
 		}
 
 		@Override
