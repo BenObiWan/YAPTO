@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.tag.Tag;
 
-import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
 
 /**
  * Dummy implementation of the {@link IDataSource} interface.
@@ -62,10 +61,21 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	private final Tag _rootTag;
 
 	/**
-	 * Creates a new DummyDataSource.
+	 * {@link EventBus} used to signal registered objects of changes in the
+	 * {@link IPictureBrowser}.
 	 */
-	public DummyDataSource()
+	protected final EventBus _bus;
+
+	/**
+	 * Creates a new DummyDataSource.
+	 * 
+	 * @param bus
+	 *            the {@link EventBus} used to signal registered objects of
+	 *            changes in the {@link IPictureBrowser}.
+	 */
+	public DummyDataSource(final EventBus bus)
 	{
+		_bus = bus;
 		final String[] fileList = { "/tmp/picture1.jpg", "/tmp/picture2.jpg",
 				"/tmp/picture3.jpg", "/tmp/picture4.jpg" };
 		int iId = 0;
@@ -207,8 +217,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		 */
 		public DummyPictureBrowser()
 		{
-			super(DummyDataSource.this, new AsyncEventBus(
-					Executors.newFixedThreadPool(10)));
+			super(DummyDataSource.this, DummyDataSource.this._bus);
 			_pictureIterator = _listPicture.listIterator();
 		}
 

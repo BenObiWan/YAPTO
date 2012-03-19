@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
-import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
 
 /**
  * {@link IDataSource} using an SQLite file to stock the meta-informations, and
@@ -95,6 +94,12 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	private final SQLFileListConnection _fileListConnection;
 
 	/**
+	 * {@link EventBus} used to signal registered objects of changes in the
+	 * {@link IPictureBrowser}.
+	 */
+	protected final EventBus _bus;
+
+	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
 	 * @param conf
@@ -102,6 +107,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 * @param cacheLoaderConf
 	 *            configuration for the
 	 *            {@link FsPictureCacheLoaderConfiguration}.
+	 * @param bus
+	 *            the {@link EventBus} used to signal registered objects of
+	 *            changes in the {@link IPictureBrowser}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the connection to the
 	 *             database.
@@ -112,9 +120,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *             directories.
 	 */
 	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf,
-			final FsPictureCacheLoaderConfiguration cacheLoaderConf)
-			throws SQLException, ClassNotFoundException, IOException
+			final FsPictureCacheLoaderConfiguration cacheLoaderConf,
+			final EventBus bus) throws SQLException, ClassNotFoundException,
+			IOException
 	{
+		_bus = bus;
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
 
@@ -349,9 +359,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		 */
 		public PictureIterator()
 		{
-			// TODO remove from there
-			super(SQLFileDataSource.this, new AsyncEventBus(
-					Executors.newFixedThreadPool(10)));
+			super(SQLFileDataSource.this, SQLFileDataSource.this._bus);
 			_idIterator = _pictureIdList.listIterator();
 		}
 

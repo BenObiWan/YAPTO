@@ -1,5 +1,7 @@
 package yapto.swing;
 
+import java.util.concurrent.Executors;
+
 import javax.swing.JFrame;
 
 import org.apache.log4j.BasicConfigurator;
@@ -9,6 +11,8 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.dummy.DummyDataSource;
 import yapto.datasource.dummy.DummyPicture;
+
+import com.google.common.eventbus.AsyncEventBus;
 
 /**
  * {@link JFrame} used to display an picture and it's information. Main frame of
@@ -51,7 +55,8 @@ public final class PictureDisplayFrame extends JFrame
 	 */
 	public static void main(final String[] args)
 	{
-		final IDataSource<DummyPicture> dataSource = new DummyDataSource();
+		final IDataSource<DummyPicture> dataSource = new DummyDataSource(
+				new AsyncEventBus(Executors.newFixedThreadPool(10)));
 
 		final IPictureBrowser<?> pictureBrowser = dataSource
 				.getPictureIterator();
