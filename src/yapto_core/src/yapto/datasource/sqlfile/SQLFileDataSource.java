@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -19,14 +18,13 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import yapto.datasource.AbstractPictureBrowser;
+import yapto.datasource.AbstractIdBasedPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
-import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
@@ -347,82 +345,22 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 * 
 	 */
 	private final class PictureIterator extends
-			AbstractPictureBrowser<FsPicture>
+			AbstractIdBasedPictureBrowser<FsPicture>
 	{
-		/**
-		 * {@link ListIterator} on the {@link FsPicture} id.
-		 */
-		private final ListIterator<String> _idIterator;
-
 		/**
 		 * Creates a new {@link PictureIterator}.
 		 */
 		public PictureIterator()
 		{
-			super(SQLFileDataSource.this, SQLFileDataSource.this._bus);
-			_idIterator = _pictureIdList.listIterator();
+			super(SQLFileDataSource.this, SQLFileDataSource.this._bus,
+					_pictureIdList.listIterator());
 		}
 
 		@Override
-		public boolean hasNext()
+		protected FsPicture getPicture(final String pictureId)
+				throws ExecutionException
 		{
-			return _idIterator.hasNext();
-		}
-
-		@Override
-		public boolean hasPrevious()
-		{
-			return _idIterator.hasPrevious();
-		}
-
-		@Override
-		public FsPicture next()
-		{
-			synchronized (_lock)
-			{
-				try
-				{
-					_currentPicture = _pictureCache.get(_idIterator.next());
-					_bus.post(new PictureChangedEvent());
-					return _currentPicture;
-				}
-				catch (final ExecutionException e)
-				{
-					LOGGER.error("can't load next picture.", e);
-					return null;
-				}
-			}
-		}
-
-		@Override
-		public int nextIndex()
-		{
-			return _idIterator.nextIndex();
-		}
-
-		@Override
-		public FsPicture previous()
-		{
-			synchronized (_lock)
-			{
-				try
-				{
-					_currentPicture = _pictureCache.get(_idIterator.previous());
-					_bus.post(new PictureChangedEvent());
-					return _currentPicture;
-				}
-				catch (final ExecutionException e)
-				{
-					LOGGER.error("can't load previous picture.", e);
-					return null;
-				}
-			}
-		}
-
-		@Override
-		public int previousIndex()
-		{
-			return _idIterator.previousIndex();
+			return _pictureCache.get(_idIterator.previous());
 		}
 	}
 }
