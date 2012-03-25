@@ -82,11 +82,11 @@ public final class FsPicture implements IPicture
 	 * @param imageCache
 	 *            the {@link LoadingCache} used to load the
 	 *            {@link BufferedImage}.
-	 * @param strId
-	 *            the id of the picture.
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
+	 * @param strId
+	 *            the id of the picture.
 	 * @param imagePath
 	 *            the path to the image file.
 	 * @param iWidth
@@ -97,7 +97,7 @@ public final class FsPicture implements IPicture
 	 *            the timestamp of the last modification of this picture.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final String strId, final IDataSource<FsPicture> dataSource,
+			final IDataSource<FsPicture> dataSource, final String strId,
 			final File imagePath, final int iWidth, final int iHeight,
 			final long lTimestamp)
 	{
@@ -118,11 +118,11 @@ public final class FsPicture implements IPicture
 	 * @param imageCache
 	 *            the {@link LoadingCache} used to load the
 	 *            {@link BufferedImage}.
-	 * @param strId
-	 *            the id of the picture.
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
+	 * @param strId
+	 *            the id of the picture.
 	 * @param imagePath
 	 *            the path to the image file.
 	 * @param iWidth
@@ -131,18 +131,18 @@ public final class FsPicture implements IPicture
 	 *            the height of the picture.
 	 * @param lTimestamp
 	 *            the timestamp of the last modification of this picture.
-	 * @param tagList
-	 *            list of {@link Tag}s.
 	 * @param iPictureGrade
 	 *            the new grade of this picture.
+	 * @param tagList
+	 *            list of {@link Tag}s.
 	 */
 	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
-			final String strId, final IDataSource<FsPicture> dataSource,
+			final IDataSource<FsPicture> dataSource, final String strId,
 			final File imagePath, final int iWidth, final int iHeight,
 			final long lTimestamp, final int iPictureGrade,
 			final List<Tag> tagList)
 	{
-		this(imageCache, strId, dataSource, imagePath, iWidth, iHeight,
+		this(imageCache, dataSource, strId, imagePath, iWidth, iHeight,
 				lTimestamp);
 		_tagSet.addAll(tagList);
 		synchronized (_lock)

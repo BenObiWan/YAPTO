@@ -88,8 +88,8 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 			}
 			return new FsPicture(
 					_imageCache,
-					key,
 					_dataSource,
+					key,
 					new File(
 							pictureRes
 									.getString(SQLFileListConnection.PICTURE_PATH_COLUMN_NAME)),
