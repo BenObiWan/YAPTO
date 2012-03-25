@@ -5,6 +5,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import yapto.datasource.sqlfile.config.BufferedImageCacheLoaderConfiguration;
+
 import com.google.common.cache.CacheLoader;
 
 /**
@@ -14,11 +16,33 @@ import com.google.common.cache.CacheLoader;
  * 
  */
 public final class BufferedImageCacheLoader extends
-		CacheLoader<File, BufferedImage>
+		CacheLoader<String, BufferedImage>
 {
-	@Override
-	public BufferedImage load(final File key) throws Exception
+	/**
+	 * The configuration of this BufferedImageCacheLoader.
+	 */
+	private final BufferedImageCacheLoaderConfiguration _cacheLoaderConf;
+
+	/**
+	 * Creates a new BufferedImageCacheLoader.
+	 * 
+	 * @param cacheLoaderConf
+	 *            the configuration of this BufferedImageCacheLoader.
+	 */
+	public BufferedImageCacheLoader(
+			final BufferedImageCacheLoaderConfiguration cacheLoaderConf)
 	{
-		return ImageIO.read(key);
+		_cacheLoaderConf = cacheLoaderConf;
+	}
+
+	@Override
+	public BufferedImage load(final String key) throws Exception
+	{
+		final char[] subdir = new char[3];
+		key.getChars(0, 2, subdir, 0);
+		subdir[2] = File.separatorChar;
+		final File imagePath = new File(_cacheLoaderConf.getPictureDirectory(),
+				new String(subdir) + key);
+		return ImageIO.read(imagePath);
 	}
 }

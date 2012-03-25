@@ -88,11 +88,6 @@ public final class SQLFileListConnection
 	 */
 	public static final String PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME = "modified_timestamp";
 
-	/**
-	 * Name for the 'path' column of the 'picture' table.
-	 */
-	public static final String PICTURE_PATH_COLUMN_NAME = "path";
-
 	// picture_tag table
 	/**
 	 * Name for the 'picture_tag' table.
@@ -213,8 +208,8 @@ public final class SQLFileListConnection
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_PATH_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?, ?)");
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME
+				+ ") VALUES(?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
@@ -230,9 +225,9 @@ public final class SQLFileListConnection
 		_psLoadPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_PATH_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME
-				+ " WHERE " + PICTURE_ID_COLUMN_NAME + " =?");
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " FROM "
+				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
+				+ " =?");
 		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
@@ -295,8 +290,7 @@ public final class SQLFileListConnection
 				+ PICTURE_GRADE_COLUMN_NAME + " integer, "
 				+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
 				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
-				+ PICTURE_PATH_COLUMN_NAME + " text)");
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer)");
 		// picture_tag table
 		statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
 				+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
@@ -357,7 +351,6 @@ public final class SQLFileListConnection
 		_psInsertPicture.setInt(3, picture.getWidth());
 		_psInsertPicture.setInt(4, picture.getHeight());
 		_psInsertPicture.setLong(5, picture.getModifiedTimestamp());
-		_psInsertPicture.setString(6, picture.getImagePath().toString());
 		return _psInsertPicture.executeUpdate() > 0;
 	}
 

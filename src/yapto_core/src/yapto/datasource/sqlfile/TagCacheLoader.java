@@ -2,7 +2,7 @@ package yapto.datasource.sqlfile;
 
 import java.sql.ResultSet;
 
-import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
+import yapto.datasource.sqlfile.config.BufferedImageCacheLoaderConfiguration;
 import yapto.datasource.tag.Tag;
 
 import com.google.common.cache.CacheLoader;
@@ -18,7 +18,7 @@ public final class TagCacheLoader extends CacheLoader<Integer, Tag>
 	/**
 	 * The configuration of this FsPictureCacheLoader.
 	 */
-	private final FsPictureCacheLoaderConfiguration _conf;
+	private final BufferedImageCacheLoaderConfiguration _conf;
 
 	/**
 	 * Object holding the connection to the database and the prepared
@@ -35,7 +35,7 @@ public final class TagCacheLoader extends CacheLoader<Integer, Tag>
 	 *            object holding the connection to the database and the prepared
 	 *            statements.
 	 */
-	public TagCacheLoader(final FsPictureCacheLoaderConfiguration conf,
+	public TagCacheLoader(final BufferedImageCacheLoaderConfiguration conf,
 			final SQLFileListConnection fileListConnection)
 	{
 		_conf = conf;

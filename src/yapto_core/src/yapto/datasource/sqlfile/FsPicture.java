@@ -2,7 +2,6 @@ package yapto.datasource.sqlfile;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -30,11 +29,6 @@ public final class FsPicture implements IPicture
 	private final String _strId;
 
 	/**
-	 * Path to the file holding the image.
-	 */
-	private final File _imagePath;
-
-	/**
 	 * Set containing all the {@link Tag}s associated with this
 	 * {@link FsPicture}.
 	 */
@@ -48,7 +42,7 @@ public final class FsPicture implements IPicture
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<File, BufferedImage> _imageCache;
+	private final LoadingCache<String, BufferedImage> _imageCache;
 
 	/**
 	 * Dimension of the picture.
@@ -87,8 +81,6 @@ public final class FsPicture implements IPicture
 	 *            coming.
 	 * @param strId
 	 *            the id of the picture.
-	 * @param imagePath
-	 *            the path to the image file.
 	 * @param iWidth
 	 *            the width of the picture.
 	 * @param iHeight
@@ -96,14 +88,12 @@ public final class FsPicture implements IPicture
 	 * @param lTimestamp
 	 *            the timestamp of the last modification of this picture.
 	 */
-	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
+	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
-			final File imagePath, final int iWidth, final int iHeight,
-			final long lTimestamp)
+			final int iWidth, final int iHeight, final long lTimestamp)
 	{
 		_strId = strId;
 		_imageCache = imageCache;
-		_imagePath = imagePath;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
 		synchronized (_lock)
@@ -136,14 +126,12 @@ public final class FsPicture implements IPicture
 	 * @param tagList
 	 *            list of {@link Tag}s.
 	 */
-	public FsPicture(final LoadingCache<File, BufferedImage> imageCache,
+	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
-			final File imagePath, final int iWidth, final int iHeight,
-			final long lTimestamp, final int iPictureGrade,
-			final List<Tag> tagList)
+			final int iWidth, final int iHeight, final long lTimestamp,
+			final int iPictureGrade, final List<Tag> tagList)
 	{
-		this(imageCache, dataSource, strId, imagePath, iWidth, iHeight,
-				lTimestamp);
+		this(imageCache, dataSource, strId, iWidth, iHeight, lTimestamp);
 		_tagSet.addAll(tagList);
 		synchronized (_lock)
 		{
@@ -168,7 +156,7 @@ public final class FsPicture implements IPicture
 	{
 		try
 		{
-			return _imageCache.get(_imagePath);
+			return _imageCache.get(_strId);
 		}
 		catch (final ExecutionException e)
 		{
@@ -268,15 +256,5 @@ public final class FsPicture implements IPicture
 			_bModified = true;
 			_iPictureGrade = iPictureGrade;
 		}
-	}
-
-	/**
-	 * Get the path to the file holding the image.
-	 * 
-	 * @return the path to the file holding the image.
-	 */
-	public File getImagePath()
-	{
-		return _imagePath;
 	}
 }

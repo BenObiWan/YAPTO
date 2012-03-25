@@ -25,7 +25,7 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
-import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
+import yapto.datasource.sqlfile.config.BufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -78,7 +78,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<File, BufferedImage> _imageCache;
+	private final LoadingCache<String, BufferedImage> _imageCache;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link Tag}.
@@ -104,7 +104,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *            configuration for this {@link SQLFileDataSource}.
 	 * @param cacheLoaderConf
 	 *            configuration for the
-	 *            {@link FsPictureCacheLoaderConfiguration}.
+	 *            {@link BufferedImageCacheLoaderConfiguration}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in the {@link IPictureBrowser}.
@@ -118,7 +118,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *             directories.
 	 */
 	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf,
-			final FsPictureCacheLoaderConfiguration cacheLoaderConf,
+			final BufferedImageCacheLoaderConfiguration cacheLoaderConf,
 			final EventBus bus) throws SQLException, ClassNotFoundException,
 			IOException
 	{
@@ -132,13 +132,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_tagCache = CacheBuilder.newBuilder().build(tagLoader);
 
 		// image cache
-		final CacheLoader<File, BufferedImage> imageLoader = new BufferedImageCacheLoader();
+		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
+				cacheLoaderConf);
 		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
 		// picture cache
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				cacheLoaderConf, _fileListConnection, _imageCache, _tagCache,
-				this);
+				_fileListConnection, _imageCache, _tagCache, this);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
 				_fileListConnection);
 		_pictureCache = CacheBuilder.newBuilder()

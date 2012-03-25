@@ -1,12 +1,10 @@
 package yapto.datasource.sqlfile;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import yapto.datasource.IDataSource;
-import yapto.datasource.sqlfile.config.FsPictureCacheLoaderConfiguration;
 import yapto.datasource.tag.Tag;
 
 import com.google.common.cache.CacheLoader;
@@ -21,11 +19,6 @@ import com.google.common.cache.LoadingCache;
 public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 {
 	/**
-	 * The configuration of this FsPictureCacheLoader.
-	 */
-	private final FsPictureCacheLoaderConfiguration _conf;
-
-	/**
 	 * Object holding the connection to the database and the prepared
 	 * statements.
 	 */
@@ -34,7 +27,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<File, BufferedImage> _imageCache;
+	private final LoadingCache<String, BufferedImage> _imageCache;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link Tag}.
@@ -49,8 +42,6 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	/**
 	 * Creates a new FsPictureCacheLoader.
 	 * 
-	 * @param conf
-	 *            the configuration for this FsPictureCacheLoader.
 	 * @param fileListConnection
 	 *            object holding the connection to the database and the prepared
 	 *            statements.
@@ -61,13 +52,11 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 * @param dataSource
 	 *            {@link IDataSource} of this FsPictureCacheLoader.
 	 */
-	public FsPictureCacheLoader(final FsPictureCacheLoaderConfiguration conf,
-			final SQLFileListConnection fileListConnection,
-			final LoadingCache<File, BufferedImage> imageCache,
+	public FsPictureCacheLoader(final SQLFileListConnection fileListConnection,
+			final LoadingCache<String, BufferedImage> imageCache,
 			final LoadingCache<Integer, Tag> tagCache,
 			final IDataSource<FsPicture> dataSource)
 	{
-		_conf = conf;
 		_fileListConnection = fileListConnection;
 		_imageCache = imageCache;
 		_tagCache = tagCache;
@@ -90,9 +79,6 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 					_imageCache,
 					_dataSource,
 					key,
-					new File(
-							pictureRes
-									.getString(SQLFileListConnection.PICTURE_PATH_COLUMN_NAME)),
 					pictureRes
 							.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
 					pictureRes

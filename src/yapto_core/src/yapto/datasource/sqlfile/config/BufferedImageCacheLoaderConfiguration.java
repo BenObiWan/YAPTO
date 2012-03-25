@@ -9,7 +9,7 @@ import yapto.datasource.sqlfile.FsPictureCacheLoader;
  * @author benobiwan
  * 
  */
-public interface FsPictureCacheLoaderConfiguration extends
+public interface BufferedImageCacheLoaderConfiguration extends
 		IDataSourceConfiguration
 {
 	/**
