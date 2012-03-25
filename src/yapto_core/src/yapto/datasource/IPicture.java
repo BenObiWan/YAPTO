@@ -43,7 +43,7 @@ public interface IPicture extends Comparable<IPicture>
 	 * 
 	 * @return the time stamp of the last modification of this {@link IPicture}.
 	 */
-	long getTimestamp();
+	long getModifiedTimestamp();
 
 	/**
 	 * Get the {@link IDataSource} from which this {@link IPicture} is coming.

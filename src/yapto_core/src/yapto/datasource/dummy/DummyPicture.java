@@ -91,7 +91,7 @@ public final class DummyPicture implements IPicture
 	}
 
 	@Override
-	public long getTimestamp()
+	public long getModifiedTimestamp()
 	{
 		// TODO Auto-generated method stub
 		return 0;

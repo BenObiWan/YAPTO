@@ -58,7 +58,7 @@ public final class FsPicture implements IPicture
 	/**
 	 * The timestamp of the last modification of this picture.
 	 */
-	private long _lTimestamp;
+	private long _lModifiedTimestamp;
 
 	/**
 	 * The grade of this picture.
@@ -108,7 +108,7 @@ public final class FsPicture implements IPicture
 		_pictureDimension = new Dimension(iWidth, iHeight);
 		synchronized (_lock)
 		{
-			_lTimestamp = lTimestamp;
+			_lModifiedTimestamp = lTimestamp;
 		}
 	}
 
@@ -177,11 +177,11 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public long getTimestamp()
+	public long getModifiedTimestamp()
 	{
 		synchronized (_lock)
 		{
-			return _lTimestamp;
+			return _lModifiedTimestamp;
 		}
 	}
 
@@ -220,7 +220,7 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			_lTimestamp = System.currentTimeMillis();
+			_lModifiedTimestamp = System.currentTimeMillis();
 			_bModified = true;
 		}
 		_tagSet.add(newTag);
@@ -231,7 +231,7 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			_lTimestamp = System.currentTimeMillis();
+			_lModifiedTimestamp = System.currentTimeMillis();
 			_bModified = true;
 		}
 		_tagSet.remove(tag);
@@ -264,7 +264,7 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			_lTimestamp = System.currentTimeMillis();
+			_lModifiedTimestamp = System.currentTimeMillis();
 			_bModified = true;
 			_iPictureGrade = iPictureGrade;
 		}

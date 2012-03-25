@@ -356,7 +356,7 @@ public final class SQLFileListConnection
 		_psInsertPicture.setInt(2, picture.getPictureGrade());
 		_psInsertPicture.setInt(3, picture.getWidth());
 		_psInsertPicture.setInt(4, picture.getHeight());
-		_psInsertPicture.setLong(5, picture.getTimestamp());
+		_psInsertPicture.setLong(5, picture.getModifiedTimestamp());
 		_psInsertPicture.setString(6, picture.getImagePath().toString());
 		return _psInsertPicture.executeUpdate() > 0;
 	}
@@ -397,7 +397,7 @@ public final class SQLFileListConnection
 	{
 		_psUpdatePictureMarkAndTimestamp.clearParameters();
 		_psUpdatePictureMarkAndTimestamp.setInt(1, picture.getPictureGrade());
-		_psUpdatePictureMarkAndTimestamp.setLong(2, picture.getTimestamp());
+		_psUpdatePictureMarkAndTimestamp.setLong(2, picture.getModifiedTimestamp());
 		_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
 		_psUpdatePictureMarkAndTimestamp.executeUpdate();
 		updateTags(picture);
