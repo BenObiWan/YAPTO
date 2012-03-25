@@ -84,9 +84,9 @@ public final class SQLFileListConnection
 	public static final String PICTURE_HEIGTH_COLUMN_NAME = "height";
 
 	/**
-	 * Name for the 'timestamp' column of the 'picture' table.
+	 * Name for the 'modified_timestamp' column of the 'picture' table.
 	 */
-	public static final String PICTURE_TIMESTAMP_COLUMN_NAME = "timestamp";
+	public static final String PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME = "modified_timestamp";
 
 	/**
 	 * Name for the 'path' column of the 'picture' table.
@@ -213,12 +213,12 @@ public final class SQLFileListConnection
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_PATH_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
-						+ PICTURE_TIMESTAMP_COLUMN_NAME + "=? WHERE "
+						+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + "=? WHERE "
 						+ PICTURE_ID_COLUMN_NAME + "=?");
 		_psInsertTagForPicture = _connection.prepareStatement("INSERT INTO "
 				+ PICTURE_TAG_TABLE_NAME + " ("
@@ -230,7 +230,7 @@ public final class SQLFileListConnection
 		_psLoadPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
 				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_PATH_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME
 				+ " WHERE " + PICTURE_ID_COLUMN_NAME + " =?");
 		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
@@ -295,7 +295,7 @@ public final class SQLFileListConnection
 				+ PICTURE_GRADE_COLUMN_NAME + " integer, "
 				+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
 				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
-				+ PICTURE_TIMESTAMP_COLUMN_NAME + " integer, "
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
 				+ PICTURE_PATH_COLUMN_NAME + " text)");
 		// picture_tag table
 		statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
@@ -397,7 +397,8 @@ public final class SQLFileListConnection
 	{
 		_psUpdatePictureMarkAndTimestamp.clearParameters();
 		_psUpdatePictureMarkAndTimestamp.setInt(1, picture.getPictureGrade());
-		_psUpdatePictureMarkAndTimestamp.setLong(2, picture.getModifiedTimestamp());
+		_psUpdatePictureMarkAndTimestamp.setLong(2,
+				picture.getModifiedTimestamp());
 		_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
 		_psUpdatePictureMarkAndTimestamp.executeUpdate();
 		updateTags(picture);
