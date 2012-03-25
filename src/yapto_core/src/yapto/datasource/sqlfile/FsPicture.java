@@ -54,6 +54,16 @@ public final class FsPicture implements IPicture
 	 */
 	private long _lModifiedTimestamp;
 
+//	/**
+//	 * The timestamp of the creation of this picture.
+//	 */
+//	private final long _lCreationTimestamp;
+//
+//	/**
+//	 * The timestamp of the last modification of this picture.
+//	 */
+//	private final long _lAddingTimestamp;
+
 	/**
 	 * The grade of this picture.
 	 */
@@ -113,8 +123,6 @@ public final class FsPicture implements IPicture
 	 *            coming.
 	 * @param strId
 	 *            the id of the picture.
-	 * @param imagePath
-	 *            the path to the image file.
 	 * @param iWidth
 	 *            the width of the picture.
 	 * @param iHeight
