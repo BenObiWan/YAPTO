@@ -2,8 +2,11 @@ package yapto.datasource.sqlfile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -214,25 +217,58 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		if (picturePath.canRead() && picturePath.isFile())
 		{
 			final long lAddedTimestamp = System.currentTimeMillis();
-
-			// calc md5sum
-			final String strPictureId = "";
-			// calc width and height
-			final int iWidth = 0;
-			final int iHeight = 0;
-			final long lCreationTimestamp = System.currentTimeMillis();
-			// copy file
-
-			final FsPicture picture = new FsPicture(_imageCache, this,
-					strPictureId, picturePath.getName(), iWidth, iHeight,
-					lAddedTimestamp, lCreationTimestamp, lAddedTimestamp);
 			try
 			{
-				_fileListConnection.insertPicture(picture);
+				// calc id
+				final MessageDigest mdSha256 = MessageDigest
+						.getInstance("SHA-256");
+				final FileInputStream stream = new FileInputStream(picturePath);
+				final byte[] dataBytes = new byte[4096];
+
+				int byteRead = 0;
+				while ((byteRead = stream.read(dataBytes)) != -1)
+				{
+					mdSha256.update(dataBytes, 0, byteRead);
+				}
+
+				final byte[] mdbytes = mdSha256.digest();
+				final StringBuffer sb = new StringBuffer();
+				for (final byte mdbyte : mdbytes)
+				{
+					sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16)
+							.substring(1));
+				}
+
+				final String strPictureId = sb.toString();
+
+				if (!_pictureIdList.contains(strPictureId))
+				{
+					// calc width and height
+					final int iWidth = 0;
+					final int iHeight = 0;
+					final long lCreationTimestamp = System.currentTimeMillis();
+					// copy file
+					File destFile = new File(_conf.getPictureDirectory(),
+							strPictureId.substring(0, 2) + '/' + strPictureId);
+
+					final FsPicture picture = new FsPicture(_imageCache, this,
+							strPictureId, picturePath.getName(), iWidth,
+							iHeight, lAddedTimestamp, lCreationTimestamp,
+							lAddedTimestamp);
+					try
+					{
+						_fileListConnection.insertPicture(picture);
+						_pictureIdList.add(strPictureId);
+					}
+					catch (final SQLException e)
+					{
+						LOGGER.error(e.getMessage(), e);
+					}
+				}
 			}
-			catch (final SQLException e)
+			catch (NoSuchAlgorithmException e1)
 			{
-				LOGGER.error(e.getMessage(), e);
+				LOGGER.error(e1.getMessage(), e1);
 			}
 		}
 	}
