@@ -59,15 +59,15 @@ public final class FsPicture implements IPicture
 	 */
 	private long _lModifiedTimestamp;
 
-//	/**
-//	 * The timestamp of the creation of this picture.
-//	 */
-//	private final long _lCreationTimestamp;
-//
-//	/**
-//	 * The timestamp of the last modification of this picture.
-//	 */
-//	private final long _lAddingTimestamp;
+	/**
+	 * The timestamp of the creation of this picture.
+	 */
+	private final long _lCreationTimestamp;
+
+	/**
+	 * The timestamp of the addition of this picture to the {@link IDataSource}.
+	 */
+	private final long _lAddingTimestamp;
 
 	/**
 	 * The grade of this picture.
@@ -102,22 +102,30 @@ public final class FsPicture implements IPicture
 	 *            the width of the picture.
 	 * @param iHeight
 	 *            the height of the picture.
-	 * @param lTimestamp
+	 * @param lModifiedTimestamp
 	 *            the timestamp of the last modification of this picture.
+	 * @param lCreationTimestamp
+	 *            the timestamp of the creation of this picture.
+	 * @param lAddingTimestamp
+	 *            the timestamp of the addition of this picture to the
+	 *            {@link IDataSource}.
 	 */
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
 			final String strOrignialFileName, final int iWidth,
-			final int iHeight, final long lTimestamp)
+			final int iHeight, final long lModifiedTimestamp,
+			final long lCreationTimestamp, final long lAddingTimestamp)
 	{
 		_strId = strId;
 		_strOrignialFileName = strOrignialFileName;
 		_imageCache = imageCache;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
+		_lCreationTimestamp = lCreationTimestamp;
+		_lAddingTimestamp = lAddingTimestamp;
 		synchronized (_lock)
 		{
-			_lModifiedTimestamp = lTimestamp;
+			_lModifiedTimestamp = lModifiedTimestamp;
 		}
 	}
 
@@ -138,8 +146,13 @@ public final class FsPicture implements IPicture
 	 *            the width of the picture.
 	 * @param iHeight
 	 *            the height of the picture.
-	 * @param lTimestamp
+	 * @param lModifiedTimestamp
 	 *            the timestamp of the last modification of this picture.
+	 * @param lCreationTimestamp
+	 *            the timestamp of the creation of this picture.
+	 * @param lAddingTimestamp
+	 *            the timestamp of the addition of this picture to the
+	 *            {@link IDataSource}.
 	 * @param iPictureGrade
 	 *            the new grade of this picture.
 	 * @param tagList
@@ -148,11 +161,13 @@ public final class FsPicture implements IPicture
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
 			final String strOrignialFileName, final int iWidth,
-			final int iHeight, final long lTimestamp, final int iPictureGrade,
-			final List<Tag> tagList)
+			final int iHeight, final long lModifiedTimestamp,
+			final long lCreationTimestamp, final long lAddingTimestamp,
+			final int iPictureGrade, final List<Tag> tagList)
 	{
 		this(imageCache, dataSource, strId, strOrignialFileName, iWidth,
-				iHeight, lTimestamp);
+				iHeight, lModifiedTimestamp, lCreationTimestamp,
+				lAddingTimestamp);
 		_tagSet.addAll(tagList);
 		synchronized (_lock)
 		{
@@ -287,5 +302,28 @@ public final class FsPicture implements IPicture
 	public String getOrignialFileName()
 	{
 		return _strOrignialFileName;
+
+	}
+
+	/**
+	 * Get the timestamp of the creation of this picture.
+	 * 
+	 * @return the timestamp of the creation of this picture.
+	 */
+	public long getCreationTimestamp()
+	{
+		return _lCreationTimestamp;
+	}
+
+	/**
+	 * Get the timestamp of the addition of this picture to the
+	 * {@link IDataSource}.
+	 * 
+	 * @return the timestamp of the addition of this picture to the
+	 *         {@link IDataSource}.
+	 */
+	public long getAddingTimestamp()
+	{
+		return _lAddingTimestamp;
 	}
 }
