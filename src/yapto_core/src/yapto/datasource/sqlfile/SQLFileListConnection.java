@@ -271,20 +271,23 @@ public final class SQLFileListConnection
 	 */
 	public void saveTagToDatabase(final Tag tag) throws SQLException
 	{
-		_psInsertTag.clearParameters();
-		_psInsertTag.setInt(1, tag.getTagId());
-		_psInsertTag.setString(2, tag.getName());
-		_psInsertTag.setString(3, tag.getDescription());
-		if (tag.getParent() == null)
+		synchronized (_psInsertTag)
 		{
-			_psInsertTag.setInt(4, -1);
+			_psInsertTag.clearParameters();
+			_psInsertTag.setInt(1, tag.getTagId());
+			_psInsertTag.setString(2, tag.getName());
+			_psInsertTag.setString(3, tag.getDescription());
+			if (tag.getParent() == null)
+			{
+				_psInsertTag.setInt(4, -1);
+			}
+			else
+			{
+				_psInsertTag.setInt(4, tag.getParent().getTagId());
+			}
+			_psInsertTag.setBoolean(5, tag.isSelectable());
+			_psInsertTag.executeUpdate();
 		}
-		else
-		{
-			_psInsertTag.setInt(4, tag.getParent().getTagId());
-		}
-		_psInsertTag.setBoolean(5, tag.isSelectable());
-		_psInsertTag.executeUpdate();
 	}
 
 	/**
@@ -366,13 +369,16 @@ public final class SQLFileListConnection
 	 */
 	public boolean insertPicture(final FsPicture picture) throws SQLException
 	{
-		_psInsertPicture.clearParameters();
-		_psInsertPicture.setString(1, picture.getId());
-		_psInsertPicture.setInt(2, picture.getPictureGrade());
-		_psInsertPicture.setInt(3, picture.getWidth());
-		_psInsertPicture.setInt(4, picture.getHeight());
-		_psInsertPicture.setLong(5, picture.getModifiedTimestamp());
-		return _psInsertPicture.executeUpdate() > 0;
+		synchronized (_psInsertPicture)
+		{
+			_psInsertPicture.clearParameters();
+			_psInsertPicture.setString(1, picture.getId());
+			_psInsertPicture.setInt(2, picture.getPictureGrade());
+			_psInsertPicture.setInt(3, picture.getWidth());
+			_psInsertPicture.setInt(4, picture.getHeight());
+			_psInsertPicture.setLong(5, picture.getModifiedTimestamp());
+			return _psInsertPicture.executeUpdate() > 0;
+		}
 	}
 
 	/**
@@ -386,15 +392,21 @@ public final class SQLFileListConnection
 	 */
 	public void updateTags(final FsPicture picture) throws SQLException
 	{
-		_psRemoveTagsForPicture.clearParameters();
-		_psRemoveTagsForPicture.setString(1, picture.getId());
-		_psRemoveTagsForPicture.execute();
-		for (final Tag tag : picture.getTagSet())
+		synchronized (_psRemoveTagsForPicture)
 		{
-			_psInsertTagForPicture.clearParameters();
-			_psInsertTagForPicture.setInt(1, tag.getTagId());
-			_psInsertTagForPicture.setString(2, picture.getId());
-			_psInsertTagForPicture.executeUpdate();
+			_psRemoveTagsForPicture.clearParameters();
+			_psRemoveTagsForPicture.setString(1, picture.getId());
+			_psRemoveTagsForPicture.execute();
+		}
+		synchronized (_psInsertTagForPicture)
+		{
+			for (final Tag tag : picture.getTagSet())
+			{
+				_psInsertTagForPicture.clearParameters();
+				_psInsertTagForPicture.setInt(1, tag.getTagId());
+				_psInsertTagForPicture.setString(2, picture.getId());
+				_psInsertTagForPicture.executeUpdate();
+			}
 		}
 	}
 
@@ -409,12 +421,16 @@ public final class SQLFileListConnection
 	 */
 	public void updatePicture(final FsPicture picture) throws SQLException
 	{
-		_psUpdatePictureMarkAndTimestamp.clearParameters();
-		_psUpdatePictureMarkAndTimestamp.setInt(1, picture.getPictureGrade());
-		_psUpdatePictureMarkAndTimestamp.setLong(2,
-				picture.getModifiedTimestamp());
-		_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
-		_psUpdatePictureMarkAndTimestamp.executeUpdate();
+		synchronized (_psUpdatePictureMarkAndTimestamp)
+		{
+			_psUpdatePictureMarkAndTimestamp.clearParameters();
+			_psUpdatePictureMarkAndTimestamp.setInt(1,
+					picture.getPictureGrade());
+			_psUpdatePictureMarkAndTimestamp.setLong(2,
+					picture.getModifiedTimestamp());
+			_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
+			_psUpdatePictureMarkAndTimestamp.executeUpdate();
+		}
 		updateTags(picture);
 	}
 
@@ -430,14 +446,17 @@ public final class SQLFileListConnection
 	 */
 	public int countPictures(final Tag tag) throws SQLException
 	{
-		_psCountPicturesByTag.clearParameters();
-		_psCountPicturesByTag.setInt(1, tag.getTagId());
-		final ResultSet res = _psCountPicturesByTag.executeQuery();
-		if (res.next())
+		synchronized (_psCountPicturesByTag)
 		{
-			return res.getInt(PICTURE_TAG_PICTURE_ID_COLUMN_NAME);
+			_psCountPicturesByTag.clearParameters();
+			_psCountPicturesByTag.setInt(1, tag.getTagId());
+			final ResultSet res = _psCountPicturesByTag.executeQuery();
+			if (res.next())
+			{
+				return res.getInt(PICTURE_TAG_PICTURE_ID_COLUMN_NAME);
+			}
+			return 0;
 		}
-		return 0;
 	}
 
 	/**
@@ -450,12 +469,15 @@ public final class SQLFileListConnection
 	 */
 	public int countPictures() throws SQLException
 	{
-		final ResultSet res = _psCountPictures.executeQuery();
-		if (res.next())
+		synchronized (_psCountPictures)
 		{
-			return res.getInt(PICTURE_ID_COLUMN_NAME);
+			final ResultSet res = _psCountPictures.executeQuery();
+			if (res.next())
+			{
+				return res.getInt(PICTURE_ID_COLUMN_NAME);
+			}
+			return 0;
 		}
-		return 0;
 	}
 
 	/**
@@ -470,14 +492,17 @@ public final class SQLFileListConnection
 	 */
 	public String[] selectPictures(final Tag tag) throws SQLException
 	{
-		_psSelectPicturesByTag.clearParameters();
-		_psSelectPicturesByTag.setInt(1, tag.getTagId());
 		final LinkedList<String> pictureList = new LinkedList<String>();
-		final ResultSet response = _psSelectPicturesByTag.executeQuery();
-		while (response.next())
+		synchronized (_psSelectPicturesByTag)
 		{
-			pictureList.add(response
-					.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+			_psSelectPicturesByTag.clearParameters();
+			_psSelectPicturesByTag.setInt(1, tag.getTagId());
+			final ResultSet response = _psSelectPicturesByTag.executeQuery();
+			while (response.next())
+			{
+				pictureList.add(response
+						.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+			}
 		}
 		final String[] res = new String[pictureList.size()];
 		return pictureList.toArray(res);
@@ -495,9 +520,12 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadPicture(final String strPictureId) throws SQLException
 	{
-		_psLoadPicture.clearParameters();
-		_psLoadPicture.setString(1, strPictureId);
-		return _psLoadPicture.executeQuery();
+		synchronized (_psLoadPicture)
+		{
+			_psLoadPicture.clearParameters();
+			_psLoadPicture.setString(1, strPictureId);
+			return _psLoadPicture.executeQuery();
+		}
 	}
 
 	/**
@@ -513,14 +541,17 @@ public final class SQLFileListConnection
 	public Integer[] loadTagsOfPicture(final String strPictureId)
 			throws SQLException
 	{
-		_psLoadTagsOfPicture.clearParameters();
-		_psLoadTagsOfPicture.setString(1, strPictureId);
 		final LinkedList<Integer> tagList = new LinkedList<Integer>();
-		final ResultSet response = _psLoadTagsOfPicture.executeQuery();
-		while (response.next())
+		synchronized (_psLoadTagsOfPicture)
 		{
-			tagList.add(Integer.valueOf(response
-					.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
+			_psLoadTagsOfPicture.clearParameters();
+			_psLoadTagsOfPicture.setString(1, strPictureId);
+			final ResultSet response = _psLoadTagsOfPicture.executeQuery();
+			while (response.next())
+			{
+				tagList.add(Integer.valueOf(response
+						.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
+			}
 		}
 		final Integer[] res = new Integer[tagList.size()];
 		return tagList.toArray(res);
@@ -538,9 +569,12 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadTag(final int iTagId) throws SQLException
 	{
-		_psLoadTag.clearParameters();
-		_psLoadTag.setInt(1, iTagId);
-		return _psLoadTag.executeQuery();
+		synchronized (_psLoadTag)
+		{
+			_psLoadTag.clearParameters();
+			_psLoadTag.setInt(1, iTagId);
+			return _psLoadTag.executeQuery();
+		}
 	}
 
 	/**
@@ -553,6 +587,9 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadPictureList() throws SQLException
 	{
-		return _psListPicture.executeQuery();
+		synchronized (_psListPicture)
+		{
+			return _psListPicture.executeQuery();
+		}
 	}
 }
