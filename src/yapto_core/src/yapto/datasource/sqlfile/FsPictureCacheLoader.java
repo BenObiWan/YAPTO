@@ -66,35 +66,47 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	@Override
 	public FsPicture load(final String key) throws Exception
 	{
-		final ResultSet pictureRes = _fileListConnection.loadPicture(key);
-		if (pictureRes != null)
+		ResultSet pictureRes = null;
+		try
 		{
-			final Integer[] tagIds = _fileListConnection.loadTagsOfPicture(key);
-			final LinkedList<Tag> tagList = new LinkedList<Tag>();
-			for (final Integer tagId : tagIds)
+			pictureRes = _fileListConnection.loadPicture(key);
+			if (pictureRes != null)
 			{
-				tagList.add(_tagCache.get(tagId));
+				final Integer[] tagIds = _fileListConnection
+						.loadTagsOfPicture(key);
+				final LinkedList<Tag> tagList = new LinkedList<Tag>();
+				for (final Integer tagId : tagIds)
+				{
+					tagList.add(_tagCache.get(tagId));
+				}
+				return new FsPicture(
+						_imageCache,
+						_dataSource,
+						key,
+						pictureRes
+								.getString(SQLFileListConnection.PICTURE_ORIGINAL_NAME),
+						pictureRes
+								.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
+						pictureRes
+								.getInt(SQLFileListConnection.PICTURE_HEIGTH_COLUMN_NAME),
+						pictureRes
+								.getLong(SQLFileListConnection.PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME),
+						pictureRes
+								.getLong(SQLFileListConnection.PICTURE_CREATION_TIMESTAMP_COLUMN_NAME),
+						pictureRes
+								.getLong(SQLFileListConnection.PICTURE_ADDING_TIMESTAMP_COLUMN_NAME),
+						pictureRes
+								.getInt(SQLFileListConnection.PICTURE_GRADE_COLUMN_NAME),
+						tagList);
 			}
-			return new FsPicture(
-					_imageCache,
-					_dataSource,
-					key,
-					pictureRes
-							.getString(SQLFileListConnection.PICTURE_ORIGINAL_NAME),
-					pictureRes
-							.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
-					pictureRes
-							.getInt(SQLFileListConnection.PICTURE_HEIGTH_COLUMN_NAME),
-					pictureRes
-							.getLong(SQLFileListConnection.PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME),
-					pictureRes
-							.getLong(SQLFileListConnection.PICTURE_CREATION_TIMESTAMP_COLUMN_NAME),
-					pictureRes
-							.getLong(SQLFileListConnection.PICTURE_ADDING_TIMESTAMP_COLUMN_NAME),
-					pictureRes
-							.getInt(SQLFileListConnection.PICTURE_GRADE_COLUMN_NAME),
-					tagList);
+			return null;
 		}
-		return null;
+		finally
+		{
+			if (pictureRes != null)
+			{
+				pictureRes.close();
+			}
+		}
 	}
 }

@@ -450,12 +450,23 @@ public final class SQLFileListConnection
 		{
 			_psCountPicturesByTag.clearParameters();
 			_psCountPicturesByTag.setInt(1, tag.getTagId());
-			final ResultSet res = _psCountPicturesByTag.executeQuery();
-			if (res.next())
+			ResultSet res = null;
+			try
 			{
-				return res.getInt(PICTURE_TAG_PICTURE_ID_COLUMN_NAME);
+				res = _psCountPicturesByTag.executeQuery();
+				if (res.next())
+				{
+					return res.getInt(PICTURE_TAG_PICTURE_ID_COLUMN_NAME);
+				}
+				return 0;
 			}
-			return 0;
+			finally
+			{
+				if (res != null)
+				{
+					res.close();
+				}
+			}
 		}
 	}
 
@@ -471,12 +482,23 @@ public final class SQLFileListConnection
 	{
 		synchronized (_psCountPictures)
 		{
-			final ResultSet res = _psCountPictures.executeQuery();
-			if (res.next())
+			ResultSet res = null;
+			try
 			{
-				return res.getInt(PICTURE_ID_COLUMN_NAME);
+				res = _psCountPictures.executeQuery();
+				if (res.next())
+				{
+					return res.getInt(PICTURE_ID_COLUMN_NAME);
+				}
+				return 0;
 			}
-			return 0;
+			finally
+			{
+				if (res != null)
+				{
+					res.close();
+				}
+			}
 		}
 	}
 
@@ -497,11 +519,22 @@ public final class SQLFileListConnection
 		{
 			_psSelectPicturesByTag.clearParameters();
 			_psSelectPicturesByTag.setInt(1, tag.getTagId());
-			final ResultSet response = _psSelectPicturesByTag.executeQuery();
-			while (response.next())
+			ResultSet response = null;
+			try
 			{
-				pictureList.add(response
-						.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+				response = _psSelectPicturesByTag.executeQuery();
+				while (response.next())
+				{
+					pictureList.add(response
+							.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+				}
+			}
+			finally
+			{
+				if (response != null)
+				{
+					response.close();
+				}
 			}
 		}
 		final String[] res = new String[pictureList.size()];
@@ -546,11 +579,22 @@ public final class SQLFileListConnection
 		{
 			_psLoadTagsOfPicture.clearParameters();
 			_psLoadTagsOfPicture.setString(1, strPictureId);
-			final ResultSet response = _psLoadTagsOfPicture.executeQuery();
-			while (response.next())
+			ResultSet response = null;
+			try
 			{
-				tagList.add(Integer.valueOf(response
-						.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
+				response = _psLoadTagsOfPicture.executeQuery();
+				while (response.next())
+				{
+					tagList.add(Integer.valueOf(response
+							.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
+				}
+			}
+			finally
+			{
+				if (response != null)
+				{
+					response.close();
+				}
 			}
 		}
 		final Integer[] res = new Integer[tagList.size()];

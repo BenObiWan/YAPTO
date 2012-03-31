@@ -45,12 +45,23 @@ public final class TagCacheLoader extends CacheLoader<Integer, Tag>
 	@Override
 	public Tag load(final Integer key) throws Exception
 	{
-		final ResultSet res = _fileListConnection.loadTag(key.intValue());
-		return new Tag(
-				_conf.getDataSourceId(),
-				res.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME),
-				res.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME),
-				res.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME),
-				res.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME));
+		ResultSet res = null;
+		try
+		{
+			res = _fileListConnection.loadTag(key.intValue());
+			return new Tag(
+					_conf.getDataSourceId(),
+					res.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME),
+					res.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME),
+					res.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME),
+					res.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME));
+		}
+		finally
+		{
+			if (res != null)
+			{
+				res.close();
+			}
+		}
 	}
 }
