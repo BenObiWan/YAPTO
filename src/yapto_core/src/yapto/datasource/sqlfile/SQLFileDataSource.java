@@ -211,8 +211,30 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			throws OperationNotSupportedException, FileNotFoundException,
 			IOException
 	{
-		// TODO Auto-generated method stub
+		if (picturePath.canRead() && picturePath.isFile())
+		{
+			final long lAddedTimestamp = System.currentTimeMillis();
 
+			// calc md5sum
+			final String strPictureId = "";
+			// calc width and height
+			final int iWidth = 0;
+			final int iHeight = 0;
+			final long lCreationTimestamp = System.currentTimeMillis();
+			// copy file
+
+			final FsPicture picture = new FsPicture(_imageCache, this,
+					strPictureId, picturePath.getName(), iWidth, iHeight,
+					lAddedTimestamp, lCreationTimestamp, lAddedTimestamp);
+			try
+			{
+				_fileListConnection.insertPicture(picture);
+			}
+			catch (final SQLException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
 	}
 
 	@Override
