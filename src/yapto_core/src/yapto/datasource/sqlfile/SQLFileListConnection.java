@@ -261,6 +261,14 @@ public final class SQLFileListConnection
 	}
 
 	/**
+	 * Properly close the connection to the database.
+	 */
+	public void close()
+	{
+		// TODO
+	}
+
+	/**
 	 * Save the given {@link Tag} to the database.
 	 * 
 	 * @param tag
@@ -298,28 +306,40 @@ public final class SQLFileListConnection
 	 */
 	public void createTables() throws SQLException
 	{
-		final Statement statement = _connection.createStatement();
-		// Tag table
-		statement.executeUpdate("create table " + TAG_TABLE_NAME
-				+ " if not exists (" + TAG_ID_COLUMN_NAME + " integer, "
-				+ TAG_NAME_COLUMN_NAME + " text, "
-				+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
-				+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
-				+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
-		// picture table
-		statement.executeUpdate("create table " + PICTURE_TABLE_NAME
-				+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " text, "
-				+ PICTURE_ORIGINAL_NAME + " text, " + PICTURE_GRADE_COLUMN_NAME
-				+ " integer, " + PICTURE_WIDTH_COLUMN_NAME + " integer, "
-				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
-				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
-				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer)");
-		// picture_tag table
-		statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
-				+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
-				+ " integer, " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME
-				+ " integer)");
+		Statement statement = null;
+		try
+		{
+			statement = _connection.createStatement();
+			// Tag table
+			statement.executeUpdate("create table " + TAG_TABLE_NAME
+					+ " if not exists (" + TAG_ID_COLUMN_NAME + " integer, "
+					+ TAG_NAME_COLUMN_NAME + " text, "
+					+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
+					+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
+					+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
+			// picture table
+			statement.executeUpdate("create table " + PICTURE_TABLE_NAME
+					+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " text, "
+					+ PICTURE_ORIGINAL_NAME + " text, "
+					+ PICTURE_GRADE_COLUMN_NAME + " integer, "
+					+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
+					+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
+					+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
+					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
+					+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer)");
+			// picture_tag table
+			statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
+					+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
+					+ " integer, " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME
+					+ " integer)");
+		}
+		finally
+		{
+			if (statement != null)
+			{
+				statement.close();
+			}
+		}
 	}
 
 	/**
@@ -332,13 +352,22 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadTagList() throws SQLException
 	{
-		final Statement statementLoad = _connection.createStatement();
-		return statementLoad
-				.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
-						+ TAG_NAME_COLUMN_NAME + ", "
-						+ TAG_DESCRIPTION_COLUMN_NAME + ", "
-						+ TAG_SELECTABLE_COLUMN_NAME + " from "
-						+ TAG_TABLE_NAME);
+		Statement statement = null;
+		try
+		{
+			statement = _connection.createStatement();
+			return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
+					+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
+					+ ", " + TAG_SELECTABLE_COLUMN_NAME + " from "
+					+ TAG_TABLE_NAME);
+		}
+		finally
+		{
+			if (statement != null)
+			{
+				statement.close();
+			}
+		}
 	}
 
 	/**
@@ -352,9 +381,20 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadParents() throws SQLException
 	{
-		final Statement statementParent = _connection.createStatement();
-		return statementParent.executeQuery("select " + TAG_ID_COLUMN_NAME
-				+ ", " + TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
+		Statement statement = null;
+		try
+		{
+			statement = _connection.createStatement();
+			return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
+					+ TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
+		}
+		finally
+		{
+			if (statement != null)
+			{
+				statement.close();
+			}
+		}
 	}
 
 	/**
