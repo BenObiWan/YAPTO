@@ -29,6 +29,11 @@ public final class FsPicture implements IPicture
 	private final String _strId;
 
 	/**
+	 * The original name of the file.
+	 */
+	private final String _strOrignialFileName;
+
+	/**
 	 * Set containing all the {@link Tag}s associated with this
 	 * {@link FsPicture}.
 	 */
@@ -91,6 +96,8 @@ public final class FsPicture implements IPicture
 	 *            coming.
 	 * @param strId
 	 *            the id of the picture.
+	 * @param strOrignialFileName
+	 *            original file name.
 	 * @param iWidth
 	 *            the width of the picture.
 	 * @param iHeight
@@ -100,9 +107,11 @@ public final class FsPicture implements IPicture
 	 */
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
-			final int iWidth, final int iHeight, final long lTimestamp)
+			final String strOrignialFileName, final int iWidth,
+			final int iHeight, final long lTimestamp)
 	{
 		_strId = strId;
+		_strOrignialFileName = strOrignialFileName;
 		_imageCache = imageCache;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
@@ -123,6 +132,8 @@ public final class FsPicture implements IPicture
 	 *            coming.
 	 * @param strId
 	 *            the id of the picture.
+	 * @param strOrignialFileName
+	 *            original file name.
 	 * @param iWidth
 	 *            the width of the picture.
 	 * @param iHeight
@@ -136,10 +147,12 @@ public final class FsPicture implements IPicture
 	 */
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
 			final IDataSource<FsPicture> dataSource, final String strId,
-			final int iWidth, final int iHeight, final long lTimestamp,
-			final int iPictureGrade, final List<Tag> tagList)
+			final String strOrignialFileName, final int iWidth,
+			final int iHeight, final long lTimestamp, final int iPictureGrade,
+			final List<Tag> tagList)
 	{
-		this(imageCache, dataSource, strId, iWidth, iHeight, lTimestamp);
+		this(imageCache, dataSource, strId, strOrignialFileName, iWidth,
+				iHeight, lTimestamp);
 		_tagSet.addAll(tagList);
 		synchronized (_lock)
 		{
@@ -264,5 +277,15 @@ public final class FsPicture implements IPicture
 			_bModified = true;
 			_iPictureGrade = iPictureGrade;
 		}
+	}
+
+	/**
+	 * Get the original name of the file.
+	 * 
+	 * @return the original name of the file.
+	 */
+	public String getOrignialFileName()
+	{
+		return _strOrignialFileName;
 	}
 }

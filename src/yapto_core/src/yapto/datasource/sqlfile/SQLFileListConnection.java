@@ -69,6 +69,11 @@ public final class SQLFileListConnection
 	public static final String PICTURE_ID_COLUMN_NAME = "id";
 
 	/**
+	 * Name for the'original_name' column of the 'picture' table.
+	 */
+	public static final String PICTURE_ORIGINAL_NAME = "original_name";
+
+	/**
 	 * Name for the 'grade' column of the 'picture' table.
 	 */
 	public static final String PICTURE_GRADE_COLUMN_NAME = "grade";
@@ -206,8 +211,9 @@ public final class SQLFileListConnection
 				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
 		_psInsertPicture = _connection.prepareStatement("INSERT INTO "
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
-				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
-				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_GRADE_COLUMN_NAME
+				+ ", " + PICTURE_WIDTH_COLUMN_NAME + ", "
+				+ PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME
 				+ ") VALUES(?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
@@ -223,8 +229,9 @@ public final class SQLFileListConnection
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
 		_psLoadPicture = _connection.prepareStatement("SELECT "
-				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
-				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_ORIGINAL_NAME
+				+ ", " + PICTURE_WIDTH_COLUMN_NAME + ", "
+				+ PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " FROM "
 				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
 				+ " =?");
@@ -287,8 +294,8 @@ public final class SQLFileListConnection
 		// picture table
 		statement.executeUpdate("create table " + PICTURE_TABLE_NAME
 				+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " text, "
-				+ PICTURE_GRADE_COLUMN_NAME + " integer, "
-				+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
+				+ PICTURE_ORIGINAL_NAME + " text, " + PICTURE_GRADE_COLUMN_NAME
+				+ " integer, " + PICTURE_WIDTH_COLUMN_NAME + " integer, "
 				+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
 				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer)");
 		// picture_tag table

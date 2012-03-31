@@ -80,6 +80,8 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 					_dataSource,
 					key,
 					pictureRes
+							.getString(SQLFileListConnection.PICTURE_ORIGINAL_NAME),
+					pictureRes
 							.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
 					pictureRes
 							.getInt(SQLFileListConnection.PICTURE_HEIGTH_COLUMN_NAME),
