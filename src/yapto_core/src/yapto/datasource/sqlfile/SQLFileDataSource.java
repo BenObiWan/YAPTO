@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
@@ -210,11 +213,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addPicture(final File picturePath)
+	public void addPicture(final File pictureFile)
 			throws OperationNotSupportedException, FileNotFoundException,
 			IOException
 	{
-		if (picturePath.canRead() && picturePath.isFile())
+		if (pictureFile.canRead() && pictureFile.isFile())
 		{
 			final long lAddedTimestamp = System.currentTimeMillis();
 			try
@@ -225,7 +228,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				FileInputStream stream = null;
 				try
 				{
-					stream = new FileInputStream(picturePath);
+					stream = new FileInputStream(pictureFile);
 					final byte[] dataBytes = new byte[4096];
 
 					int byteRead = 0;
@@ -252,6 +255,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 
 				final String strPictureId = sb.toString();
 
+				// check if already present
 				if (!_pictureIdList.contains(strPictureId))
 				{
 					// calc width and height
@@ -259,11 +263,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					final int iHeight = 0;
 					final long lCreationTimestamp = System.currentTimeMillis();
 					// copy file
-					final File destFile = new File(_conf.getPictureDirectory(),
-							strPictureId.substring(0, 2) + '/' + strPictureId);
+					final Path destPath = FileSystems.getDefault().getPath(
+							_conf.getPictureDirectory(),
+							strPictureId.substring(0, 2), strPictureId);
 
+					Files.copy(pictureFile.toPath(), destPath);
 					final FsPicture picture = new FsPicture(_imageCache, this,
-							strPictureId, picturePath.getName(), iWidth,
+							strPictureId, pictureFile.getName(), iWidth,
 							iHeight, lAddedTimestamp, lCreationTimestamp,
 							lAddedTimestamp);
 					try

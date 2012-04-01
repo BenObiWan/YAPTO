@@ -20,7 +20,7 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	/**
 	 * Add an {@link IPicture} to the {@link IDataSource}.
 	 * 
-	 * @param picturePath
+	 * @param pictureFile
 	 *            the path to the {@link IPicture} to add.
 	 * @throws FileNotFoundException
 	 *             if the file isn't found.
@@ -30,7 +30,7 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *             if this operation isn't supported by this {@link IDataSource}
 	 *             .
 	 */
-	void addPicture(File picturePath) throws OperationNotSupportedException,
+	void addPicture(File pictureFile) throws OperationNotSupportedException,
 			FileNotFoundException, IOException;
 
 	/**

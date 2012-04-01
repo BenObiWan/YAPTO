@@ -147,10 +147,10 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	}
 
 	@Override
-	public void addPicture(final File picturePath)
+	public void addPicture(final File pictureFile)
 			throws FileNotFoundException, IOException
 	{
-		final DummyPicture pict = new DummyPicture(this, picturePath);
+		final DummyPicture pict = new DummyPicture(this, pictureFile);
 		_mapPicture.put(pict.getId(), pict);
 		_listPicture.add(pict);
 	}
