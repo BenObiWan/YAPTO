@@ -222,13 +222,24 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				// calc id
 				final MessageDigest mdSha256 = MessageDigest
 						.getInstance("SHA-256");
-				final FileInputStream stream = new FileInputStream(picturePath);
-				final byte[] dataBytes = new byte[4096];
-
-				int byteRead = 0;
-				while ((byteRead = stream.read(dataBytes)) != -1)
+				FileInputStream stream = null;
+				try
 				{
-					mdSha256.update(dataBytes, 0, byteRead);
+					stream = new FileInputStream(picturePath);
+					final byte[] dataBytes = new byte[4096];
+
+					int byteRead = 0;
+					while ((byteRead = stream.read(dataBytes)) != -1)
+					{
+						mdSha256.update(dataBytes, 0, byteRead);
+					}
+				}
+				finally
+				{
+					if (stream != null)
+					{
+						stream.close();
+					}
 				}
 
 				final byte[] mdbytes = mdSha256.digest();
@@ -248,7 +259,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					final int iHeight = 0;
 					final long lCreationTimestamp = System.currentTimeMillis();
 					// copy file
-					File destFile = new File(_conf.getPictureDirectory(),
+					final File destFile = new File(_conf.getPictureDirectory(),
 							strPictureId.substring(0, 2) + '/' + strPictureId);
 
 					final FsPicture picture = new FsPicture(_imageCache, this,
@@ -266,7 +277,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					}
 				}
 			}
-			catch (NoSuchAlgorithmException e1)
+			catch (final NoSuchAlgorithmException e1)
 			{
 				LOGGER.error(e1.getMessage(), e1);
 			}
