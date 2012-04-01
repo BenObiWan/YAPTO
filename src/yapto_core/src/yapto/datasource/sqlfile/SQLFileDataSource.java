@@ -163,8 +163,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	@Override
 	public int getPictureCount() throws OperationNotSupportedException
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return _pictureIdList.size();
 	}
 
 	@Override
