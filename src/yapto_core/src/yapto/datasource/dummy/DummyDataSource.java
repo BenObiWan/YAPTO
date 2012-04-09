@@ -1,8 +1,6 @@
 package yapto.datasource.dummy;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -21,6 +19,7 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.tag.Tag;
 
@@ -107,11 +106,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 			{
 				addPicture(new File(file));
 			}
-			catch (final FileNotFoundException e)
-			{
-				LOGGER.error(e.getLocalizedMessage(), e);
-			}
-			catch (final IOException e)
+			catch (final PictureAddException e)
 			{
 				LOGGER.error(e.getLocalizedMessage(), e);
 			}
@@ -147,8 +142,7 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	}
 
 	@Override
-	public void addPicture(final File pictureFile)
-			throws FileNotFoundException, IOException
+	public void addPicture(final File pictureFile) throws PictureAddException
 	{
 		final DummyPicture pict = new DummyPicture(this, pictureFile);
 		_mapPicture.put(pict.getId(), pict);

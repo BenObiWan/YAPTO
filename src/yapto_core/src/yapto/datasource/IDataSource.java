@@ -1,8 +1,6 @@
 package yapto.datasource;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import yapto.datasource.tag.Tag;
 
@@ -22,16 +20,11 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 * 
 	 * @param pictureFile
 	 *            the path to the {@link IPicture} to add.
-	 * @throws FileNotFoundException
-	 *             if the file isn't found.
-	 * @throws IOException
-	 *             if an IO error occurs during the calculation of the checksum.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this {@link IDataSource}
-	 *             .
+	 * @throws PictureAddException
+	 *             if an error occurs during the addition of the
+	 *             {@link IPicture}.
 	 */
-	void addPicture(File pictureFile) throws OperationNotSupportedException,
-			FileNotFoundException, IOException;
+	void addPicture(File pictureFile) throws PictureAddException;
 
 	/**
 	 * Add a {@link Tag} to the list of {@link Tag}s know to this

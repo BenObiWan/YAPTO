@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +32,8 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
+import yapto.datasource.PictureAddException;
+import yapto.datasource.PictureAddExceptionType;
 import yapto.datasource.sqlfile.config.BufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
@@ -212,81 +215,112 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addPicture(final File pictureFile)
-			throws OperationNotSupportedException, FileNotFoundException,
-			IOException
+	public void addPicture(final File pictureFile) throws PictureAddException
 	{
-		if (pictureFile.canRead() && pictureFile.isFile())
+		if (!pictureFile.canRead())
 		{
-			final long lAddedTimestamp = System.currentTimeMillis();
+			throw new PictureAddException(PictureAddExceptionType.CAN_T_READ);
+		}
+		if (!pictureFile.isFile())
+		{
+			throw new PictureAddException(PictureAddExceptionType.NOT_A_FILE);
+		}
+		final long lAddedTimestamp = System.currentTimeMillis();
+		// calc id
+		MessageDigest mdSha256;
+		try
+		{
+			mdSha256 = MessageDigest.getInstance("SHA-256");
+		}
+		catch (final NoSuchAlgorithmException e)
+		{
+			throw new PictureAddException(
+					PictureAddExceptionType.NO_SUCH_ALGORITHM, e);
+		}
+		try
+		{
+			FileInputStream stream = null;
 			try
 			{
-				// calc id
-				final MessageDigest mdSha256 = MessageDigest
-						.getInstance("SHA-256");
-				FileInputStream stream = null;
-				try
+				stream = new FileInputStream(pictureFile);
+				final byte[] dataBytes = new byte[4096];
+
+				int byteRead = 0;
+				while ((byteRead = stream.read(dataBytes)) != -1)
 				{
-					stream = new FileInputStream(pictureFile);
-					final byte[] dataBytes = new byte[4096];
-
-					int byteRead = 0;
-					while ((byteRead = stream.read(dataBytes)) != -1)
-					{
-						mdSha256.update(dataBytes, 0, byteRead);
-					}
-				}
-				finally
-				{
-					if (stream != null)
-					{
-						stream.close();
-					}
-				}
-
-				final byte[] mdbytes = mdSha256.digest();
-				final StringBuffer sb = new StringBuffer();
-				for (final byte mdbyte : mdbytes)
-				{
-					sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16)
-							.substring(1));
-				}
-
-				final String strPictureId = sb.toString();
-
-				// check if already present
-				if (!_pictureIdList.contains(strPictureId))
-				{
-					// calc width and height
-					final int iWidth = 0;
-					final int iHeight = 0;
-					final long lCreationTimestamp = System.currentTimeMillis();
-					// copy file
-					final Path destPath = FileSystems.getDefault().getPath(
-							_conf.getPictureDirectory(),
-							strPictureId.substring(0, 2), strPictureId);
-
-					Files.copy(pictureFile.toPath(), destPath);
-					final FsPicture picture = new FsPicture(_imageCache, this,
-							strPictureId, pictureFile.getName(), iWidth,
-							iHeight, lAddedTimestamp, lCreationTimestamp,
-							lAddedTimestamp);
-					try
-					{
-						_fileListConnection.insertPicture(picture);
-						_pictureIdList.add(strPictureId);
-					}
-					catch (final SQLException e)
-					{
-						LOGGER.error(e.getMessage(), e);
-					}
+					mdSha256.update(dataBytes, 0, byteRead);
 				}
 			}
-			catch (final NoSuchAlgorithmException e1)
+			catch (final FileNotFoundException e)
 			{
-				LOGGER.error(e1.getMessage(), e1);
+				throw new PictureAddException(
+						PictureAddExceptionType.FILE_NOT_FOUND, e);
+			}
+			finally
+			{
+				if (stream != null)
+				{
+					stream.close();
+				}
 			}
 		}
+		catch (final IOException e)
+		{
+			throw new PictureAddException(PictureAddExceptionType.IO_ERROR, e);
+		}
+
+		final byte[] mdbytes = mdSha256.digest();
+		final StringBuffer sb = new StringBuffer();
+		for (final byte mdbyte : mdbytes)
+		{
+			sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16)
+					.substring(1));
+		}
+
+		final String strPictureId = sb.toString();
+
+		// check if already present
+		if (_pictureIdList.contains(strPictureId))
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.FILE_ALREADY_EXISTS);
+		}
+
+		// calc width and height
+		final int iWidth = 0;
+		final int iHeight = 0;
+		final long lCreationTimestamp = System.currentTimeMillis();
+		// copy file
+		final Path destPath = FileSystems.getDefault().getPath(
+				_conf.getPictureDirectory(), strPictureId.substring(0, 2),
+				strPictureId);
+		try
+		{
+			Files.copy(pictureFile.toPath(), destPath);
+		}
+		catch (final FileAlreadyExistsException e)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.FILE_ALREADY_EXISTS, e);
+		}
+		catch (final IOException e)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.COPY_ERROR, e);
+		}
+		final FsPicture picture = new FsPicture(_imageCache, this,
+				strPictureId, pictureFile.getName(), iWidth, iHeight,
+				lAddedTimestamp, lCreationTimestamp, lAddedTimestamp);
+		try
+		{
+			_fileListConnection.insertPicture(picture);
+		}
+		catch (final SQLException e)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.SQL_INSERT_ERROR, e);
+		}
+		_pictureIdList.add(strPictureId);
 	}
 
 	@Override
