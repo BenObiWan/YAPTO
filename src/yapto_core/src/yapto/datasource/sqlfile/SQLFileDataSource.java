@@ -399,8 +399,12 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			for (int i = 0; i < 256; i++)
 			{
-				bRes &= checkDirectory(new File(fBaseDirectory,
-						Integer.toHexString(i)));
+				String strFileName = Integer.toHexString(i).toUpperCase();
+				if (strFileName.length() == 1)
+				{
+					strFileName = '0' + strFileName;
+				}
+				bRes &= checkDirectory(new File(fBaseDirectory, strFileName));
 			}
 		}
 		return bRes;
