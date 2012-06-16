@@ -269,7 +269,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		for (final byte mdbyte : mdbytes)
 		{
 			sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16)
-					.substring(1));
+					.substring(1).toUpperCase());
 		}
 
 		final String strPictureId = sb.toString();
