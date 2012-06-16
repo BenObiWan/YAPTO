@@ -34,7 +34,6 @@ import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
-import yapto.datasource.sqlfile.config.BufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -111,9 +110,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 * 
 	 * @param conf
 	 *            configuration for this {@link SQLFileDataSource}.
-	 * @param cacheLoaderConf
-	 *            configuration for the
-	 *            {@link BufferedImageCacheLoaderConfiguration}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in the {@link IPictureBrowser}.
@@ -127,7 +123,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *             directories.
 	 */
 	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf,
-			final BufferedImageCacheLoaderConfiguration cacheLoaderConf,
 			final EventBus bus) throws SQLException, ClassNotFoundException,
 			IOException
 	{
@@ -136,13 +131,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_fileListConnection = new SQLFileListConnection(_conf);
 
 		// tag cache
-		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(
-				cacheLoaderConf, _fileListConnection);
+		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(_conf,
+				_fileListConnection);
 		_tagCache = CacheBuilder.newBuilder().build(tagLoader);
 
 		// image cache
 		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
-				cacheLoaderConf);
+				_conf);
 		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
 		// picture cache
