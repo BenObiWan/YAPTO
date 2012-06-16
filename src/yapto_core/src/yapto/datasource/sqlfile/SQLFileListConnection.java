@@ -204,6 +204,8 @@ public final class SQLFileListConnection
 		Class.forName("org.sqlite.JDBC");
 		_connection = DriverManager.getConnection("jdbc:sqlite:"
 				+ _conf.getDatabaseFileName());
+		createTables();
+
 		_psInsertTag = _connection.prepareStatement("INSERT INTO "
 				+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + ", "
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
@@ -311,16 +313,16 @@ public final class SQLFileListConnection
 		{
 			statement = _connection.createStatement();
 			// Tag table
-			statement.executeUpdate("create table " + TAG_TABLE_NAME
-					+ " if not exists (" + TAG_ID_COLUMN_NAME + " integer, "
+			statement.executeUpdate("create table if not exists "
+					+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + " integer, "
 					+ TAG_NAME_COLUMN_NAME + " text, "
 					+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
 					+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
 					+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
 			// picture table
-			statement.executeUpdate("create table " + PICTURE_TABLE_NAME
-					+ " if not exists (" + PICTURE_ID_COLUMN_NAME + " text, "
-					+ PICTURE_ORIGINAL_NAME + " text, "
+			statement.executeUpdate("create table if not exists "
+					+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME
+					+ " text, " + PICTURE_ORIGINAL_NAME + " text, "
 					+ PICTURE_GRADE_COLUMN_NAME + " integer, "
 					+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
 					+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
@@ -328,10 +330,10 @@ public final class SQLFileListConnection
 					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
 					+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer)");
 			// picture_tag table
-			statement.executeUpdate("create table " + PICTURE_TAG_TABLE_NAME
-					+ " if not exists (" + PICTURE_TAG_TAG_ID_COLUMN_NAME
-					+ " integer, " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME
-					+ " integer)");
+			statement.executeUpdate("create table if not exists "
+					+ PICTURE_TAG_TABLE_NAME + " ("
+					+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " integer, "
+					+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " integer)");
 		}
 		finally
 		{
