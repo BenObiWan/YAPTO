@@ -101,13 +101,14 @@ public class SQLFileDataSourceConfigurationImpl extends
 				iCommandLineDataSourceId);
 		_leafDatabaseFileName = new ConfigurationString(parent,
 				DATABASE_FILENAME_TAG, "Database file name",
-				"File name for the database.", "File name for the database.",
-				false, StringDisplayType.TEXTFIELD, 0, "",
+				"File name for the database.",
+				"Invalid file name for the database.", false,
+				StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineDatabaseFileName);
 		_leafPictureDirectory = new ConfigurationString(parent,
 				PICTURE_DIRECTORY_TAG, "Picture directory",
 				"Base directory for the pictures.",
-				"Base directory for the pictures.", false,
+				"Invalid base directory for the pictures.", false,
 				StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLinePictureDirectory);
 		addLeaf(_leafDataSourceId);
