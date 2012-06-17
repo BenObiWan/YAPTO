@@ -156,6 +156,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		}
 		_fileListConnection.createTables();
 		loadTags();
+		loadPictureIdList();
 	}
 
 	@Override
@@ -443,6 +444,24 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	public IPictureBrowser<FsPicture> getPictureIterator()
 	{
 		return new PictureIterator();
+	}
+
+	/**
+	 * Load picture id list from the database.
+	 * 
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	private void loadPictureIdList() throws SQLException
+	{
+		final ResultSet resLoad = _fileListConnection.loadPictureList();
+		while (resLoad.next())
+		{
+			final String strId = resLoad
+					.getString(SQLFileListConnection.PICTURE_ID_COLUMN_NAME);
+			_pictureIdList.add(strId);
+		}
 	}
 
 	/**
