@@ -42,7 +42,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	public ListTagEditorPanel(final IPictureList<?> pictureList,
 			final IPicture picture)
 	{
-		_tagList = new JList<Tag>();
+		_tagList = new JList<>();
 		_tagList.setLayoutOrientation(JList.VERTICAL);
 		_tagList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final JScrollPane scrollPane = new JScrollPane(_tagList);
@@ -74,7 +74,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 		{
 			if (_pictureList != null)
 			{
-				final Vector<Tag> vTags = new Vector<Tag>();
+				final Vector<Tag> vTags = new Vector<>();
 				populateChildren(_pictureList.getRootTag(), vTags);
 				_tagList.setListData(vTags);
 			}
