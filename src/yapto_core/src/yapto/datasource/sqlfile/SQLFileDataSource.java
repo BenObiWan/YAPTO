@@ -486,7 +486,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		protected FsPicture getPicture(final String pictureId)
 				throws ExecutionException
 		{
-			return _pictureCache.get(_idIterator.previous());
+			return _pictureCache.get(pictureId);
 		}
 	}
 }
