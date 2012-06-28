@@ -83,13 +83,16 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 
 	private void populateChildren(final Tag parentTag, final Vector<Tag> vTags)
 	{
-		if (parentTag.isSelectable())
+		if (parentTag != null)
 		{
-			vTags.add(parentTag);
-		}
-		for (final Tag t : parentTag.getChildren())
-		{
-			populateChildren(t, vTags);
+			if (parentTag.isSelectable())
+			{
+				vTags.add(parentTag);
+			}
+			for (final Tag t : parentTag.getChildren())
+			{
+				populateChildren(t, vTags);
+			}
 		}
 	}
 }
