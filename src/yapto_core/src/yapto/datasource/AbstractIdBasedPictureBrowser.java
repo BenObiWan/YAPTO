@@ -72,8 +72,23 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		{
 			try
 			{
-				_currentPicture = getPicture(_idIterator.next());
-				_bus.post(new PictureChangedEvent());
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("before next; has previous " + hasPrevious()
+							+ " previous id " + previousIndex() + "; has next "
+							+ hasNext() + " next id " + nextIndex());
+				}
+				if (_idIterator.hasNext())
+				{
+					_currentPicture = getPicture(_idIterator.next());
+					_bus.post(new PictureChangedEvent());
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("after next; has previous " + hasPrevious()
+							+ " previous id " + previousIndex() + "; has next "
+							+ hasNext() + " next id " + nextIndex());
+				}
 				return _currentPicture;
 			}
 			catch (final ExecutionException e)
@@ -91,8 +106,25 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		{
 			try
 			{
-				_currentPicture = getPicture(_idIterator.previous());
-				_bus.post(new PictureChangedEvent());
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("before previous; has previous "
+							+ hasPrevious() + " previous id " + previousIndex()
+							+ "; has next " + hasNext() + " next id "
+							+ nextIndex());
+				}
+				if (_idIterator.hasPrevious())
+				{
+					_currentPicture = getPicture(_idIterator.previous());
+					_bus.post(new PictureChangedEvent());
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("after previous; has previous "
+							+ hasPrevious() + " previous id " + previousIndex()
+							+ "; has next " + hasNext() + " next id "
+							+ nextIndex());
+				}
 				return _currentPicture;
 			}
 			catch (final ExecutionException e)
