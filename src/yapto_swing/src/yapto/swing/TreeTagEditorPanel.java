@@ -82,7 +82,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	 *            the {@link Tag}.
 	 * @return the created {@link MutableTreeNode}.
 	 */
-	private MutableTreeNode createTreeNode(final Tag tag)
+	private static MutableTreeNode createTreeNode(final Tag tag)
 	{
 		final MutableTreeNode node = new DefaultMutableTreeNode(tag.getName());
 		return node;

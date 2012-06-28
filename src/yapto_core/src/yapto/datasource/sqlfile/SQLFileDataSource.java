@@ -419,7 +419,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *            the directory to check.
 	 * @return if the directory exists, and is readable and writable.
 	 */
-	private boolean checkDirectory(final File fDirectory)
+	private static boolean checkDirectory(final File fDirectory)
 	{
 		boolean bRes = true;
 		if (!fDirectory.exists())
