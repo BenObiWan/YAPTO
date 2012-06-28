@@ -115,7 +115,9 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 				}
 				if (_idIterator.hasPrevious())
 				{
-					_currentPicture = getPicture(_idIterator.previous());
+					_idIterator.previous();
+					_idIterator.previous();
+					_currentPicture = getPicture(_idIterator.next());
 					_bus.post(new PictureChangedEvent());
 				}
 				if (LOGGER.isDebugEnabled())
