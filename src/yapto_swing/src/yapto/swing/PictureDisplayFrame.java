@@ -24,12 +24,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import yapto.datasource.AbstractIdBasedPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.PictureAddException;
-import yapto.datasource.dummy.DummyDataSource;
-import yapto.datasource.dummy.DummyPicture;
 import yapto.datasource.sqlfile.SQLFileDataSource;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.sqlfile.config.SQLFileDataSourceConfigurationImpl;
@@ -213,7 +210,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				{
 					_dataSource.addPicture(file);
 				}
-				catch (PictureAddException e)
+				catch (final PictureAddException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -246,9 +243,6 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			SQLException, IOException, InvalidConfigurationException
 	{
 		BasicConfigurator.configure();
-//
-//		LoggerFactory
-//		.getLogger(AbstractIdBasedPictureBrowser.class).		
 		final ISQLFileDataSourceConfiguration conf = new SQLFileDataSourceConfigurationImpl(
 				null, ManagementFactory.getPlatformMBeanServer(),
 				Integer.valueOf(1),

@@ -57,9 +57,13 @@ public final class PictureDisplayComponent extends JComponent
 	 */
 	public void loadPicture() throws IOException
 	{
-		_img = _pictureIterator.getCurrentPicture().getImageData();
-		setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
-		repaint();
+		final IPicture pic = _pictureIterator.getCurrentPicture();
+		if (pic != null)
+		{
+			_img = pic.getImageData();
+			setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
+			repaint();
+		}
 	}
 
 	@Override
