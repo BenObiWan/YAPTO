@@ -78,7 +78,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 							+ " previous id " + previousIndex() + "; has next "
 							+ hasNext() + " next id " + nextIndex());
 				}
-				if (_idIterator.hasNext())
+				if (hasNext())
 				{
 					_currentPicture = getPicture(_idIterator.next());
 					_bus.post(new PictureChangedEvent());
@@ -113,7 +113,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 							+ "; has next " + hasNext() + " next id "
 							+ nextIndex());
 				}
-				if (_idIterator.hasPrevious())
+				if (hasPrevious())
 				{
 					_idIterator.previous();
 					_idIterator.previous();
