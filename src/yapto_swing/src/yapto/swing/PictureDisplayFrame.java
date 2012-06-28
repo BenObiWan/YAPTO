@@ -5,8 +5,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -19,13 +24,19 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import yapto.datasource.AbstractIdBasedPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
+import yapto.datasource.PictureAddException;
 import yapto.datasource.dummy.DummyDataSource;
 import yapto.datasource.dummy.DummyPicture;
+import yapto.datasource.sqlfile.SQLFileDataSource;
+import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
+import yapto.datasource.sqlfile.config.SQLFileDataSourceConfigurationImpl;
 
 import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
+import common.config.InvalidConfigurationException;
 
 /**
  * {@link JFrame} used to display an picture and it's information. Main frame of
@@ -62,16 +73,21 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 */
 	private static final String QUIT_ACTION_COMMAND = "quit";
 
+	private final JFileChooser _chooser = new JFileChooser();
+
+	private final IDataSource<?> _dataSource;
+
 	/**
 	 * Creates a new PictureDisplayFrame.
 	 * 
-	 * @param pictureBrowser
-	 *            the {@link IPictureBrowser} used as source for the
+	 * @param dataSource
+	 *            the {@link IDataSource} used as source for the
 	 *            {@link IPicture}.
 	 */
-	public PictureDisplayFrame(final IPictureBrowser<?> pictureBrowser)
+	public PictureDisplayFrame(final IDataSource<?> dataSource)
 	{
 		super("yapto");
+		_dataSource = dataSource;
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowListener()
 		{
@@ -121,7 +137,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		});
 
 		final MainPictureDisplayPanel contentPane = new MainPictureDisplayPanel(
-				pictureBrowser);
+				_dataSource.getPictureIterator());
 
 		setJMenuBar(createMenuBar());
 		setContentPane(contentPane);
@@ -187,6 +203,22 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		switch (ae.getActionCommand())
 		{
 		case ADD_PICTURE_ACTION_COMMAND:
+			final int returnVal = _chooser
+					.showOpenDialog(PictureDisplayFrame.this);
+			if (returnVal == JFileChooser.APPROVE_OPTION)
+			{
+				final File file = _chooser.getSelectedFile();
+				LOGGER.info("Opening: " + file.getName() + ".");
+				try
+				{
+					_dataSource.addPicture(file);
+				}
+				catch (PictureAddException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			break;
 		case ADD_DIRECTORY_ACTION_COMMAND:
 			break;
@@ -205,17 +237,30 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 * 
 	 * @param args
 	 *            command line parameters.
+	 * @throws IOException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws InvalidConfigurationException
 	 */
-	public static void main(final String[] args)
+	public static void main(final String[] args) throws ClassNotFoundException,
+			SQLException, IOException, InvalidConfigurationException
 	{
 		BasicConfigurator.configure();
+//
+//		LoggerFactory
+//		.getLogger(AbstractIdBasedPictureBrowser.class).		
+		final ISQLFileDataSourceConfiguration conf = new SQLFileDataSourceConfigurationImpl(
+				null, ManagementFactory.getPlatformMBeanServer(),
+				Integer.valueOf(1),
+				"/home/benobiwan/images/photoDB/photoDB.sqlite",
+				"/home/benobiwan/images/photoDB/");
+		final EventBus bus = new AsyncEventBus(Executors.newFixedThreadPool(10));
+		final SQLFileDataSource dataSource = new SQLFileDataSource(conf, bus);
 
-		final IDataSource<DummyPicture> dataSource = new DummyDataSource(
-				new AsyncEventBus(Executors.newFixedThreadPool(10)));
+		// final IDataSource<DummyPicture> dataSource = new DummyDataSource(
+		// new AsyncEventBus(Executors.newFixedThreadPool(10)));
 
-		final IPictureBrowser<?> pictureBrowser = dataSource
-				.getPictureIterator();
-		final PictureDisplayFrame main = new PictureDisplayFrame(pictureBrowser);
+		final PictureDisplayFrame main = new PictureDisplayFrame(dataSource);
 		main.pack();
 		main.setVisible(true);
 	}
