@@ -222,11 +222,9 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 			{
 				if (LOGGER.isDebugEnabled())
 				{
-					LOGGER.debug("before next");
-					LOGGER.debug("has previous " + hasPrevious()
-							+ " previous id " + previousIndex());
-					LOGGER.debug("has next " + hasNext() + " next id "
-							+ nextIndex());
+					LOGGER.debug("before next; has previous " + hasPrevious()
+							+ " previous id " + previousIndex() + "; has next "
+							+ hasNext() + " next id " + nextIndex());
 				}
 				if (_pictureIterator.hasNext())
 				{
@@ -235,11 +233,9 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 				}
 				if (LOGGER.isDebugEnabled())
 				{
-					LOGGER.debug("after next");
-					LOGGER.debug("has previous " + hasPrevious()
-							+ " previous id " + previousIndex());
-					LOGGER.debug("has next " + hasNext() + " next id "
-							+ nextIndex());
+					LOGGER.debug("after next; has previous " + hasPrevious()
+							+ " previous id " + previousIndex() + "; has next "
+							+ hasNext() + " next id " + nextIndex());
 				}
 				return _currentPicture;
 			}
@@ -261,10 +257,9 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 			{
 				if (LOGGER.isDebugEnabled())
 				{
-					LOGGER.debug("before previous");
-					LOGGER.debug("has previous " + hasPrevious()
-							+ " previous id " + previousIndex());
-					LOGGER.debug("has next " + hasNext() + " next id "
+					LOGGER.debug("before previous; has previous "
+							+ hasPrevious() + " previous id " + previousIndex()
+							+ "; has next " + hasNext() + " next id "
 							+ nextIndex());
 				}
 				if (_pictureIterator.hasPrevious())
@@ -276,10 +271,9 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 				}
 				if (LOGGER.isDebugEnabled())
 				{
-					LOGGER.debug("after previous");
-					LOGGER.debug("has previous " + hasPrevious()
-							+ " previous id " + previousIndex());
-					LOGGER.debug("has next " + hasNext() + " next id "
+					LOGGER.debug("after previous; has previous "
+							+ hasPrevious() + " previous id " + previousIndex()
+							+ "; has next " + hasNext() + " next id "
 							+ nextIndex());
 				}
 				return _currentPicture;
