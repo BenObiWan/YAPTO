@@ -278,8 +278,16 @@ public final class Tag implements Comparable<Tag>
 						{
 							synchronized (_parentLock)
 							{
-								iComp = _parentTag.getName().compareTo(
-										arg0.getParent().getName());
+								if (_parentTag != null
+										&& arg0.getParent() != null)
+								{
+									iComp = _parentTag.getName().compareTo(
+											arg0.getParent().getName());
+								}
+								else
+								{
+									iComp = 0;
+								}
 							}
 						}
 						else if (_bSelectable)
