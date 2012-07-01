@@ -35,6 +35,24 @@ public class SQLFileDataSourceConfigurationImpl extends
 	private final ConfigurationString _leafPictureDirectory;
 
 	/**
+	 * Leaf configuring the base directory for index.
+	 */
+	private final ConfigurationString _leafIndexDirectory;
+
+	private final static String DATASOURCE_ID_SHORT_DESC = "DataSource Id";
+	private final static String DATASOURCE_ID_LONG_DESC = "Id of this DataSource.";
+	private final static String DATASOURCE_ID_INVALID_MESSAGE = "Invalid Id for this DataSource.";
+	private final static String DATASBASE_FILENAME_SHORT_DESC = "Database file name";
+	private final static String DATASBASE_FILENAME_LONG_DESC = "File name for the database.";
+	private final static String DATASBASE_FILENAME_INVALID_MESSAGE = "Invalid file name for the database.";
+	private final static String PICTURE_DIRECTORY_SHORT_DESC = "Picture directory";
+	private final static String PICTURE_DIRECTORY_LONG_DESC = "Base directory for the pictures.";
+	private final static String PICTURE_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the pictures.";
+	private final static String INDEX_DIRECTORY_SHORT_DESC = "Index directory";
+	private final static String INDEX_DIRECTORY_LONG_DESC = "Base directory for the indexes.";
+	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
+
+	/**
 	 * Creates a new SQLFileDataSourceConfigurationImpl using default values for
 	 * every elements.
 	 * 
@@ -47,23 +65,29 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final MBeanServer mBeanServer)
 	{
 		super(parent, SQLFILE_DATASOURCE_CONFIGURATION_TAG, mBeanServer);
+
 		_leafDataSourceId = new ConfigurationInteger(this, DATASOURCE_ID_TAG,
-				"DataSource Id", "Id of this DataSource.",
-				"Invalid Id for this DataSource.", false,
+				DATASOURCE_ID_SHORT_DESC, DATASOURCE_ID_LONG_DESC,
+				DATASOURCE_ID_INVALID_MESSAGE, false,
 				IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		_leafDatabaseFileName = new ConfigurationString(parent,
-				DATABASE_FILENAME_TAG, "Database file name",
-				"File name for the database.", "File name for the database.",
-				false, StringDisplayType.TEXTFIELD, 0, "");
-		_leafPictureDirectory = new ConfigurationString(parent,
-				PICTURE_DIRECTORY_TAG, "Picture directory",
-				"Base directory for the pictures.",
-				"Base directory for the pictures.", false,
+				DATABASE_FILENAME_TAG, DATASBASE_FILENAME_SHORT_DESC,
+				DATASBASE_FILENAME_LONG_DESC,
+				DATASBASE_FILENAME_INVALID_MESSAGE, false,
 				StringDisplayType.TEXTFIELD, 0, "");
+		_leafPictureDirectory = new ConfigurationString(parent,
+				PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
+				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "");
+		_leafIndexDirectory = new ConfigurationString(parent,
+				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
+				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "");
 		addLeaf(_leafDataSourceId);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
+		addLeaf(_leafIndexDirectory);
 	}
 
 	/**
@@ -89,31 +113,37 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final MBeanServer mBeanServer,
 			final Integer iCommandLineDataSourceId,
 			final String strCommandLineDatabaseFileName,
-			final String strCommandLinePictureDirectory)
+			final String strCommandLinePictureDirectory,
+			final String strCommandLineIndexDirectory)
 			throws InvalidConfigurationException
 	{
 		super(parent, SQLFILE_DATASOURCE_CONFIGURATION_TAG, mBeanServer);
 		_leafDataSourceId = new ConfigurationInteger(this, DATASOURCE_ID_TAG,
-				"DataSource Id", "Id of this DataSource.",
-				"Invalid Id for this DataSource.", false,
+				DATASOURCE_ID_SHORT_DESC, DATASOURCE_ID_LONG_DESC,
+				DATASOURCE_ID_INVALID_MESSAGE, false,
 				IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
 				iCommandLineDataSourceId);
 		_leafDatabaseFileName = new ConfigurationString(parent,
-				DATABASE_FILENAME_TAG, "Database file name",
-				"File name for the database.",
-				"Invalid file name for the database.", false,
+				DATABASE_FILENAME_TAG, DATASBASE_FILENAME_SHORT_DESC,
+				DATASBASE_FILENAME_LONG_DESC,
+				DATASBASE_FILENAME_INVALID_MESSAGE, false,
 				StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineDatabaseFileName);
 		_leafPictureDirectory = new ConfigurationString(parent,
-				PICTURE_DIRECTORY_TAG, "Picture directory",
-				"Base directory for the pictures.",
-				"Invalid base directory for the pictures.", false,
-				StringDisplayType.TEXTFIELD, 0, "",
+				PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
+				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLinePictureDirectory);
+		_leafIndexDirectory = new ConfigurationString(parent,
+				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
+				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "",
+				strCommandLineIndexDirectory);
 		addLeaf(_leafDataSourceId);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
+		addLeaf(_leafIndexDirectory);
 	}
 
 	/**
@@ -149,18 +179,23 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final Integer iCommandLineDataSourceId,
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
+			final String strCommandLineIndexDirectory,
 			final Integer iConfigurationDataSourceId,
 			final String strConfigurationDatabaseFileName,
-			final String strConfigurationPictureDirectory)
+			final String strConfigurationPictureDirectory,
+			final String strConfigurationIndexDirectory)
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLineDataSourceId,
-				strCommandLineDatabaseFileName, strCommandLinePictureDirectory);
+				strCommandLineDatabaseFileName, strCommandLinePictureDirectory,
+				strCommandLineIndexDirectory);
 		_leafDataSourceId.setConfigurationValue(iConfigurationDataSourceId);
 		_leafDatabaseFileName
 				.setConfigurationValue(strConfigurationDatabaseFileName);
 		_leafPictureDirectory
 				.setConfigurationValue(strConfigurationPictureDirectory);
+		_leafIndexDirectory
+				.setConfigurationValue(strConfigurationIndexDirectory);
 	}
 
 	@Override
@@ -185,5 +220,11 @@ public class SQLFileDataSourceConfigurationImpl extends
 	public int getDataSourceId()
 	{
 		return _leafDataSourceId.getCurrentValue().intValue();
+	}
+
+	@Override
+	public String getIndexDirectory()
+	{
+		return _leafIndexDirectory.getCurrentValue();
 	}
 }
