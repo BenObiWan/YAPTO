@@ -19,7 +19,7 @@ public class ANDTagListFilter implements IPictureFilter
 	/**
 	 * Set of {@link Tag} for this filter.
 	 */
-	private final SortedSet<Tag> _tagSet = new TreeSet<Tag>();
+	private final SortedSet<Tag> _tagSet = new TreeSet<>();
 
 	/**
 	 * Creates a new ANDTagListFilter.

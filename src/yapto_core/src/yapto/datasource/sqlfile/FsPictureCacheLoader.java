@@ -74,7 +74,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 			{
 				final Integer[] tagIds = _fileListConnection
 						.loadTagsOfPicture(key);
-				final LinkedList<Tag> tagList = new LinkedList<Tag>();
+				final LinkedList<Tag> tagList = new LinkedList<>();
 				for (final Integer tagId : tagIds)
 				{
 					tagList.add(_tagCache.get(tagId));

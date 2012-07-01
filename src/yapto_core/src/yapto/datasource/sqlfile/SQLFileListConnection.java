@@ -558,7 +558,7 @@ public final class SQLFileListConnection
 	 */
 	public String[] selectPictures(final Tag tag) throws SQLException
 	{
-		final LinkedList<String> pictureList = new LinkedList<String>();
+		final LinkedList<String> pictureList = new LinkedList<>();
 		synchronized (_psSelectPicturesByTag)
 		{
 			_psSelectPicturesByTag.clearParameters();
@@ -618,7 +618,7 @@ public final class SQLFileListConnection
 	public Integer[] loadTagsOfPicture(final String strPictureId)
 			throws SQLException
 	{
-		final LinkedList<Integer> tagList = new LinkedList<Integer>();
+		final LinkedList<Integer> tagList = new LinkedList<>();
 		synchronized (_psLoadTagsOfPicture)
 		{
 			_psLoadTagsOfPicture.clearParameters();

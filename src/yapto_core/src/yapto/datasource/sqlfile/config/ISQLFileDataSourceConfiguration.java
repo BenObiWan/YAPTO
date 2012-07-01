@@ -26,7 +26,7 @@ public interface ISQLFileDataSourceConfiguration extends
 	 * Tag for the picture directory.
 	 */
 	String PICTURE_DIRECTORY_TAG = "PictureDirectory";
-	
+
 	/**
 	 * Tag for the picture directory.
 	 */
@@ -45,7 +45,7 @@ public interface ISQLFileDataSourceConfiguration extends
 	 * @return the path for the picture directory.
 	 */
 	String getPictureDirectory();
-	
+
 	/**
 	 * Get the path for the index directory.
 	 * 

@@ -56,7 +56,7 @@ public final class Tag implements Comparable<Tag>
 	/**
 	 * Set containing the children of this {@link Tag}.
 	 */
-	private final ConcurrentSkipListSet<Tag> _childrenSet = new ConcurrentSkipListSet<Tag>();
+	private final ConcurrentSkipListSet<Tag> _childrenSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * Creates a new Tag.

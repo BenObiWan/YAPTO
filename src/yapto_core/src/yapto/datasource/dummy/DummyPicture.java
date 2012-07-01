@@ -41,7 +41,7 @@ public final class DummyPicture implements IPicture
 	 * Set containing all the {@link Tag}s associated with this
 	 * {@link DummyPicture}.
 	 */
-	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<Tag>();
+	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.

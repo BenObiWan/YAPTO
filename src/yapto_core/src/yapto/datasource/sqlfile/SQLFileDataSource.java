@@ -61,17 +61,17 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	/**
 	 * Set containing all the {@link Tag}s.
 	 */
-	private final Set<Tag> _tagSet = new TreeSet<Tag>();
+	private final Set<Tag> _tagSet = new TreeSet<>();
 
 	/**
 	 * List of all picture id.
 	 */
-	protected final List<String> _pictureIdList = new Vector<String>();
+	protected final List<String> _pictureIdList = new Vector<>();
 
 	/**
 	 * Map containing all the {@link Tag}s.
 	 */
-	private final Map<Integer, Tag> _tagMap = new TreeMap<Integer, Tag>();
+	private final Map<Integer, Tag> _tagMap = new TreeMap<>();
 
 	/**
 	 * Configuration for this {@link SQLFileDataSource}.

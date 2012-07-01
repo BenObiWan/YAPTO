@@ -42,17 +42,17 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	/**
 	 * Map containing all the picture and their id.
 	 */
-	private final ConcurrentSkipListMap<String, IPicture> _mapPicture = new ConcurrentSkipListMap<String, IPicture>();
+	private final ConcurrentSkipListMap<String, IPicture> _mapPicture = new ConcurrentSkipListMap<>();
 
 	/**
 	 * List of {@link IPicture} of this {@link DummyDataSource}.
 	 */
-	protected final List<DummyPicture> _listPicture = new CopyOnWriteArrayList<DummyPicture>();
+	protected final List<DummyPicture> _listPicture = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Set of all the {@link Tag}s available on this {@link IDataSource}.
 	 */
-	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<Tag>();
+	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * The root {@link Tag} of this {@link DummyDataSource}.
