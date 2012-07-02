@@ -353,35 +353,59 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	private void loadTags() throws SQLException
 	{
-		final ResultSet resLoad = _fileListConnection.loadTagList();
+		ResultSet resLoad = null;
+		ResultSet resParent = null;
 		Tag tag = null;
 		Tag parentTag = null;
-		while (resLoad.next())
+		try
 		{
-			final int iTagId = resLoad
-					.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME);
-			final String strName = resLoad
-					.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME);
-			final String strDescription = resLoad
-					.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
-			final boolean bSelectable = resLoad
-					.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-			tag = new Tag(getId(), iTagId, strName, strDescription, bSelectable);
-			_tagSet.add(tag);
-			_tagMap.put(Integer.valueOf(iTagId), tag);
-		}
-		final ResultSet resParent = _fileListConnection.loadParents();
-		while (resParent.next())
-		{
-			final Integer iId = Integer.valueOf(resLoad
-					.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME));
-			final Integer iParentId = Integer.valueOf(resLoad
-					.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME));
-			tag = _tagMap.get(iId);
-			parentTag = _tagMap.get(iParentId);
-			if (tag != null && parentTag != null)
+			resLoad = _fileListConnection.loadTagList();
+			while (resLoad.next())
 			{
-				tag.setParent(parentTag);
+				final int iTagId = resLoad
+						.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME);
+				final String strName = resLoad
+						.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME);
+				final String strDescription = resLoad
+						.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
+				final boolean bSelectable = resLoad
+						.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
+				tag = new Tag(getId(), iTagId, strName, strDescription,
+						bSelectable);
+				_tagSet.add(tag);
+				_tagMap.put(Integer.valueOf(iTagId), tag);
+			}
+		}
+		finally
+		{
+			if (resLoad != null)
+			{
+				resLoad.close();
+			}
+		}
+		try
+		{
+			resParent = _fileListConnection.loadParents();
+			while (resParent.next())
+			{
+				final Integer iId = Integer.valueOf(resParent
+						.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME));
+				final Integer iParentId = Integer
+						.valueOf(resParent
+								.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME));
+				tag = _tagMap.get(iId);
+				parentTag = _tagMap.get(iParentId);
+				if (tag != null && parentTag != null)
+				{
+					tag.setParent(parentTag);
+				}
+			}
+		}
+		finally
+		{
+			if (resParent != null)
+			{
+				resParent.close();
 			}
 		}
 	}
