@@ -242,12 +242,15 @@ public final class FsPicture implements IPicture
 	@Override
 	public void addTag(final Tag newTag)
 	{
-		synchronized (_lock)
+		if (!_tagSet.contains(newTag))
 		{
-			_lModifiedTimestamp = System.currentTimeMillis();
-			_bModified = true;
+			synchronized (_lock)
+			{
+				_lModifiedTimestamp = System.currentTimeMillis();
+				_bModified = true;
+			}
+			_tagSet.add(newTag);
 		}
-		_tagSet.add(newTag);
 	}
 
 	@Override
@@ -296,9 +299,12 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			_lModifiedTimestamp = System.currentTimeMillis();
-			_bModified = true;
-			_iPictureGrade = iPictureGrade;
+			if (_iPictureGrade != iPictureGrade)
+			{
+				_lModifiedTimestamp = System.currentTimeMillis();
+				_bModified = true;
+				_iPictureGrade = iPictureGrade;
+			}
 		}
 	}
 
