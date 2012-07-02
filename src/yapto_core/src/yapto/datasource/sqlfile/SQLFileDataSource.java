@@ -149,7 +149,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
 				_fileListConnection, _imageCache, _tagCache, this);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
-				_fileListConnection);
+				this);
 		_pictureCache = CacheBuilder.newBuilder()
 				.removalListener(pictureListener).build(pictureLoader);
 
@@ -510,6 +510,30 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			final String strId = resLoad
 					.getString(SQLFileListConnection.PICTURE_ID_COLUMN_NAME);
 			_pictureIdList.add(strId);
+		}
+	}
+
+	/**
+	 * Update the picture in the database and the index.
+	 * 
+	 * @param picture
+	 *            the picture to update.
+	 */
+	public void updatePicture(final FsPicture picture)
+	{
+		// TODO very unlikely race condition here, to improve.
+		if (picture.hasBeenModified())
+		{
+			try
+			{
+				_fileListConnection.updatePicture(picture);
+				_indexer.indexPicture(picture);
+				picture.setModified(false);
+			}
+			catch (final SQLException | IOException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
 	}
 

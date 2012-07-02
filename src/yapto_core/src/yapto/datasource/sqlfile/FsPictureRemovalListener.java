@@ -1,10 +1,5 @@
 package yapto.datasource.sqlfile;
 
-import java.sql.SQLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
@@ -19,44 +14,25 @@ public final class FsPictureRemovalListener implements
 		RemovalListener<String, FsPicture>
 {
 	/**
-	 * Logger object.
+	 * The {@link SQLFileDataSource}.
 	 */
-	private static transient final Logger LOGGER = LoggerFactory
-			.getLogger(FsPictureRemovalListener.class);
-
-	/**
-	 * Object holding the connection to the database and the prepared
-	 * statements.
-	 */
-	private final SQLFileListConnection _fileListConnection;
+	private final SQLFileDataSource _dataSource;
 
 	/**
 	 * Creates a new FsPictureRemovalListener.
 	 * 
-	 * @param fileListConnection
-	 *            object holding the connection to the database and the prepared
-	 *            statements.
+	 * @param dataSource
+	 *            the {@link SQLFileDataSource}.
 	 */
-	public FsPictureRemovalListener(
-			final SQLFileListConnection fileListConnection)
+	public FsPictureRemovalListener(final SQLFileDataSource dataSource)
 	{
-		_fileListConnection = fileListConnection;
+		_dataSource = dataSource;
 	}
 
 	@Override
 	public void onRemoval(
 			final RemovalNotification<String, FsPicture> notification)
 	{
-		if (notification.getValue().hasBeenModified())
-		{
-			try
-			{
-				_fileListConnection.updatePicture(notification.getValue());
-			}
-			catch (final SQLException e)
-			{
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
+		_dataSource.updatePicture(notification.getValue());
 	}
 }
