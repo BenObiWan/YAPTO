@@ -398,7 +398,7 @@ public final class SQLFileListConnection
 		{
 			_psInsertPicture.clearParameters();
 			_psInsertPicture.setString(1, picture.getId());
-			_psInsertPicture.setString(2, picture.getOrignialFileName());
+			_psInsertPicture.setString(2, picture.getOriginalFileName());
 			_psInsertPicture.setInt(3, picture.getPictureGrade());
 			_psInsertPicture.setInt(4, picture.getWidth());
 			_psInsertPicture.setInt(5, picture.getHeight());
