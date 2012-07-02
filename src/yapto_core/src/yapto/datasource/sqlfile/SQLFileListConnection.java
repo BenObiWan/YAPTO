@@ -187,11 +187,6 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psListPicture;
 
 	/**
-	 * Statement to load the list of {@link Tag} names.
-	 */
-	private final PreparedStatement _psListTag;
-
-	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -267,10 +262,6 @@ public final class SQLFileListConnection
 				+ " where " + TAG_ID_COLUMN_NAME + " =?");
 		_psListPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
-		_psListTag = _connection.prepareStatement("SELECT "
-				+ TAG_ID_COLUMN_NAME + ", " + TAG_NAME_COLUMN_NAME + ", "
-				+ TAG_DESCRIPTION_COLUMN_NAME + ", "
-				+ TAG_SELECTABLE_COLUMN_NAME + " FROM " + TAG_TABLE_NAME);
 	}
 
 	/**
@@ -365,10 +356,13 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadTagList() throws SQLException
 	{
-		synchronized (_psListTag)
-		{
-			return _psListTag.executeQuery();
-		}
+		final Statement statement = _connection.createStatement();
+		return statement
+				.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
+						+ TAG_NAME_COLUMN_NAME + ", "
+						+ TAG_DESCRIPTION_COLUMN_NAME + ", "
+						+ TAG_SELECTABLE_COLUMN_NAME + " from "
+						+ TAG_TABLE_NAME);
 	}
 
 	/**
@@ -382,20 +376,9 @@ public final class SQLFileListConnection
 	 */
 	public ResultSet loadParents() throws SQLException
 	{
-		Statement statement = null;
-		try
-		{
-			statement = _connection.createStatement();
-			return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
-					+ TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
-		}
-		finally
-		{
-			if (statement != null)
-			{
-				statement.close();
-			}
-		}
+		final Statement statement = _connection.createStatement();
+		return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
+				+ TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
 	}
 
 	/**
