@@ -256,10 +256,11 @@ public final class SQLFileListConnection
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
 		_psLoadTag = _connection.prepareStatement("SELECT "
-				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
-				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
-				+ TAG_SELECTABLE_COLUMN_NAME + " FROM " + TAG_TABLE_NAME
-				+ " where " + TAG_ID_COLUMN_NAME + " =?");
+				+ TAG_ID_COLUMN_NAME + ", " + TAG_NAME_COLUMN_NAME + ", "
+				+ TAG_DESCRIPTION_COLUMN_NAME + ", "
+				+ TAG_PARENT_ID_COLUMN_NAME + ", " + TAG_SELECTABLE_COLUMN_NAME
+				+ " FROM " + TAG_TABLE_NAME + " where " + TAG_ID_COLUMN_NAME
+				+ " =?");
 		_psListPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
 	}
