@@ -274,6 +274,14 @@ public final class FsPicture implements IPicture
 		}
 	}
 
+	public void setModified(boolean bModified)
+	{
+		synchronized (_lock)
+		{
+			_bModified = bModified;
+		}
+	}
+
 	@Override
 	public int getPictureGrade()
 	{
