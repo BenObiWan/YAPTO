@@ -18,7 +18,11 @@ public enum PictureAddExceptionType
 
 	IO_ERROR(""),
 
-	SQL_INSERT_ERROR("");
+	SQL_INSERT_ERROR(""),
+
+	CORRUPT_INDEX_ERROR(""),
+
+	INDEX_ERROR("");
 
 	/**
 	 * Message for this exception type.

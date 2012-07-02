@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.lucene.index.CorruptIndexException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
+import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -105,6 +107,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	protected final EventBus _bus;
 
+	private final PictureIndexer _indexer;
+
 	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
@@ -129,6 +133,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_bus = bus;
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
+		_indexer = new PictureIndexer(_conf);
 
 		// tag cache
 		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(_conf,
@@ -310,11 +315,22 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		try
 		{
 			_fileListConnection.insertPicture(picture);
+			_indexer.indexPicture(picture);
 		}
 		catch (final SQLException e)
 		{
 			throw new PictureAddException(strPictureId,
 					PictureAddExceptionType.SQL_INSERT_ERROR, e);
+		}
+		catch (final CorruptIndexException e)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.CORRUPT_INDEX_ERROR, e);
+		}
+		catch (final IOException e)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.INDEX_ERROR, e);
 		}
 		_pictureIdList.add(strPictureId);
 	}
@@ -420,6 +436,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	{
 		final File fBaseDirectory = new File(_conf.getPictureDirectory());
 		boolean bRes = checkDirectory(fBaseDirectory);
+		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
 		if (bRes)
 		{
 			for (int i = 0; i < 256; i++)
@@ -462,6 +479,14 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	public void close()
 	{
 		_pictureCache.invalidateAll();
+		try
+		{
+			_indexer.close();
+		}
+		catch (final IOException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
