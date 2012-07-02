@@ -397,10 +397,13 @@ public final class SQLFileListConnection
 		{
 			_psInsertPicture.clearParameters();
 			_psInsertPicture.setString(1, picture.getId());
-			_psInsertPicture.setInt(2, picture.getPictureGrade());
-			_psInsertPicture.setInt(3, picture.getWidth());
-			_psInsertPicture.setInt(4, picture.getHeight());
-			_psInsertPicture.setLong(5, picture.getModifiedTimestamp());
+			_psInsertPicture.setString(2, picture.getOrignialFileName());
+			_psInsertPicture.setInt(3, picture.getPictureGrade());
+			_psInsertPicture.setInt(4, picture.getWidth());
+			_psInsertPicture.setInt(5, picture.getHeight());
+			_psInsertPicture.setLong(6, picture.getModifiedTimestamp());
+			_psInsertPicture.setLong(7, picture.getCreationTimestamp());
+			_psInsertPicture.setLong(8, picture.getAddingTimestamp());
 			return _psInsertPicture.executeUpdate() > 0;
 		}
 	}
