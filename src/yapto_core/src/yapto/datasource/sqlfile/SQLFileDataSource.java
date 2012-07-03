@@ -521,18 +521,20 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	public void updatePicture(final FsPicture picture)
 	{
-		// TODO very unlikely race condition here, to improve.
-		if (picture.hasBeenModified())
+		synchronized (picture)
 		{
-			try
+			if (picture.hasBeenModified())
 			{
-				_fileListConnection.updatePicture(picture);
-				_indexer.indexPicture(picture);
-				picture.setModified(false);
-			}
-			catch (final SQLException | IOException e)
-			{
-				LOGGER.error(e.getMessage(), e);
+				try
+				{
+					_fileListConnection.updatePicture(picture);
+					_indexer.indexPicture(picture);
+					picture.setModified(false);
+				}
+				catch (final SQLException | IOException e)
+				{
+					LOGGER.error(e.getMessage(), e);
+				}
 			}
 		}
 	}

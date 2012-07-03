@@ -75,12 +75,6 @@ public final class FsPicture implements IPicture
 	private int _iPictureGrade;
 
 	/**
-	 * Lock protecting the timestamp of the last modification of this picture
-	 * and the grade of the picture.
-	 */
-	private final Object _lock = new Object();
-
-	/**
 	 * Boolean telling whether this FsPicture has been modified or not.
 	 */
 	private boolean _bModified = false;
@@ -123,7 +117,7 @@ public final class FsPicture implements IPicture
 		_pictureDimension = new Dimension(iWidth, iHeight);
 		_lCreationTimestamp = lCreationTimestamp;
 		_lAddingTimestamp = lAddingTimestamp;
-		synchronized (_lock)
+		synchronized (this)
 		{
 			_lModifiedTimestamp = lModifiedTimestamp;
 		}
@@ -169,7 +163,7 @@ public final class FsPicture implements IPicture
 				iHeight, lModifiedTimestamp, lCreationTimestamp,
 				lAddingTimestamp);
 		_tagSet.addAll(tagList);
-		synchronized (_lock)
+		synchronized (this)
 		{
 			_iPictureGrade = iPictureGrade;
 		}
@@ -203,7 +197,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public long getModifiedTimestamp()
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			return _lModifiedTimestamp;
 		}
@@ -244,7 +238,7 @@ public final class FsPicture implements IPicture
 	{
 		if (!_tagSet.contains(newTag))
 		{
-			synchronized (_lock)
+			synchronized (this)
 			{
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
@@ -256,7 +250,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public void removeTag(final Tag tag)
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			_lModifiedTimestamp = System.currentTimeMillis();
 			_bModified = true;
@@ -271,7 +265,7 @@ public final class FsPicture implements IPicture
 	 */
 	public boolean hasBeenModified()
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			return _bModified;
 		}
@@ -285,7 +279,7 @@ public final class FsPicture implements IPicture
 	 */
 	public void setModified(final boolean bModified)
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			_bModified = bModified;
 		}
@@ -294,7 +288,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public int getPictureGrade()
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			return _iPictureGrade;
 		}
@@ -303,7 +297,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public void setPictureGrade(final int iPictureGrade)
 	{
-		synchronized (_lock)
+		synchronized (this)
 		{
 			if (_iPictureGrade != iPictureGrade)
 			{
