@@ -20,7 +20,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.lucene.index.CorruptIndexException;
 import org.slf4j.Logger;
@@ -107,7 +109,20 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	protected final EventBus _bus;
 
+	/**
+	 * Object used to index {@link FsPicture}s.
+	 */
 	private final PictureIndexer _indexer;
+
+	/**
+	 * Queue holding all the {@link FsPicture} to update.
+	 */
+	protected final BlockingQueue<FsPicture> _updateQueue = new LinkedBlockingQueue<>();
+
+	/**
+	 * {@link Runnable} used to update modified {@link FsPicture}.
+	 */
+	private final PictureUpdater _updater;
 
 	/**
 	 * Creates a new SQLFileDataSource.
@@ -162,6 +177,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_fileListConnection.createTables();
 		loadTags();
 		loadPictureIdList();
+		_updater = new PictureUpdater();
+		final Thread t = new Thread(_updater, "picture updater");
+		t.start();
 	}
 
 	@Override
@@ -478,6 +496,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	@Override
 	public void close()
 	{
+		_updater.stop();
 		_pictureCache.invalidateAll();
 		try
 		{
@@ -529,7 +548,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				{
 					_fileListConnection.updatePicture(picture);
 					_indexer.indexPicture(picture);
-					picture.setModified(false);
+					picture.unsetModified();
 				}
 				catch (final SQLException | IOException e)
 				{
@@ -537,6 +556,17 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add a {@link FsPicture} to the list of pictures needing an update.
+	 * 
+	 * @param picture
+	 *            the {@link FsPicture} needing an update.
+	 */
+	public void setPictureForUpdating(final FsPicture picture)
+	{
+		_updateQueue.add(picture);
 	}
 
 	/**
@@ -562,6 +592,52 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				throws ExecutionException
 		{
 			return _pictureCache.get(pictureId);
+		}
+	}
+
+	/**
+	 * {@link Runnable} used to update the modified {@link FsPicture}.
+	 * 
+	 * @author benobiwan
+	 * 
+	 */
+	private final class PictureUpdater implements Runnable
+	{
+		/**
+		 * Boolean used to stop the {@link PictureUpdater}.
+		 */
+		private volatile boolean _bStop = false;
+
+		/**
+		 * Creates a new {@link PictureUpdater}.
+		 */
+		public PictureUpdater()
+		{
+			// nothing to do
+		}
+
+		/**
+		 * Function used to stop the {@link PictureUpdater}.
+		 */
+		public void stop()
+		{
+			_bStop = true;
+		}
+
+		@Override
+		public void run()
+		{
+			while (!_bStop)
+			{
+				try
+				{
+					updatePicture(_updateQueue.take());
+				}
+				catch (final InterruptedException e)
+				{
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 		}
 	}
 }

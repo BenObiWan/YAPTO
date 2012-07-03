@@ -42,7 +42,7 @@ public final class FsPicture implements IPicture
 	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.
 	 */
-	private final IDataSource<FsPicture> _dataSource;
+	private final SQLFileDataSource _dataSource;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
@@ -105,7 +105,7 @@ public final class FsPicture implements IPicture
 	 *            {@link IDataSource}.
 	 */
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
-			final IDataSource<FsPicture> dataSource, final String strId,
+			final SQLFileDataSource dataSource, final String strId,
 			final String strOrigInalFileName, final int iWidth,
 			final int iHeight, final long lModifiedTimestamp,
 			final long lCreationTimestamp, final long lAddingTimestamp)
@@ -153,7 +153,7 @@ public final class FsPicture implements IPicture
 	 *            list of {@link Tag}s.
 	 */
 	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
-			final IDataSource<FsPicture> dataSource, final String strId,
+			final SQLFileDataSource dataSource, final String strId,
 			final String strOriginalFileName, final int iWidth,
 			final int iHeight, final long lModifiedTimestamp,
 			final long lCreationTimestamp, final long lAddingTimestamp,
@@ -242,6 +242,7 @@ public final class FsPicture implements IPicture
 			{
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
+				_dataSource.setPictureForUpdating(this);
 			}
 			_tagSet.add(newTag);
 		}
@@ -254,6 +255,7 @@ public final class FsPicture implements IPicture
 		{
 			_lModifiedTimestamp = System.currentTimeMillis();
 			_bModified = true;
+			_dataSource.setPictureForUpdating(this);
 		}
 		_tagSet.remove(tag);
 	}
@@ -272,16 +274,13 @@ public final class FsPicture implements IPicture
 	}
 
 	/**
-	 * Change the modified status of this {@link FsPicture}.
-	 * 
-	 * @param bModified
-	 *            the new modified status of this {@link FsPicture}.
+	 * Change the modified status of this {@link FsPicture} to unmodified.
 	 */
-	public void setModified(final boolean bModified)
+	public void unsetModified()
 	{
 		synchronized (this)
 		{
-			_bModified = bModified;
+			_bModified = false;
 		}
 	}
 
@@ -304,6 +303,7 @@ public final class FsPicture implements IPicture
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
 				_iPictureGrade = iPictureGrade;
+				_dataSource.setPictureForUpdating(this);
 			}
 		}
 	}
@@ -316,7 +316,6 @@ public final class FsPicture implements IPicture
 	public String getOriginalFileName()
 	{
 		return _strOriginalFileName;
-
 	}
 
 	/**
