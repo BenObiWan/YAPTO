@@ -2,6 +2,8 @@ package yapto.datasource.sqlfile.config;
 
 import javax.management.MBeanServer;
 
+import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
+
 import common.config.AbstractConfigurationBranch;
 import common.config.IConfiguration;
 import common.config.InvalidConfigurationException;
@@ -32,7 +34,7 @@ public class SQLFileDataSourceConfigurationImpl extends
 	/**
 	 * Leaf configuring the base directory for pictures.
 	 */
-	private final ConfigurationString _leafPictureDirectory;
+	protected final ConfigurationString _leafPictureDirectory;
 
 	/**
 	 * Leaf configuring the base directory for index.
@@ -51,6 +53,8 @@ public class SQLFileDataSourceConfigurationImpl extends
 	private final static String INDEX_DIRECTORY_SHORT_DESC = "Index directory";
 	private final static String INDEX_DIRECTORY_LONG_DESC = "Base directory for the indexes.";
 	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
+
+	private final IBufferedImageCacheLoaderConfiguration _pictureCacheLoaderConfiguration;
 
 	/**
 	 * Creates a new SQLFileDataSourceConfigurationImpl using default values for
@@ -88,6 +92,8 @@ public class SQLFileDataSourceConfigurationImpl extends
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
+		_pictureCacheLoaderConfiguration = new IPictureLoaderConfigurationImpl(
+				this, mBeanServer);
 	}
 
 	/**
@@ -144,6 +150,8 @@ public class SQLFileDataSourceConfigurationImpl extends
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
+		_pictureCacheLoaderConfiguration = new IPictureLoaderConfigurationImpl(
+				this, mBeanServer);
 	}
 
 	/**
@@ -211,12 +219,6 @@ public class SQLFileDataSourceConfigurationImpl extends
 	}
 
 	@Override
-	public String getPictureDirectory()
-	{
-		return _leafPictureDirectory.getCurrentValue();
-	}
-
-	@Override
 	public int getDataSourceId()
 	{
 		return _leafDataSourceId.getCurrentValue().intValue();
@@ -226,5 +228,61 @@ public class SQLFileDataSourceConfigurationImpl extends
 	public String getIndexDirectory()
 	{
 		return _leafIndexDirectory.getCurrentValue();
+	}
+
+	@Override
+	public IBufferedImageCacheLoaderConfiguration getMainPictureLoaderConfiguration()
+	{
+		return _pictureCacheLoaderConfiguration;
+	}
+
+	private final class IPictureLoaderConfigurationImpl extends
+			AbstractConfigurationBranch implements
+			IBufferedImageCacheLoaderConfiguration
+	{
+		public IPictureLoaderConfigurationImpl(final IConfiguration parent,
+				final MBeanServer mBeanServer)
+		{
+			super(parent, "", mBeanServer);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public String getDescription()
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getPictureDirectory()
+		{
+			return _leafPictureDirectory.getCurrentValue();
+		}
+	}
+
+	private final class IThumbnailLoaderConfigurationImpl extends
+			AbstractConfigurationBranch implements
+			IBufferedImageCacheLoaderConfiguration
+	{
+		public IThumbnailLoaderConfigurationImpl(final IConfiguration parent,
+				final MBeanServer mBeanServer)
+		{
+			super(parent, "", mBeanServer);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public String getDescription()
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getPictureDirectory()
+		{
+			return _leafPictureDirectory.getCurrentValue();
+		}
 	}
 }

@@ -157,7 +157,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 
 		// image cache
 		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
-				_conf);
+				_conf.getMainPictureLoaderConfiguration());
 		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
 
 		// picture cache
@@ -172,7 +172,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			throw new IOException(
 					"Error creating the required picture directories : "
-							+ _conf.getPictureDirectory());
+							+ _conf.getMainPictureLoaderConfiguration()
+									.getPictureDirectory());
 		}
 		_fileListConnection.createTables();
 		loadTags();
@@ -310,9 +311,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		final int iHeight = 0;
 		final long lCreationTimestamp = System.currentTimeMillis();
 		// copy file
-		final Path destPath = FileSystems.getDefault().getPath(
-				_conf.getPictureDirectory(), strPictureId.substring(0, 2),
-				strPictureId);
+		final Path destPath = FileSystems.getDefault()
+				.getPath(
+						_conf.getMainPictureLoaderConfiguration()
+								.getPictureDirectory(),
+						strPictureId.substring(0, 2), strPictureId);
 		try
 		{
 			Files.copy(pictureFile.toPath(), destPath);
@@ -452,7 +455,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	private boolean checkAndCreateDirectories()
 	{
-		final File fBaseDirectory = new File(_conf.getPictureDirectory());
+		final File fBaseDirectory = new File(_conf
+				.getMainPictureLoaderConfiguration().getPictureDirectory());
 		boolean bRes = checkDirectory(fBaseDirectory);
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
 		if (bRes)

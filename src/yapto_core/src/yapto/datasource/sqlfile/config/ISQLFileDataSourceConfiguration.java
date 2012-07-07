@@ -1,6 +1,7 @@
 package yapto.datasource.sqlfile.config;
 
 import yapto.datasource.config.IDataSourceConfiguration;
+import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.SQLFileDataSource;
 
 /**
@@ -40,16 +41,11 @@ public interface ISQLFileDataSourceConfiguration extends
 	String getDatabaseFileName();
 
 	/**
-	 * Get the path for the picture directory.
-	 * 
-	 * @return the path for the picture directory.
-	 */
-	String getPictureDirectory();
-
-	/**
 	 * Get the path for the index directory.
 	 * 
 	 * @return the path for the index directory.
 	 */
 	String getIndexDirectory();
+
+	IBufferedImageCacheLoaderConfiguration getMainPictureLoaderConfiguration();
 }

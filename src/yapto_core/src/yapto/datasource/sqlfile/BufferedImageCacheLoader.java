@@ -5,8 +5,6 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
-
 import com.google.common.cache.CacheLoader;
 
 /**
@@ -21,7 +19,7 @@ public final class BufferedImageCacheLoader extends
 	/**
 	 * The configuration of this BufferedImageCacheLoader.
 	 */
-	private final ISQLFileDataSourceConfiguration _cacheLoaderConf;
+	private final IBufferedImageCacheLoaderConfiguration _cacheLoaderConf;
 
 	/**
 	 * Creates a new BufferedImageCacheLoader.
@@ -30,7 +28,7 @@ public final class BufferedImageCacheLoader extends
 	 *            the configuration of this BufferedImageCacheLoader.
 	 */
 	public BufferedImageCacheLoader(
-			final ISQLFileDataSourceConfiguration cacheLoaderConf)
+			final IBufferedImageCacheLoaderConfiguration cacheLoaderConf)
 	{
 		_cacheLoaderConf = cacheLoaderConf;
 	}
