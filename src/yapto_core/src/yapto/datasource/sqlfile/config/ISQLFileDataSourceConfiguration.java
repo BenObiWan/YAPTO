@@ -1,5 +1,7 @@
 package yapto.datasource.sqlfile.config;
 
+import com.google.common.cache.CacheLoader;
+
 import yapto.datasource.config.IDataSourceConfiguration;
 import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.SQLFileDataSource;
@@ -29,6 +31,11 @@ public interface ISQLFileDataSourceConfiguration extends
 	String PICTURE_DIRECTORY_TAG = "PictureDirectory";
 
 	/**
+	 * Tag for the thumbnail directory.
+	 */
+	String THUMBNAILS_DIRECTORY_TAG = "ThumbnailDirectory";
+
+	/**
 	 * Tag for the picture directory.
 	 */
 	String INDEX_DIRECTORY_TAG = "IndexDirectory";
@@ -47,5 +54,21 @@ public interface ISQLFileDataSourceConfiguration extends
 	 */
 	String getIndexDirectory();
 
+	/**
+	 * Get the {@link IBufferedImageCacheLoaderConfiguration} for the picture
+	 * {@link CacheLoader}.
+	 * 
+	 * @return the {@link IBufferedImageCacheLoaderConfiguration} for the
+	 *         picture {@link CacheLoader}.
+	 */
 	IBufferedImageCacheLoaderConfiguration getMainPictureLoaderConfiguration();
+
+	/**
+	 * Get the {@link IBufferedImageCacheLoaderConfiguration} for the thumbnails
+	 * {@link CacheLoader}.
+	 * 
+	 * @return the {@link IBufferedImageCacheLoaderConfiguration} for the
+	 *         thumbnails {@link CacheLoader}.
+	 */
+	IBufferedImageCacheLoaderConfiguration getThumbnailPictureLoaderConfiguration();
 }

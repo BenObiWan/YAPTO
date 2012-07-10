@@ -37,6 +37,11 @@ public class SQLFileDataSourceConfigurationImpl extends
 	protected final ConfigurationString _leafPictureDirectory;
 
 	/**
+	 * Leaf configuring the base directory for thumbnails.
+	 */
+	protected final ConfigurationString _leafThumbnailsDirectory;
+
+	/**
 	 * Leaf configuring the base directory for index.
 	 */
 	private final ConfigurationString _leafIndexDirectory;
@@ -50,11 +55,22 @@ public class SQLFileDataSourceConfigurationImpl extends
 	private final static String PICTURE_DIRECTORY_SHORT_DESC = "Picture directory";
 	private final static String PICTURE_DIRECTORY_LONG_DESC = "Base directory for the pictures.";
 	private final static String PICTURE_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the pictures.";
+	private final static String THUMBNAILS_DIRECTORY_SHORT_DESC = "Thumbnails directory";
+	private final static String THUMBNAILS_DIRECTORY_LONG_DESC = "Base directory for the thumbnails.";
+	private final static String THUMBNAILS_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the thumbnails.";
 	private final static String INDEX_DIRECTORY_SHORT_DESC = "Index directory";
 	private final static String INDEX_DIRECTORY_LONG_DESC = "Base directory for the indexes.";
 	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
 
+	/**
+	 * {@link IBufferedImageCacheLoaderConfiguration} for the pictures.
+	 */
 	private final IBufferedImageCacheLoaderConfiguration _pictureCacheLoaderConfiguration;
+
+	/**
+	 * {@link IBufferedImageCacheLoaderConfiguration} for the thumbnails.
+	 */
+	private final IBufferedImageCacheLoaderConfiguration _thumbnailCacheLoaderConfiguration;
 
 	/**
 	 * Creates a new SQLFileDataSourceConfigurationImpl using default values for
@@ -84,6 +100,11 @@ public class SQLFileDataSourceConfigurationImpl extends
 				PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
 				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "");
+		_leafThumbnailsDirectory = new ConfigurationString(parent,
+				THUMBNAILS_DIRECTORY_TAG, THUMBNAILS_DIRECTORY_SHORT_DESC,
+				THUMBNAILS_DIRECTORY_LONG_DESC,
+				THUMBNAILS_DIRECTORY_INVALID_MESSAGE, false,
+				StringDisplayType.TEXTFIELD, 0, "");
 		_leafIndexDirectory = new ConfigurationString(parent,
 				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
@@ -92,8 +113,9 @@ public class SQLFileDataSourceConfigurationImpl extends
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
-		_pictureCacheLoaderConfiguration = new IPictureLoaderConfigurationImpl(
-				this, mBeanServer);
+		addLeaf(_leafThumbnailsDirectory);
+		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
+		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
 	}
 
 	/**
@@ -112,6 +134,12 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 * @param strCommandLinePictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for pictures.
+	 * @param strCommandLineThumbnailsDirectory
+	 *            the value specified on the command line for the base directory
+	 *            for thumbnails.
+	 * @param strCommandLineIndexDirectory
+	 *            the value specified on the command line for the base directory
+	 *            for indexes.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -120,6 +148,7 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final Integer iCommandLineDataSourceId,
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
+			final String strCommandLineThumbnailsDirectory,
 			final String strCommandLineIndexDirectory)
 			throws InvalidConfigurationException
 	{
@@ -141,6 +170,12 @@ public class SQLFileDataSourceConfigurationImpl extends
 				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLinePictureDirectory);
+		_leafThumbnailsDirectory = new ConfigurationString(parent,
+				THUMBNAILS_DIRECTORY_TAG, THUMBNAILS_DIRECTORY_SHORT_DESC,
+				THUMBNAILS_DIRECTORY_LONG_DESC,
+				THUMBNAILS_DIRECTORY_INVALID_MESSAGE, false,
+				StringDisplayType.TEXTFIELD, 0, "",
+				strCommandLineThumbnailsDirectory);
 		_leafIndexDirectory = new ConfigurationString(parent,
 				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
@@ -150,8 +185,9 @@ public class SQLFileDataSourceConfigurationImpl extends
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
-		_pictureCacheLoaderConfiguration = new IPictureLoaderConfigurationImpl(
-				this, mBeanServer);
+		addLeaf(_leafThumbnailsDirectory);
+		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
+		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
 	}
 
 	/**
@@ -170,6 +206,12 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 * @param strCommandLinePictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for pictures.
+	 * @param strCommandLineThumbnailsDirectory
+	 *            the value specified on the command line for the base directory
+	 *            for thumbnails.
+	 * @param strCommandLineIndexDirectory
+	 *            the value specified on the command line for the base directory
+	 *            for indexes.
 	 * @param iConfigurationDataSourceId
 	 *            the value specified in the configuration file for the
 	 *            DataSource id.
@@ -179,6 +221,12 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 * @param strConfigurationPictureDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for pictures.
+	 * @param strConfigurationThumbnailsDirectory
+	 *            the value specified in the configuration file for the base
+	 *            directory for thumbnails.
+	 * @param strConfigurationIndexDirectory
+	 *            the value specified in the configuration file for the base
+	 *            directory for indexes.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -187,16 +235,18 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final Integer iCommandLineDataSourceId,
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
+			final String strCommandLineThumbnailsDirectory,
 			final String strCommandLineIndexDirectory,
 			final Integer iConfigurationDataSourceId,
 			final String strConfigurationDatabaseFileName,
 			final String strConfigurationPictureDirectory,
+			final String strConfigurationThumbnailsDirectory,
 			final String strConfigurationIndexDirectory)
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLineDataSourceId,
 				strCommandLineDatabaseFileName, strCommandLinePictureDirectory,
-				strCommandLineIndexDirectory);
+				strCommandLineThumbnailsDirectory, strCommandLineIndexDirectory);
 		_leafDataSourceId.setConfigurationValue(iConfigurationDataSourceId);
 		_leafDatabaseFileName
 				.setConfigurationValue(strConfigurationDatabaseFileName);
@@ -204,6 +254,8 @@ public class SQLFileDataSourceConfigurationImpl extends
 				.setConfigurationValue(strConfigurationPictureDirectory);
 		_leafIndexDirectory
 				.setConfigurationValue(strConfigurationIndexDirectory);
+		_leafThumbnailsDirectory
+				.setConfigurationValue(strConfigurationThumbnailsDirectory);
 	}
 
 	@Override
@@ -236,22 +288,35 @@ public class SQLFileDataSourceConfigurationImpl extends
 		return _pictureCacheLoaderConfiguration;
 	}
 
-	private final class IPictureLoaderConfigurationImpl extends
+	@Override
+	public IBufferedImageCacheLoaderConfiguration getThumbnailPictureLoaderConfiguration()
+	{
+		return _thumbnailCacheLoaderConfiguration;
+	}
+
+	/**
+	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
+	 * 
+	 * @author benobiwan
+	 * 
+	 */
+	private final class PictureLoaderConfigurationImpl extends
 			AbstractConfigurationBranch implements
 			IBufferedImageCacheLoaderConfiguration
 	{
-		public IPictureLoaderConfigurationImpl(final IConfiguration parent,
-				final MBeanServer mBeanServer)
+		/**
+		 * Creates a new PictureLoaderConfigurationImpl.
+		 */
+		public PictureLoaderConfigurationImpl()
 		{
-			super(parent, "", mBeanServer);
-			// TODO Auto-generated constructor stub
+			super(SQLFileDataSourceConfigurationImpl.this, "",
+					SQLFileDataSourceConfigurationImpl.this.getMBeanServer());
 		}
 
 		@Override
 		public String getDescription()
 		{
-			// TODO Auto-generated method stub
-			return null;
+			return "";
 		}
 
 		@Override
@@ -261,28 +326,35 @@ public class SQLFileDataSourceConfigurationImpl extends
 		}
 	}
 
-	private final class IThumbnailLoaderConfigurationImpl extends
+	/**
+	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
+	 * 
+	 * @author benobiwan
+	 * 
+	 */
+	private final class ThumbnailLoaderConfigurationImpl extends
 			AbstractConfigurationBranch implements
 			IBufferedImageCacheLoaderConfiguration
 	{
-		public IThumbnailLoaderConfigurationImpl(final IConfiguration parent,
-				final MBeanServer mBeanServer)
+		/**
+		 * Creates a new ThumbnailLoaderConfigurationImpl.
+		 */
+		public ThumbnailLoaderConfigurationImpl()
 		{
-			super(parent, "", mBeanServer);
-			// TODO Auto-generated constructor stub
+			super(SQLFileDataSourceConfigurationImpl.this, "",
+					SQLFileDataSourceConfigurationImpl.this.getMBeanServer());
 		}
 
 		@Override
 		public String getDescription()
 		{
-			// TODO Auto-generated method stub
-			return null;
+			return "";
 		}
 
 		@Override
 		public String getPictureDirectory()
 		{
-			return _leafPictureDirectory.getCurrentValue();
+			return _leafThumbnailsDirectory.getCurrentValue();
 		}
 	}
 }

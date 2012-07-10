@@ -1,7 +1,14 @@
 package yapto.datasource.sqlfile;
 
+import common.config.IConfiguration;
 import common.config.IConfigurationBranch;
 
+/**
+ * {@link IConfiguration} for {@link BufferedImageCacheLoader}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public interface IBufferedImageCacheLoaderConfiguration extends
 		IConfigurationBranch
 {
