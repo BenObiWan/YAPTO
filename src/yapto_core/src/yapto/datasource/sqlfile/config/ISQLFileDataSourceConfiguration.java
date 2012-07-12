@@ -1,10 +1,10 @@
 package yapto.datasource.sqlfile.config;
 
-import com.google.common.cache.CacheLoader;
-
 import yapto.datasource.config.IDataSourceConfiguration;
 import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.SQLFileDataSource;
+
+import com.google.common.cache.CacheLoader;
 
 /**
  * Configuration for an {@link SQLFileDataSource}.

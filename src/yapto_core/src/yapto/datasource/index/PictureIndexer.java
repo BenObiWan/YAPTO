@@ -2,16 +2,23 @@ package yapto.datasource.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -38,6 +45,10 @@ public final class PictureIndexer
 
 	private final IndexWriter _indexWriter;
 
+	private final IndexReader _indexReader;
+
+	private final IndexSearcher _indexSearcher;
+
 	/**
 	 * Creates a new {@link PictureIndexer}.
 	 * 
@@ -59,6 +70,9 @@ public final class PictureIndexer
 		iwConf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 
 		_indexWriter = new IndexWriter(dir, iwConf);
+
+		_indexReader = DirectoryReader.open(_indexWriter, true);
+		_indexSearcher = new IndexSearcher(_indexReader);
 	}
 
 	/**
@@ -99,7 +113,7 @@ public final class PictureIndexer
 		// tags
 		for (final Tag t : picture.getTagSet())
 		{
-			doc.add(new StringField(t.getName(), "", Field.Store.NO));
+			doc.add(new StringField(t.getName(), t.getName(), Field.Store.NO));
 		}
 		return doc;
 	}
@@ -115,5 +129,30 @@ public final class PictureIndexer
 	public void close() throws CorruptIndexException, IOException
 	{
 		_indexWriter.close();
+		_indexReader.close();
+	}
+
+	/**
+	 * Search picture id corresponding to the specified query.
+	 * 
+	 * @param query
+	 *            the query.
+	 * @param iLimit
+	 *            maximum number of result.
+	 * @return a {@link List} of the matching picture id.
+	 * @throws IOException
+	 *             if an error occurs during the search.
+	 */
+	public List<String> searchPicture(final Query query, final int iLimit)
+			throws IOException
+	{
+		final ScoreDoc[] searchResult = _indexSearcher.search(query, iLimit).scoreDocs;
+		final ArrayList<String> result = new ArrayList<>();
+		result.ensureCapacity(searchResult.length);
+		for (final ScoreDoc scoreDoc : searchResult)
+		{
+			result.add(_indexReader.document(scoreDoc.doc).get("picture_id"));
+		}
+		return result;
 	}
 }
