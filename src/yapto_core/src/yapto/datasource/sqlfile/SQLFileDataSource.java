@@ -455,10 +455,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 */
 	private boolean checkAndCreateDirectories()
 	{
-		final File fBaseDirectory = new File(_conf
-				.getMainPictureLoaderConfiguration().getPictureDirectory());
-		boolean bRes = checkDirectory(fBaseDirectory);
+		boolean bRes = true;
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
+		final File fPictureBaseDirectory = new File(_conf
+				.getMainPictureLoaderConfiguration().getPictureDirectory());
+		bRes &= checkDirectory(fPictureBaseDirectory);
 		if (bRes)
 		{
 			for (int i = 0; i < 256; i++)
@@ -468,9 +469,27 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				{
 					strFileName = '0' + strFileName;
 				}
-				bRes &= checkDirectory(new File(fBaseDirectory, strFileName));
+				bRes &= checkDirectory(new File(fPictureBaseDirectory,
+						strFileName));
 			}
 		}
+		final File fThumbnailBaseDirectory = new File(_conf
+				.getThumbnailPictureLoaderConfiguration().getPictureDirectory());
+		bRes &= checkDirectory(fThumbnailBaseDirectory);
+		if (bRes)
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				String strFileName = Integer.toHexString(i).toUpperCase();
+				if (strFileName.length() == 1)
+				{
+					strFileName = '0' + strFileName;
+				}
+				bRes &= checkDirectory(new File(fThumbnailBaseDirectory,
+						strFileName));
+			}
+		}
+
 		return bRes;
 	}
 
@@ -613,6 +632,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		private volatile boolean _bStop = false;
 
 		/**
+		 * Thread used to run the {@link PictureUpdater}.
+		 */
+		private volatile Thread _workingThread;
+
+		/**
 		 * Creates a new {@link PictureUpdater}.
 		 */
 		public PictureUpdater()
@@ -626,11 +650,19 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		public void stop()
 		{
 			_bStop = true;
+			if (_workingThread != null)
+			{
+				synchronized (_workingThread)
+				{
+					_workingThread.interrupt();
+				}
+			}
 		}
 
 		@Override
 		public void run()
 		{
+			_workingThread = Thread.currentThread();
 			while (!_bStop)
 			{
 				try
@@ -639,7 +671,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				}
 				catch (final InterruptedException e)
 				{
-					LOGGER.error(e.getMessage(), e);
+					// nothing to do there
 				}
 			}
 		}
