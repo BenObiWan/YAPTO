@@ -27,27 +27,54 @@ import yapto.datasource.IPicture;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
+/**
+ * Object used to interact with the lucene index.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class PictureIndexer
 {
-	private static final String ID_FIELD = "picture_id";
-
-	private static final String GRADE_FIELD = "picture_grade";
+	/**
+	 * Name of the field used to index the name of the picture.
+	 */
+	public static final String ID_INDEX_FIELD = "picture_id";
 
 	/**
-	 * An empty byte array for uses in tags {@link Field}.
+	 * Name of the field used to index the grade of the picture.
 	 */
-	private static final byte[] EMPTY_BYTE_ARRAY = new byte[] {};
+	public static final String GRADE_INDEX_FIELD = "picture_grade";
 
 	/**
 	 * The configuration.
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
 
+	/**
+	 * {@link IndexWriter} used to write the indexes.
+	 */
 	private final IndexWriter _indexWriter;
 
-	private final IndexReader _indexReader;
+	/**
+	 * Object used to protect the access to the reader.
+	 */
+	private final Object _readerLock = new Object();
 
-	private final IndexSearcher _indexSearcher;
+	/**
+	 * {@link IndexReader} used to write the indexes.
+	 */
+	private IndexReader _indexReader;
+
+	/**
+	 * {@link IndexSearcher} used to search the indexes.
+	 */
+	private IndexSearcher _indexSearcher;
+
+	/**
+	 * Boolean telling whether the {@link IndexReader} needs to be updated or
+	 * not.
+	 */
+	private boolean _bReaderNeedsUpdate;
 
 	/**
 	 * Creates a new {@link PictureIndexer}.
@@ -71,8 +98,12 @@ public final class PictureIndexer
 
 		_indexWriter = new IndexWriter(dir, iwConf);
 
-		_indexReader = DirectoryReader.open(_indexWriter, true);
-		_indexSearcher = new IndexSearcher(_indexReader);
+		synchronized (_readerLock)
+		{
+			_indexReader = DirectoryReader.open(_indexWriter, true);
+			_indexSearcher = new IndexSearcher(_indexReader);
+			_bReaderNeedsUpdate = false;
+		}
 	}
 
 	/**
@@ -88,10 +119,14 @@ public final class PictureIndexer
 	public void indexPicture(final IPicture picture)
 			throws CorruptIndexException, IOException
 	{
-		final Term currDoc = new Term(ID_FIELD, picture.getId());
+		final Term currDoc = new Term(ID_INDEX_FIELD, picture.getId());
 		final Document doc = createDocument(picture);
 
 		_indexWriter.updateDocument(currDoc, doc);
+		synchronized (_readerLock)
+		{
+			_bReaderNeedsUpdate = true;
+		}
 	}
 
 	/**
@@ -105,9 +140,10 @@ public final class PictureIndexer
 	{
 		final Document doc = new Document();
 		// id
-		doc.add(new StringField(ID_FIELD, picture.getId(), Field.Store.YES));
+		doc.add(new StringField(ID_INDEX_FIELD, picture.getId(),
+				Field.Store.YES));
 		// grade
-		final IntField grade = new IntField(GRADE_FIELD,
+		final IntField grade = new IntField(GRADE_INDEX_FIELD,
 				picture.getPictureGrade(), Field.Store.YES);
 		doc.add(grade);
 		// tags
@@ -129,7 +165,10 @@ public final class PictureIndexer
 	public void close() throws CorruptIndexException, IOException
 	{
 		_indexWriter.close();
-		_indexReader.close();
+		synchronized (_readerLock)
+		{
+			_indexReader.close();
+		}
 	}
 
 	/**
@@ -146,13 +185,25 @@ public final class PictureIndexer
 	public List<String> searchPicture(final Query query, final int iLimit)
 			throws IOException
 	{
-		final ScoreDoc[] searchResult = _indexSearcher.search(query, iLimit).scoreDocs;
-		final ArrayList<String> result = new ArrayList<>();
-		result.ensureCapacity(searchResult.length);
-		for (final ScoreDoc scoreDoc : searchResult)
+		synchronized (_readerLock)
 		{
-			result.add(_indexReader.document(scoreDoc.doc).get("picture_id"));
+			if (_bReaderNeedsUpdate)
+			{
+				_indexReader.close();
+				_indexReader = DirectoryReader.open(_indexWriter, true);
+				_indexSearcher = new IndexSearcher(_indexReader);
+				_bReaderNeedsUpdate = false;
+			}
+			final ScoreDoc[] searchResult = _indexSearcher
+					.search(query, iLimit).scoreDocs;
+			final ArrayList<String> result = new ArrayList<>();
+			result.ensureCapacity(searchResult.length);
+			for (final ScoreDoc scoreDoc : searchResult)
+			{
+				result.add(_indexReader.document(scoreDoc.doc)
+						.get("picture_id"));
+			}
+			return result;
 		}
-		return result;
 	}
 }
