@@ -5,7 +5,8 @@ import java.io.IOException;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.NumericField;
+import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -54,7 +55,7 @@ public final class PictureIndexer
 
 		// index writer configuration
 		final IndexWriterConfig iwConf = new IndexWriterConfig(
-				Version.LUCENE_36, null);
+				Version.LUCENE_40, null);
 		iwConf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 
 		_indexWriter = new IndexWriter(dir, iwConf);
@@ -90,17 +91,16 @@ public final class PictureIndexer
 	{
 		final Document doc = new Document();
 		// id
-		doc.add(new Field(ID_FIELD, picture.getId().getBytes()));
+		doc.add(new StringField(ID_FIELD, picture.getId(), Field.Store.YES));
 		// grade
-		final NumericField grade = new NumericField(GRADE_FIELD);
-		grade.setIntValue(picture.getPictureGrade());
+		final IntField grade = new IntField(GRADE_FIELD,
+				picture.getPictureGrade(), Field.Store.YES);
 		doc.add(grade);
 		// tags
 		for (final Tag t : picture.getTagSet())
 		{
-			doc.add(new Field(t.getName(), EMPTY_BYTE_ARRAY));
+			doc.add(new StringField(t.getName(), "", Field.Store.NO));
 		}
-
 		return doc;
 	}
 
