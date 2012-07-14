@@ -134,7 +134,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		});
 
 		final MainPictureDisplayPanel contentPane = new MainPictureDisplayPanel(
-				_dataSource.getPictureIterator());
+				_dataSource.getAllPictures());
 
 		setJMenuBar(createMenuBar());
 		setContentPane(contentPane);

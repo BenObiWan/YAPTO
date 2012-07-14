@@ -59,8 +59,7 @@ public final class PictureInformationPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
-		_tagPanel = new ListTagEditorPanel(
-				_pictureIterator.getSourcePictureList(),
+		_tagPanel = new ListTagEditorPanel(_pictureIterator.getDataSource(),
 				_pictureIterator.getCurrentPicture());
 		add(_tagPanel, BorderLayout.CENTER);
 	}
