@@ -500,21 +500,16 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	@Override
 	public IPictureBrowser<FsPicture> getAllPictures()
 	{
-		return new PictureIterator();
+		return new PictureIterator(null, _pictureIdList);
 	}
 
 	@Override
 	public IPictureBrowser<FsPicture> filterPictures(final Query query,
 			final int iLimit) throws IOException
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+		List<String> list = _indexer.searchPicture(query, iLimit);
 
-	public List<String> searchPicture(final Query query, final int iLimit)
-			throws IOException
-	{
-		return _indexer.searchPicture(query, iLimit);
+		return new PictureIterator(query, list);
 	}
 
 	/**
@@ -583,11 +578,17 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	{
 		/**
 		 * Creates a new {@link PictureIterator}.
+		 * 
+		 * @param query
+		 *            the {@link Query} used to create the
+		 *            {@link PictureIterator}.
+		 * @param idList
+		 *            the list of ids of the {@link PictureIterator}.
 		 */
-		public PictureIterator()
+		public PictureIterator(Query query, List<String> idList)
 		{
-			super(SQLFileDataSource.this, SQLFileDataSource.this._bus,
-					_pictureIdList.listIterator());
+			super(SQLFileDataSource.this, query, SQLFileDataSource.this._bus,
+					idList);
 		}
 
 		@Override
