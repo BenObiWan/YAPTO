@@ -1,6 +1,7 @@
 package yapto.datasource.dummy;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -9,6 +10,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +18,7 @@ import yapto.datasource.AbstractPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.IPictureFilter;
 import yapto.datasource.IPictureList;
-import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.tag.Tag;
@@ -120,28 +120,6 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	}
 
 	@Override
-	public IPictureList<DummyPicture> filterList(final IPictureFilter filter)
-			throws OperationNotSupportedException
-	{
-		throw new OperationNotSupportedException();
-	}
-
-	@Override
-	public IPictureList<? extends IPicture> mergeList(
-			final IPictureList<IPicture> otherList)
-			throws OperationNotSupportedException
-	{
-		throw new OperationNotSupportedException();
-	}
-
-	@Override
-	public List<IPictureList<DummyPicture>> getParent()
-			throws OperationNotSupportedException
-	{
-		throw new OperationNotSupportedException();
-	}
-
-	@Override
 	public void addPicture(final File pictureFile) throws PictureAddException
 	{
 		final DummyPicture pict = new DummyPicture(this, pictureFile);
@@ -153,12 +131,6 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	public Set<Tag> getTagSet()
 	{
 		return Collections.unmodifiableSet(_tagSet);
-	}
-
-	@Override
-	public List<IPicture> getPictureList()
-	{
-		return null;
 	}
 
 	@Override
@@ -186,9 +158,17 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 	}
 
 	@Override
-	public IPictureBrowser<DummyPicture> getPictureIterator()
+	public IPictureBrowser<DummyPicture> getAllPictures()
 	{
 		return new DummyPictureBrowser();
+	}
+
+	@Override
+	public IPictureBrowser<DummyPicture> filterPictures(Query query, int iLimit)
+			throws IOException
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -304,6 +284,19 @@ public final class DummyDataSource implements IDataSource<DummyPicture>
 		{
 			return _pictureIterator.previousIndex();
 		}
-	}
 
+		@Override
+		public int getCurrentIndex()
+		{
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getPictureCount()
+		{
+			// TODO Auto-generated method stub
+			return 0;
+		}
+	}
 }
