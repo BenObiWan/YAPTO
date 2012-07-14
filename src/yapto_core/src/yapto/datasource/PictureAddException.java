@@ -1,5 +1,10 @@
 package yapto.datasource;
 
+/**
+ * Thrown when there is a problem during the adding of picture.
+ * 
+ * @author benobiwan
+ */
 public final class PictureAddException extends Exception
 {
 	/**

@@ -1,27 +1,60 @@
 package yapto.datasource;
 
+/**
+ * Enum describing the different types of {@link PictureAddException}.
+ * 
+ * @author benobiwan
+ */
 public enum PictureAddExceptionType
 {
+	/**
+	 * The image file is absent.
+	 */
 	FILE_NOT_FOUND(""),
 
+	/**
+	 * The specified path is not a file.
+	 */
 	NOT_A_FILE(""),
 
+	/**
+	 * Can't read the specified file.
+	 */
 	CAN_T_READ(""),
 
+	/**
+	 * Specified MessageDigest algorithm doesn't exists.
+	 */
 	NO_SUCH_ALGORITHM(""),
 
+	/**
+	 * Destination file already exists.
+	 */
 	FILE_ALREADY_EXISTS(""),
 
-	DIRECTORY_NOT_EMPTY(""),
-
+	/**
+	 * IO error during the copy.
+	 */
 	COPY_ERROR(""),
 
+	/**
+	 * IO error during the reading of the file.
+	 */
 	IO_ERROR(""),
 
+	/**
+	 * SQL error during the insertion of the picture in the database.
+	 */
 	SQL_INSERT_ERROR(""),
 
+	/**
+	 * The lucene index is corrupted.
+	 */
 	CORRUPT_INDEX_ERROR(""),
 
+	/**
+	 * IO error during the indexation.
+	 */
 	INDEX_ERROR("");
 
 	/**
