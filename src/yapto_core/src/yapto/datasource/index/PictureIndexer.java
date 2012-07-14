@@ -149,7 +149,7 @@ public final class PictureIndexer
 		// tags
 		for (final Tag t : picture.getTagSet())
 		{
-			doc.add(new IntField(t.getTagIdAsString(), t.getTagId(),
+			doc.add(new StringField(t.getTagIdAsString(), t.getTagIdAsString(),
 					Field.Store.NO));
 		}
 		return doc;
