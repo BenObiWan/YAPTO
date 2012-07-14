@@ -1,5 +1,7 @@
 package yapto.datasource;
 
+import org.apache.lucene.search.Query;
+
 /**
  * An object used to browse pictures from an {@link IDataSource}.
  * 
@@ -48,6 +50,16 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	int nextIndex();
 
 	/**
+	 * Retrieve the pictures directly after the current picture, without
+	 * changing the current picture.
+	 * 
+	 * @param iNbr
+	 *            the number of pictures to retrieve.
+	 * @return an array containing the asked picture in order.
+	 */
+	PICTURE[] nextPictures(int iNbr);
+
+	/**
 	 * Returns true if this IPictureBrowser has more elements when traversing
 	 * the list in the reverse direction.
 	 * 
@@ -69,6 +81,27 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 * @return the index of the previous element.
 	 */
 	int previousIndex();
+
+	/**
+	 * Retrieve the pictures directly before the current picture, without
+	 * changing the current picture.
+	 * 
+	 * @param iNbr
+	 *            the number of pictures to retrieve.
+	 * @return an array containing the asked picture in order.
+	 */
+	PICTURE[] previousPictures(int iNbr);
+
+	/**
+	 * Retrieve the picture whose id are between the specified indexes.
+	 * 
+	 * @param iBeginIndex
+	 *            the index of the first picture to retrieve.
+	 * @param iEndIndex
+	 *            the index of the last picture to retrieve.
+	 * @return an array containing the asked picture in order.
+	 */
+	PICTURE[] getPictures(int iBeginIndex, int iEndIndex);
 
 	/**
 	 * Register an object to the listen for change in this
@@ -95,4 +128,12 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 *         {@link IPictureBrowser}.
 	 */
 	IDataSource<PICTURE> getDataSource();
+
+	/**
+	 * get the {@link Query} which created this {@link IPictureBrowser}. null if
+	 * it isn't filtered.
+	 * 
+	 * @return the {@link Query} which created this {@link IPictureBrowser}.
+	 */
+	Query getQuery();
 }
