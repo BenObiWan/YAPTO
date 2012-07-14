@@ -1,6 +1,9 @@
 package yapto.datasource;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.lucene.search.Query;
 
 import yapto.datasource.tag.Tag;
 
@@ -46,4 +49,28 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 * Close this {@link IDataSource}.
 	 */
 	void close();
+
+	/**
+	 * Get an {@link IPictureBrowser} browsing all the pictures of this
+	 * {@link IDataSource}.
+	 * 
+	 * @return an {@link IPictureBrowser}.
+	 */
+	IPictureBrowser<PICTURE> getAllPictures();
+
+	/**
+	 * Get an {@link IPictureBrowser} browsing a selection of pictures from this
+	 * {@link IDataSource}.
+	 * 
+	 * @param query
+	 *            the {@link Query} used to filter the pictures to select.
+	 * @param iLimit
+	 *            the maximal number of pictures to select.
+	 * 
+	 * @return an {@link IPictureBrowser}.
+	 * @throws IOException
+	 *             if an error occurs during the filtering.
+	 */
+	IPictureBrowser<PICTURE> filterPictures(Query query, int iLimit)
+			throws IOException;
 }

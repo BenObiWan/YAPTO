@@ -1,6 +1,5 @@
 package yapto.datasource;
 
-import java.util.List;
 import java.util.Set;
 
 import yapto.datasource.tag.Tag;
@@ -11,7 +10,6 @@ import yapto.datasource.tag.Tag;
  * @author benobiwan
  * @param <PICTURE>
  *            type of {@link IPicture} of this {@link IPictureList}.
- * 
  */
 public interface IPictureList<PICTURE extends IPicture>
 {
@@ -19,52 +17,8 @@ public interface IPictureList<PICTURE extends IPicture>
 	 * Get the number of {@link IPicture} in this {@link IPictureList}.
 	 * 
 	 * @return the number of {@link IPicture} in this {@link IPictureList}.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this
-	 *             {@link IPictureList}.
 	 */
-	int getPictureCount() throws OperationNotSupportedException;
-
-	/**
-	 * Filter the list of {@link IPicture} in this {@link IPictureList} with the
-	 * specified {@link IPictureFilter}.
-	 * 
-	 * @param filter
-	 *            the {@link IPictureFilter} to use to filter the list of
-	 *            {@link IPicture}.
-	 * @return a {@link IPictureList} based on the current {@link IPictureList}
-	 *         and the specified {@link IPictureFilter}.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this
-	 *             {@link IPictureList}.
-	 */
-	IPictureList<PICTURE> filterList(IPictureFilter filter)
-			throws OperationNotSupportedException;
-
-	/**
-	 * Merge this {@link IPictureList} with another {@link IPictureList}.
-	 * 
-	 * @param otherList
-	 *            the {@link IPictureList} to merge with.
-	 * @return a {@link IPictureList} containing the {@link IPicture} of the two
-	 *         specified list.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this
-	 *             {@link IPictureList}.
-	 */
-	IPictureList<? extends IPicture> mergeList(IPictureList<IPicture> otherList)
-			throws OperationNotSupportedException;
-
-	/**
-	 * Get the list of parents of this {@link IPictureList}.
-	 * 
-	 * @return the list of parents of this {@link IPictureList}.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this
-	 *             {@link IPictureList}.
-	 */
-	List<IPictureList<PICTURE>> getParent()
-			throws OperationNotSupportedException;
+	int getPictureCount();
 
 	/**
 	 * Get the list of {@link Tag}s associated with {@link IPicture} in this
@@ -85,18 +39,4 @@ public interface IPictureList<PICTURE extends IPicture>
 	 * @return the root {@link Tag}.
 	 */
 	Tag getRootTag();
-
-	/**
-	 * Get the {@link List} of all {@link IPicture}.
-	 * 
-	 * @return the {@link List} of all {@link IPicture}.
-	 */
-	List<IPicture> getPictureList();
-
-	/**
-	 * Get a {@link IPictureBrowser}.
-	 * 
-	 * @return a {@link IPictureBrowser}.
-	 */
-	IPictureBrowser<PICTURE> getPictureIterator();
 }
