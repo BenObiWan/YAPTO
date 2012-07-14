@@ -1,8 +1,10 @@
 package yapto.datasource;
 
-import java.util.ListIterator;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,14 @@ import yapto.datasource.sqlfile.FsPicture;
 
 import com.google.common.eventbus.EventBus;
 
+/**
+ * Abstract implementation if the {@link IPictureBrowser} interface based on a
+ * list of picture ids.
+ * 
+ * @author benobiwan
+ * 
+ * @param <PICTURE>
+ */
 public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		extends AbstractPictureBrowser<PICTURE>
 {
@@ -20,25 +30,34 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 			.getLogger(AbstractIdBasedPictureBrowser.class);
 
 	/**
-	 * {@link ListIterator} on the {@link FsPicture} id.
+	 * {@link List} on the {@link FsPicture} id.
 	 */
-	protected final ListIterator<String> _idIterator;
+	protected final List<String> _idList;
+
+	/**
+	 * Id of the picture currently selected.
+	 */
+	protected int _iCurrentId = 0;
 
 	/**
 	 * Creates a new AbstractIdBasedPictureBrowser.
 	 * 
 	 * @param dataSource
 	 *            the {@link IDataSource} for this {@link IPictureBrowser}.
+	 * @param query
+	 *            the {@link Query} which created this {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link AbstractPictureBrowser}.
-	 * @param idIterator
+	 * @param idList
+	 *            {@link List} containing the ids of the picture contained in
+	 *            this AbstractIdBasedPictureBrowser.
 	 */
 	public AbstractIdBasedPictureBrowser(final IDataSource<PICTURE> dataSource,
-			final EventBus bus, final ListIterator<String> idIterator)
+			final Query query, final EventBus bus, final List<String> idList)
 	{
-		super(dataSource, bus);
-		_idIterator = idIterator;
+		super(dataSource, query, bus);
+		_idList = idList;
 	}
 
 	@Override
@@ -46,7 +65,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _idIterator.hasNext();
+			return _iCurrentId < _idList.size();
 		}
 	}
 
@@ -55,11 +74,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			if (_idIterator.hasPrevious())
-			{
-				return _idIterator.previousIndex() != 0;
-			}
-			return false;
+			return _iCurrentId > 0;
 		}
 	}
 
@@ -78,7 +93,8 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 				}
 				if (hasNext())
 				{
-					_currentPicture = getPicture(_idIterator.next());
+					_iCurrentId++;
+					_currentPicture = getPicture(_idList.get(_iCurrentId));
 					_bus.post(new PictureChangedEvent());
 				}
 				if (LOGGER.isDebugEnabled())
@@ -113,9 +129,8 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 				}
 				if (hasPrevious())
 				{
-					_idIterator.previous();
-					_idIterator.previous();
-					_currentPicture = getPicture(_idIterator.next());
+					_iCurrentId--;
+					_currentPicture = getPicture(_idList.get(_iCurrentId));
 					_bus.post(new PictureChangedEvent());
 				}
 				if (LOGGER.isDebugEnabled())
@@ -140,7 +155,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _idIterator.nextIndex();
+			return _iCurrentId + 1;
 		}
 	}
 
@@ -149,22 +164,86 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _idIterator.previousIndex();
+			return _iCurrentId - 1;
 		}
 	}
 
 	@Override
 	public int getCurrentIndex()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		synchronized (_lock)
+		{
+			return _iCurrentId;
+		}
 	}
 
 	@Override
 	public int getPictureCount()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return _idList.size();
+	}
+
+	@Override
+	public IPicture[] nextPictures(final int iNbr) throws ExecutionException
+	{
+		int iFirstIndex;
+		synchronized (_lock)
+		{
+			iFirstIndex = _iCurrentId + 1;
+		}
+		return getPictures(iFirstIndex, iFirstIndex + iNbr);
+	}
+
+	@Override
+	public IPicture[] previousPictures(final int iNbr)
+			throws ExecutionException
+	{
+		int iFirstIndex;
+		synchronized (_lock)
+		{
+			iFirstIndex = _iCurrentId - 1;
+		}
+		return getPictures(iFirstIndex, iFirstIndex - iNbr);
+	}
+
+	@Override
+	public IPicture[] getPictures(final int iBeginIndex, final int iEndIndex)
+			throws ExecutionException
+	{
+		boolean bReverseOrder = false;
+		int iRealBeginIndex;
+		int iRealEndIndex;
+		if (iBeginIndex > iEndIndex)
+		{
+			bReverseOrder = true;
+			iRealBeginIndex = iEndIndex;
+			iRealEndIndex = iBeginIndex;
+		}
+		else
+		{
+			iRealBeginIndex = iBeginIndex;
+			iRealEndIndex = iEndIndex;
+		}
+		if (iRealBeginIndex < 0)
+		{
+			iRealBeginIndex = 0;
+		}
+		if (iRealEndIndex > _idList.size())
+		{
+			iRealEndIndex = _idList.size();
+		}
+		final List<String> ids = _idList
+				.subList(iRealBeginIndex, iRealEndIndex);
+		if (bReverseOrder)
+		{
+			Collections.reverse(ids);
+		}
+		final IPicture[] array = new IPicture[ids.size()];
+		for (int i = 0; i < ids.size(); i++)
+		{
+			array[i] = getPicture(ids.get(i));
+		}
+		return array;
 	}
 
 	/**
@@ -173,6 +252,8 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	 * @param pictureId
 	 *            the id of the picture.
 	 * @return the requested {@link IPicture}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the picture.
 	 */
 	protected abstract PICTURE getPicture(String pictureId)
 			throws ExecutionException;

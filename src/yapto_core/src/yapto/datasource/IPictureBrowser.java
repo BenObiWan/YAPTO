@@ -1,5 +1,7 @@
 package yapto.datasource;
 
+import java.util.concurrent.ExecutionException;
+
 import org.apache.lucene.search.Query;
 
 /**
@@ -56,8 +58,10 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 * @param iNbr
 	 *            the number of pictures to retrieve.
 	 * @return an array containing the asked picture in order.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the picture.
 	 */
-	PICTURE[] nextPictures(int iNbr);
+	IPicture[] nextPictures(int iNbr) throws ExecutionException;
 
 	/**
 	 * Returns true if this IPictureBrowser has more elements when traversing
@@ -89,8 +93,10 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 * @param iNbr
 	 *            the number of pictures to retrieve.
 	 * @return an array containing the asked picture in order.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the picture.
 	 */
-	PICTURE[] previousPictures(int iNbr);
+	IPicture[] previousPictures(int iNbr) throws ExecutionException;
 
 	/**
 	 * Retrieve the picture whose id are between the specified indexes.
@@ -100,8 +106,11 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 	 * @param iEndIndex
 	 *            the index of the last picture to retrieve.
 	 * @return an array containing the asked picture in order.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the picture.
 	 */
-	PICTURE[] getPictures(int iBeginIndex, int iEndIndex);
+	IPicture[] getPictures(int iBeginIndex, int iEndIndex)
+			throws ExecutionException;
 
 	/**
 	 * Register an object to the listen for change in this
