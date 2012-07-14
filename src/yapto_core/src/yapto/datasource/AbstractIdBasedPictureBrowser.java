@@ -27,19 +27,17 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	/**
 	 * Creates a new AbstractIdBasedPictureBrowser.
 	 * 
-	 * @param sourcePictureList
-	 *            the source {@link IPictureList} for this
-	 *            {@link IPictureBrowser}.
+	 * @param dataSource
+	 *            the {@link IDataSource} for this {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link AbstractPictureBrowser}.
 	 * @param idIterator
 	 */
-	public AbstractIdBasedPictureBrowser(
-			final IPictureList<PICTURE> sourcePictureList, final EventBus bus,
-			final ListIterator<String> idIterator)
+	public AbstractIdBasedPictureBrowser(final IDataSource<PICTURE> dataSource,
+			final EventBus bus, final ListIterator<String> idIterator)
 	{
-		super(sourcePictureList, bus);
+		super(dataSource, bus);
 		_idIterator = idIterator;
 	}
 
@@ -153,6 +151,20 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		{
 			return _idIterator.previousIndex();
 		}
+	}
+	
+	@Override
+	public int getCurrentIndex()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPictureCount()
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/**

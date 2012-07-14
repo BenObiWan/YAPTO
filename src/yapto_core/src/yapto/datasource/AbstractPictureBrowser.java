@@ -1,5 +1,9 @@
 package yapto.datasource;
 
+import java.util.Set;
+
+import yapto.datasource.tag.Tag;
+
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -29,47 +33,28 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	protected final EventBus _bus;
 
 	/**
-	 * The source {@link IPictureList} for this {@link IPictureBrowser}.
+	 * The {@link IDataSource} for this {@link IPictureBrowser}.
 	 */
-	protected final IPictureList<PICTURE> _sourcePictureList;
+	protected final IDataSource<PICTURE> _dataSource;
 
 	/**
 	 * Creates a new AbstractPictureBrowser.
 	 * 
-	 * @param sourcePictureList
-	 *            the source {@link IPictureList} for this
-	 *            {@link IPictureBrowser}.
+	 * @param dataSource
+	 *            the {@link IDataSource} for this {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link AbstractPictureBrowser}.
 	 */
-	protected AbstractPictureBrowser(
-			final IPictureList<PICTURE> sourcePictureList, final EventBus bus)
+	protected AbstractPictureBrowser(final IDataSource<PICTURE> dataSource,
+			final EventBus bus)
 	{
 		_bus = bus;
-		_sourcePictureList = sourcePictureList;
+		_dataSource = dataSource;
 	}
 
 	@Override
-	public void add(final PICTURE arg0)
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void remove()
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void set(final PICTURE arg0)
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public IPicture getCurrentPicture()
+	public PICTURE getCurrentPicture()
 	{
 		synchronized (_lock)
 		{
@@ -94,8 +79,20 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public IPictureList<PICTURE> getSourcePictureList()
+	public IDataSource<PICTURE> getDataSource()
 	{
-		return _sourcePictureList;
+		return _dataSource;
+	}
+
+	@Override
+	public Set<Tag> getTagSet() throws OperationNotSupportedException
+	{
+		return _dataSource.getTagSet();
+	}
+
+	@Override
+	public Tag getRootTag()
+	{
+		return _dataSource.getRootTag();
 	}
 }

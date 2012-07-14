@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,34 +185,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public int getPictureCount() throws OperationNotSupportedException
+	public int getPictureCount()
 	{
 		return _pictureIdList.size();
-	}
-
-	@Override
-	public IPictureList<FsPicture> filterList(final IPictureFilter filter)
-			throws OperationNotSupportedException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IPictureList<IPicture> mergeList(
-			final IPictureList<IPicture> otherList)
-			throws OperationNotSupportedException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<IPictureList<FsPicture>> getParent()
-			throws OperationNotSupportedException
-	{
-		// no parent for a datasource.
-		return null;
 	}
 
 	@Override
@@ -222,13 +198,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 
 	@Override
 	public Tag getRootTag()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<IPicture> getPictureList()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -532,9 +501,23 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> getPictureIterator()
+	public IPictureBrowser<FsPicture> getAllPictures()
 	{
 		return new PictureIterator();
+	}
+	
+	@Override
+	public IPictureBrowser<FsPicture> filterPictures(Query query, int iLimit)
+			throws IOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<String> searchPicture(final Query query, final int iLimit)
+			throws IOException
+	{
+		return _indexer.searchPicture(query, iLimit);
 	}
 
 	/**
