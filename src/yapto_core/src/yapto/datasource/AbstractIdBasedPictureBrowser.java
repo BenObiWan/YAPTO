@@ -52,12 +52,17 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	 * @param idList
 	 *            {@link List} containing the ids of the picture contained in
 	 *            this AbstractIdBasedPictureBrowser.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
 	 */
 	public AbstractIdBasedPictureBrowser(final IDataSource<PICTURE> dataSource,
 			final Query query, final EventBus bus, final List<String> idList)
+			throws ExecutionException
 	{
 		super(dataSource, query, bus);
 		_idList = idList;
+		_currentPicture = getPicture(_idList.get(0));
 	}
 
 	@Override
@@ -65,7 +70,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId < _idList.size();
+			return _iCurrentId < _idList.size() - 1;
 		}
 	}
 

@@ -68,10 +68,6 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			if (_currentPicture == null)
-			{
-				_currentPicture = next();
-			}
 			return _currentPicture;
 		}
 	}

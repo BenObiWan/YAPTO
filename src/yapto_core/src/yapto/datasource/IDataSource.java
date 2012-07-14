@@ -2,6 +2,7 @@ package yapto.datasource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.lucene.search.Query;
 
@@ -55,8 +56,11 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 * {@link IDataSource}.
 	 * 
 	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
 	 */
-	IPictureBrowser<PICTURE> getAllPictures();
+	IPictureBrowser<PICTURE> getAllPictures() throws ExecutionException;
 
 	/**
 	 * Get an {@link IPictureBrowser} browsing a selection of pictures from this
@@ -70,7 +74,10 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 * @return an {@link IPictureBrowser}.
 	 * @throws IOException
 	 *             if an error occurs during the filtering.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
 	 */
 	IPictureBrowser<PICTURE> filterPictures(Query query, int iLimit)
-			throws IOException;
+			throws IOException, ExecutionException;
 }
