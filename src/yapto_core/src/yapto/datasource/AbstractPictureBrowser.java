@@ -2,6 +2,8 @@ package yapto.datasource;
 
 import java.util.Set;
 
+import org.apache.lucene.search.Query;
+
 import yapto.datasource.tag.Tag;
 
 import com.google.common.eventbus.EventBus;
@@ -38,19 +40,27 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	protected final IDataSource<PICTURE> _dataSource;
 
 	/**
+	 * the {@link Query} which created this {@link IPictureBrowser}.
+	 */
+	protected final Query _query;
+
+	/**
 	 * Creates a new AbstractPictureBrowser.
 	 * 
 	 * @param dataSource
 	 *            the {@link IDataSource} for this {@link IPictureBrowser}.
+	 * @param query
+	 *            the {@link Query} which created this {@link IPictureBrowser}.
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link AbstractPictureBrowser}.
 	 */
 	protected AbstractPictureBrowser(final IDataSource<PICTURE> dataSource,
-			final EventBus bus)
+			final Query query, final EventBus bus)
 	{
 		_bus = bus;
 		_dataSource = dataSource;
+		_query = query;
 	}
 
 	@Override
@@ -94,5 +104,11 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	public Tag getRootTag()
 	{
 		return _dataSource.getRootTag();
+	}
+
+	@Override
+	public Query getQuery()
+	{
+		return _query;
 	}
 }
