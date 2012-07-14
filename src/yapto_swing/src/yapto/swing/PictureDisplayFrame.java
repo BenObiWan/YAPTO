@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 import javax.swing.JFileChooser;
@@ -133,8 +134,16 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			}
 		});
 
-		final MainPictureDisplayPanel contentPane = new MainPictureDisplayPanel(
-				_dataSource.getAllPictures());
+		MainPictureDisplayPanel contentPane = null;
+		try
+		{
+			contentPane = new MainPictureDisplayPanel(
+					_dataSource.getAllPictures());
+		}
+		catch (final ExecutionException e1)
+		{
+			LOGGER.error(e1.getMessage(), e1);
+		}
 
 		setJMenuBar(createMenuBar());
 		setContentPane(contentPane);
