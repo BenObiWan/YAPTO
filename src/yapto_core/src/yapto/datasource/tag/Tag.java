@@ -54,6 +54,11 @@ public final class Tag implements Comparable<Tag>
 	private final int _iTagId;
 
 	/**
+	 * Id of this {@link Tag} as a String.
+	 */
+	private final String _strTagId;
+
+	/**
 	 * Set containing the children of this {@link Tag}.
 	 */
 	private final ConcurrentSkipListSet<Tag> _childrenSet = new ConcurrentSkipListSet<>();
@@ -80,6 +85,7 @@ public final class Tag implements Comparable<Tag>
 	{
 		_iDatasourceId = iDatasourceId;
 		_iTagId = iTagId;
+		_strTagId = String.valueOf(_iTagId);
 		synchronized (_parentLock)
 		{
 			_parentTag = parent;
@@ -323,5 +329,15 @@ public final class Tag implements Comparable<Tag>
 	public int getTagId()
 	{
 		return _iTagId;
+	}
+
+	/**
+	 * Get the id of this {@link Tag} as a String.
+	 * 
+	 * @return the String representation of the id of this {@link Tag}.
+	 */
+	public String getTagIdAsString()
+	{
+		return _strTagId;
 	}
 }
