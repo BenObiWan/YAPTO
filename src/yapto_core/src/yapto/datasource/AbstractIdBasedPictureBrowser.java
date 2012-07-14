@@ -152,7 +152,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 			return _idIterator.previousIndex();
 		}
 	}
-	
+
 	@Override
 	public int getCurrentIndex()
 	{

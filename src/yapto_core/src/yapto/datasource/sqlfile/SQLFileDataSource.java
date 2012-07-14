@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import yapto.datasource.AbstractIdBasedPictureBrowser;
 import yapto.datasource.IDataSource;
-import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.IPictureFilter;
-import yapto.datasource.IPictureList;
 import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
@@ -505,10 +502,10 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	{
 		return new PictureIterator();
 	}
-	
+
 	@Override
-	public IPictureBrowser<FsPicture> filterPictures(Query query, int iLimit)
-			throws IOException
+	public IPictureBrowser<FsPicture> filterPictures(final Query query,
+			final int iLimit) throws IOException
 	{
 		// TODO Auto-generated method stub
 		return null;
