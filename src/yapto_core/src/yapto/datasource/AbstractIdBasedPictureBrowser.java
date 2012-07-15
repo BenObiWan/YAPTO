@@ -1,5 +1,6 @@
 package yapto.datasource;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -233,15 +234,19 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		{
 			iRealBeginIndex = 0;
 		}
+		iRealEndIndex++;
 		if (iRealEndIndex > _idList.size())
 		{
 			iRealEndIndex = _idList.size();
 		}
-		final List<String> ids = _idList
-				.subList(iRealBeginIndex, iRealEndIndex);
+		List<String> ids = _idList.subList(iRealBeginIndex, iRealEndIndex);
 		if (bReverseOrder)
 		{
-			Collections.reverse(ids);
+			final ArrayList<String> reverseList = new ArrayList<>();
+			reverseList.ensureCapacity(ids.size());
+			reverseList.addAll(ids);
+			Collections.reverse(reverseList);
+			ids = reverseList;
 		}
 		final IPicture[] array = new IPicture[ids.size()];
 		for (int i = 0; i < ids.size(); i++)
