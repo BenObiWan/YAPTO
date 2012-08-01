@@ -92,9 +92,11 @@ public final class PictureDisplayComponent extends JComponent
 				break;
 			case WINDOW_DIMENSION:
 				break;
-			case PERCENTAGE:
+			case PICTURE_PERCENTAGE:
 				break;
 			case SPECIFIC_SIZE:
+				break;
+			case WINDOW_PERCENTAGE:
 				break;
 			default:
 				break;
@@ -115,6 +117,12 @@ public final class PictureDisplayComponent extends JComponent
 			final Graphics2D g2 = (Graphics2D) g;
 			changeTransform(getParent().getSize());
 			g2.drawImage(_img, _transform, null);
+			break;
+		case PICTURE_PERCENTAGE:
+			break;
+		case SPECIFIC_SIZE:
+			break;
+		case WINDOW_PERCENTAGE:
 			break;
 		default:
 			break;
