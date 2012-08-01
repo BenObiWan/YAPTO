@@ -2,6 +2,8 @@ package yapto.swing;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -32,10 +34,31 @@ public final class PictureDisplayComponent extends JComponent
 	private BufferedImage _img;
 
 	/**
+	 * The configured type of zoom used to display the picture.
+	 */
+	private PictureZoomType _zoomType = PictureZoomType.WINDOW_DIMENSION;
+	// private PictureZoomType _zoomType = PictureZoomType.REAL_SIZE;
+
+	/**
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link PictureDisplayComponent}.
 	 */
 	private final IPictureBrowser<? extends IPicture> _pictureIterator;
+
+	/**
+	 * Memory of the last scale factor used to scale the image.
+	 */
+	private Dimension _size;
+
+	/**
+	 * Memory of the last scale factor used to scale the image.
+	 */
+	private double _dScaleFactor;
+
+	/**
+	 * The AffineTransform used to scale the image.
+	 */
+	private AffineTransform _transform;
 
 	/**
 	 * Creates a new {@link PictureDisplayComponent}.
@@ -61,7 +84,21 @@ public final class PictureDisplayComponent extends JComponent
 		if (pic != null)
 		{
 			_img = pic.getImageData();
-			setPreferredSize(new Dimension(_img.getWidth(), _img.getHeight()));
+			switch (_zoomType)
+			{
+			case REAL_SIZE:
+				setPreferredSize(new Dimension(_img.getWidth(),
+						_img.getHeight()));
+				break;
+			case WINDOW_DIMENSION:
+				break;
+			case PERCENTAGE:
+				break;
+			case SPECIFIC_SIZE:
+				break;
+			default:
+				break;
+			}
 			repaint();
 		}
 	}
@@ -69,7 +106,54 @@ public final class PictureDisplayComponent extends JComponent
 	@Override
 	public void paint(final Graphics g)
 	{
-		g.drawImage(_img, 0, 0, null);
+		switch (_zoomType)
+		{
+		case REAL_SIZE:
+			g.drawImage(_img, 0, 0, null);
+			break;
+		case WINDOW_DIMENSION:
+			final Graphics2D g2 = (Graphics2D) g;
+			changeTransform(getParent().getSize());
+			g2.drawImage(_img, _transform, null);
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * Change the AffineTransform to fit the specified size.
+	 * 
+	 * @param size
+	 *            the size to match.
+	 */
+	private void changeTransform(final Dimension size)
+	{
+		if (_size == null || _transform == null || !_size.equals(size))
+		{
+			_size = size;
+			final double dScaleFactor = Math.min(
+					size.getWidth() / _img.getWidth(),
+					size.getHeight() / _img.getHeight());
+			changeTransform(dScaleFactor);
+		}
+	}
+
+	/**
+	 * Change the AffineTransform to fit the specified scale factor.
+	 * 
+	 * @param dScaleFactor
+	 *            the scale factor to match.
+	 */
+	private void changeTransform(final double dScaleFactor)
+	{
+		if (dScaleFactor != _dScaleFactor || _transform == null
+				&& dScaleFactor > 0)
+		{
+			_dScaleFactor = dScaleFactor;
+			_transform = AffineTransform.getScaleInstance(_dScaleFactor,
+					_dScaleFactor);
+		}
 	}
 
 	/**
@@ -92,4 +176,5 @@ public final class PictureDisplayComponent extends JComponent
 			e1.printStackTrace();
 		}
 	}
+
 }
