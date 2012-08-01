@@ -37,7 +37,18 @@ public final class PictureDisplayComponent extends JComponent
 	 * The configured type of zoom used to display the picture.
 	 */
 	private PictureZoomType _zoomType = PictureZoomType.WINDOW_DIMENSION;
-	// private PictureZoomType _zoomType = PictureZoomType.REAL_SIZE;
+
+	/**
+	 * the scale associated with the zoom type. Required for WINDOW_PERCENTAGE
+	 * and PICTURE_PERCENTAGE zoom type.
+	 */
+	private double _zoomScale;
+
+	/**
+	 * the {@link Dimension} associated with the zoom type. Required for
+	 * SPECIFIC_SIZE zoom type.
+	 */
+	private Dimension _zoomDimension;
 
 	/**
 	 * The {@link IPictureBrowser} used to display picture on this
@@ -91,12 +102,16 @@ public final class PictureDisplayComponent extends JComponent
 						_img.getHeight()));
 				break;
 			case WINDOW_DIMENSION:
+				setPreferredSize(getParent().getSize());
 				break;
 			case PICTURE_PERCENTAGE:
+				// TODO
 				break;
 			case SPECIFIC_SIZE:
+				setPreferredSize(_zoomDimension);
 				break;
 			case WINDOW_PERCENTAGE:
+				// TODO
 				break;
 			default:
 				break;
@@ -108,21 +123,26 @@ public final class PictureDisplayComponent extends JComponent
 	@Override
 	public void paint(final Graphics g)
 	{
+		final Graphics2D g2 = (Graphics2D) g;
 		switch (_zoomType)
 		{
 		case REAL_SIZE:
 			g.drawImage(_img, 0, 0, null);
 			break;
 		case WINDOW_DIMENSION:
-			final Graphics2D g2 = (Graphics2D) g;
 			changeTransform(getParent().getSize());
 			g2.drawImage(_img, _transform, null);
 			break;
 		case PICTURE_PERCENTAGE:
+			changeTransform(_zoomScale);
+			g2.drawImage(_img, _transform, null);
 			break;
 		case SPECIFIC_SIZE:
+			changeTransform(_zoomDimension);
+			g2.drawImage(_img, _transform, null);
 			break;
 		case WINDOW_PERCENTAGE:
+			// TODO
 			break;
 		default:
 			break;
@@ -185,4 +205,63 @@ public final class PictureDisplayComponent extends JComponent
 		}
 	}
 
+	/**
+	 * Change the zoomType of the picture.
+	 * 
+	 * @param zoomType
+	 *            the new zoomType.
+	 * @param zoomScale
+	 *            the scale associated with the zoom type. Required for
+	 *            WINDOW_PERCENTAGE and PICTURE_PERCENTAGE zoom type.
+	 * @param zoomDimension
+	 *            the {@link Dimension} associated with the zoom type. Required
+	 *            for SPECIFIC_SIZE zoom type.
+	 */
+	public void changePictureZoomType(final PictureZoomType zoomType,
+			final double zoomScale, final Dimension zoomDimension)
+	{
+		switch (zoomType)
+		{
+		case REAL_SIZE:
+			_zoomScale = 0;
+			_zoomDimension = null;
+			break;
+		case WINDOW_DIMENSION:
+			_zoomScale = 0;
+			_zoomDimension = null;
+			break;
+		case SPECIFIC_SIZE:
+			if (zoomDimension == null)
+			{
+				throw new IllegalArgumentException(
+						"zoomDimension value can't be null for SPECIFIC_SIZE zoom type");
+			}
+			_zoomScale = 0;
+			_zoomDimension = zoomDimension;
+			break;
+		case PICTURE_PERCENTAGE:
+			if (zoomScale <= 0)
+			{
+				throw new IllegalArgumentException(
+						"Illegal scale value for PICTURE_PERCENTAGE zoom type : "
+								+ zoomScale);
+			}
+			_zoomScale = zoomScale;
+			_zoomDimension = null;
+			break;
+		case WINDOW_PERCENTAGE:
+			if (zoomScale <= 0)
+			{
+				throw new IllegalArgumentException(
+						"Illegal scale value for WINDOW_PERCENTAGE zoom type : "
+								+ zoomScale);
+			}
+			_zoomScale = zoomScale;
+			_zoomDimension = null;
+			break;
+		default:
+			break;
+		}
+		_zoomType = zoomType;
+	}
 }
