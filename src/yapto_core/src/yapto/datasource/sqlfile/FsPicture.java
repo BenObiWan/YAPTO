@@ -7,13 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutionException;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.tag.Tag;
-
-import com.google.common.cache.LoadingCache;
 
 /**
  * Implementation of the {@link IPicture} interface.
@@ -45,9 +42,9 @@ public final class FsPicture implements IPicture
 	private final SQLFileDataSource _dataSource;
 
 	/**
-	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 * {@link ImageLoader} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<String, BufferedImage> _imageCache;
+	private final ImageLoader _imageLoader;
 
 	/**
 	 * Dimension of the picture.
@@ -82,9 +79,9 @@ public final class FsPicture implements IPicture
 	/**
 	 * Creates a new FsPicture.
 	 * 
-	 * @param imageCache
-	 *            the {@link LoadingCache} used to load the
-	 *            {@link BufferedImage}.
+	 * @param imageLoader
+	 *            the {@link ImageLoader} used to load the {@link BufferedImage}
+	 *            .
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
@@ -104,7 +101,7 @@ public final class FsPicture implements IPicture
 	 *            the timestamp of the addition of this picture to the
 	 *            {@link IDataSource}.
 	 */
-	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
+	public FsPicture(final ImageLoader imageLoader,
 			final SQLFileDataSource dataSource, final String strId,
 			final String strOrigInalFileName, final int iWidth,
 			final int iHeight, final long lModifiedTimestamp,
@@ -112,7 +109,7 @@ public final class FsPicture implements IPicture
 	{
 		_strId = strId;
 		_strOriginalFileName = strOrigInalFileName;
-		_imageCache = imageCache;
+		_imageLoader = imageLoader;
 		_dataSource = dataSource;
 		_pictureDimension = new Dimension(iWidth, iHeight);
 		_lCreationTimestamp = lCreationTimestamp;
@@ -126,9 +123,9 @@ public final class FsPicture implements IPicture
 	/**
 	 * Creates a new FsPicture.
 	 * 
-	 * @param imageCache
-	 *            the {@link LoadingCache} used to load the
-	 *            {@link BufferedImage}.
+	 * @param imageLoader
+	 *            the {@link ImageLoader} used to load the {@link BufferedImage}
+	 *            .
 	 * @param dataSource
 	 *            the {@link IDataSource} from which this {@link IPicture} is
 	 *            coming.
@@ -152,14 +149,14 @@ public final class FsPicture implements IPicture
 	 * @param tagList
 	 *            list of {@link Tag}s.
 	 */
-	public FsPicture(final LoadingCache<String, BufferedImage> imageCache,
+	public FsPicture(final ImageLoader imageLoader,
 			final SQLFileDataSource dataSource, final String strId,
 			final String strOriginalFileName, final int iWidth,
 			final int iHeight, final long lModifiedTimestamp,
 			final long lCreationTimestamp, final long lAddingTimestamp,
 			final int iPictureGrade, final List<Tag> tagList)
 	{
-		this(imageCache, dataSource, strId, strOriginalFileName, iWidth,
+		this(imageLoader, dataSource, strId, strOriginalFileName, iWidth,
 				iHeight, lModifiedTimestamp, lCreationTimestamp,
 				lAddingTimestamp);
 		_tagSet.addAll(tagList);
@@ -184,14 +181,13 @@ public final class FsPicture implements IPicture
 	@Override
 	public BufferedImage getImageData() throws IOException
 	{
-		try
-		{
-			return _imageCache.get(_strId);
-		}
-		catch (final ExecutionException e)
-		{
-			throw new IOException(e);
-		}
+		return _imageLoader.getImageData(_strId);
+	}
+
+	@Override
+	public BufferedImage getThumbnailData() throws IOException
+	{
+		return _imageLoader.getThumbnailData(_strId);
 	}
 
 	@Override

@@ -39,6 +39,15 @@ public interface IPicture extends Comparable<IPicture>
 	BufferedImage getImageData() throws IOException;
 
 	/**
+	 * Get the data of the thumbnail image of this {@link IPicture}.
+	 * 
+	 * @return the data of the thumbnail image of this {@link IPicture}.
+	 * @throws IOException
+	 *             if an error occurs during reading.
+	 */
+	BufferedImage getThumbnailData() throws IOException;
+
+	/**
 	 * Get the time stamp of the last modification of this {@link IPicture}.
 	 * 
 	 * @return the time stamp of the last modification of this {@link IPicture}.

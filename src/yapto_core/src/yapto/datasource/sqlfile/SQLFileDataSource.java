@@ -86,9 +86,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	protected final LoadingCache<String, FsPicture> _pictureCache;
 
 	/**
-	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 * {@link ImageLoader} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<String, BufferedImage> _imageCache;
+	private final ImageLoader _imageLoader;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link Tag}.
@@ -153,14 +153,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				_fileListConnection);
 		_tagCache = CacheBuilder.newBuilder().build(tagLoader);
 
-		// image cache
-		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
-				_conf.getMainPictureLoaderConfiguration());
-		_imageCache = CacheBuilder.newBuilder().build(imageLoader);
+		_imageLoader = new ImageLoader(_conf);
 
 		// picture cache
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				_fileListConnection, _imageCache, _tagCache, this);
+				_fileListConnection, _imageLoader, _tagCache, this);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
 				this);
 		_pictureCache = CacheBuilder.newBuilder()
@@ -272,7 +269,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					PictureAddExceptionType.FILE_ALREADY_EXISTS);
 		}
 
-		// calc width and height
+		// TODO calc width and height
 		final int iWidth = 0;
 		final int iHeight = 0;
 		final long lCreationTimestamp = System.currentTimeMillis();
@@ -296,7 +293,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			throw new PictureAddException(strPictureId,
 					PictureAddExceptionType.COPY_ERROR, e);
 		}
-		final FsPicture picture = new FsPicture(_imageCache, this,
+		final FsPicture picture = new FsPicture(_imageLoader, this,
 				strPictureId, pictureFile.getName(), iWidth, iHeight,
 				lAddedTimestamp, lCreationTimestamp, lAddedTimestamp);
 		try

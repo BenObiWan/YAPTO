@@ -25,9 +25,9 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	private final SQLFileListConnection _fileListConnection;
 
 	/**
-	 * {@link LoadingCache} used to load the {@link BufferedImage}.
+	 * {@link ImageLoader} used to load the {@link BufferedImage}.
 	 */
-	private final LoadingCache<String, BufferedImage> _imageCache;
+	private final ImageLoader _imageLoader;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link Tag}.
@@ -45,20 +45,20 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 * @param fileListConnection
 	 *            object holding the connection to the database and the prepared
 	 *            statements.
-	 * @param imageCache
-	 *            {@link LoadingCache} used to load the {@link BufferedImage}.
+	 * @param imageLoader
+	 *            {@link ImageLoader} used to load the {@link BufferedImage}.
 	 * @param tagCache
 	 *            {@link LoadingCache} used to load the {@link Tag}.
 	 * @param dataSource
 	 *            {@link IDataSource} of this FsPictureCacheLoader.
 	 */
 	public FsPictureCacheLoader(final SQLFileListConnection fileListConnection,
-			final LoadingCache<String, BufferedImage> imageCache,
+			final ImageLoader imageLoader,
 			final LoadingCache<Integer, Tag> tagCache,
 			final SQLFileDataSource dataSource)
 	{
 		_fileListConnection = fileListConnection;
-		_imageCache = imageCache;
+		_imageLoader = imageLoader;
 		_tagCache = tagCache;
 		_dataSource = dataSource;
 	}
@@ -80,7 +80,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 					tagList.add(_tagCache.get(tagId));
 				}
 				return new FsPicture(
-						_imageCache,
+						_imageLoader,
 						_dataSource,
 						key,
 						pictureRes
