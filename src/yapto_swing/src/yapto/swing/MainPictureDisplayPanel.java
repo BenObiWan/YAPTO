@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -64,10 +63,9 @@ public final class MainPictureDisplayPanel extends JPanel
 		_pictureBrowserPanel = new PictureBrowserPanel(_pictureBrowser);
 		_pictureBrowser.register(_pictureBrowserPanel);
 
-		final JScrollPane spPicture = new JScrollPane(_pictureComponent);
-		spPicture.setPreferredSize(new Dimension(400, 300));
+		_pictureComponent.setPreferredSize(new Dimension(400, 300));
 
-		add(spPicture, BorderLayout.CENTER);
+		add(_pictureComponent, BorderLayout.CENTER);
 		add(_pictureInfoPanel, BorderLayout.LINE_END);
 		add(_pictureBrowserPanel, BorderLayout.PAGE_END);
 		try
