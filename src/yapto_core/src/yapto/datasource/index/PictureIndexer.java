@@ -24,6 +24,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import yapto.datasource.IPicture;
+import yapto.datasource.PictureInformation;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -44,6 +45,31 @@ public final class PictureIndexer
 	 * Name of the field used to index the grade of the picture.
 	 */
 	public static final String GRADE_INDEX_FIELD = "picture_grade";
+
+	/**
+	 * Name of the field used to index the orientation of the picture.
+	 */
+	public static final String ORIENTATION_INDEX_FIELD = "picture_orientation";
+
+	/**
+	 * Name of the field used to index the exif 'make' of the picture.
+	 */
+	public static final String MAKE_INDEX_FIELD = "picture_make";
+
+	/**
+	 * Name of the field used to index the exif 'model' of the picture.
+	 */
+	public static final String MODEL_INDEX_FIELD = "picture_model";
+
+	/**
+	 * Name of the field used to index the height of the picture.
+	 */
+	public static final String HEIGHT_INDEX_FIELD = "picture_height";
+
+	/**
+	 * Name of the field used to index the width of the picture.
+	 */
+	public static final String WIDTH_INDEX_FIELD = "picture_width";
 
 	/**
 	 * The configuration.
@@ -143,15 +169,27 @@ public final class PictureIndexer
 		doc.add(new StringField(ID_INDEX_FIELD, picture.getId(),
 				Field.Store.YES));
 		// grade
-		final IntField grade = new IntField(GRADE_INDEX_FIELD,
-				picture.getPictureGrade(), Field.Store.YES);
-		doc.add(grade);
+		doc.add(new IntField(GRADE_INDEX_FIELD, picture.getPictureGrade(),
+				Field.Store.YES));
 		// tags
 		for (final Tag t : picture.getTagSet())
 		{
 			doc.add(new StringField(t.getTagIdAsString(), t.getTagIdAsString(),
 					Field.Store.NO));
 		}
+		// informations
+		PictureInformation info = picture.getPictureInformation();
+		doc.add(new IntField(ORIENTATION_INDEX_FIELD, info.getOrientation(),
+				Field.Store.NO));
+		doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
+				Field.Store.NO));
+		doc.add(new StringField(MODEL_INDEX_FIELD, info.getModel(),
+				Field.Store.NO));
+		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(),
+				Field.Store.NO));
+		doc.add(new IntField(WIDTH_INDEX_FIELD, info.getWidth(), Field.Store.NO));
+		// doc.add(new IntField("",
+		// info.getCreationTimestamp(), Field.Store.NO));
 		return doc;
 	}
 
