@@ -54,7 +54,7 @@ public class IdentifyTask implements Callable<PictureInformation>
 	@Override
 	public PictureInformation call() throws Exception
 	{
-		_command.run(_operation, _fPicture.getAbsoluteFile());
+		_command.run(_operation, _fPicture.getAbsolutePath());
 		return CommandOutputParser.readIdentifyOutput(_fPicture.getName(),
 				_consumer.getOutput());
 	}

@@ -284,10 +284,10 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			info = _processor.identifyPicture(pictureFile);
 		}
-		catch (InterruptedException | ExecutionException e1)
+		catch (InterruptedException | ExecutionException e)
 		{
 			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.IDENTIFY_EXECUTION_ERROR);
+					PictureAddExceptionType.IDENTIFY_EXECUTION_ERROR, e);
 		}
 		// copy file
 		final Path destPath = FileSystems.getDefault()
@@ -499,6 +499,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	{
 		_updater.stop();
 		_pictureCache.invalidateAll();
+		_processor.shutdown();
 		try
 		{
 			_indexer.close();

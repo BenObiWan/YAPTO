@@ -124,4 +124,24 @@ public final class PictureProcessor
 		return _generalPurposeExecutor.submit(new ResizeTask(fOriginalPicture,
 				fDestinationPicture, iWidth, bkeepMetadata));
 	}
+
+	/**
+	 * Initiate a shutdown of all the {@link ExecutorService}, but waits for
+	 * already running tasks to complete.
+	 */
+	public void shutdown()
+	{
+		_identifyExecutor.shutdown();
+		_generalPurposeExecutor.shutdown();
+	}
+
+	/**
+	 * Initiate an immediate shutdown of all the {@link ExecutorService} and
+	 * tries to stop already running tasks.
+	 */
+	public void shutdownNow()
+	{
+		_identifyExecutor.shutdownNow();
+		_generalPurposeExecutor.shutdownNow();
+	}
 }

@@ -35,14 +35,14 @@ public abstract class CommandOutputParser
 	 * expected line : 'exif:Make: Canon'
 	 */
 	private static Pattern EXIF_MAKE_PATTERN = Pattern
-			.compile("[\\s]*exif:Make: ([\\w\\s]+)[\\s]*");
+			.compile("[\\s]*exif:Make: (.+)[\\s]*");
 
 	/**
 	 * Pattern matching the exif model line of the identify command. Example
 	 * expected line : 'exif:Model: Canon EOS 5D'
 	 */
 	private static Pattern EXIF_MODEL_PATTERN = Pattern
-			.compile("[\\s]*exif:Model: ([\\w\\s]+)[\\s]*");
+			.compile("[\\s]*exif:Model: (.+)[\\s]*");
 
 	/**
 	 * Pattern matching the exif orientation line of the identify command.
