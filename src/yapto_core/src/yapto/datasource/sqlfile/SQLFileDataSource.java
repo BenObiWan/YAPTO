@@ -35,7 +35,9 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
+import yapto.datasource.PictureInformation;
 import yapto.datasource.index.PictureIndexer;
+import yapto.datasource.process.PictureProcessor;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -123,6 +125,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	private final PictureUpdater _updater;
 
 	/**
+	 * {@link PictureProcessor} used to execute external commands on pictures.
+	 */
+	private final PictureProcessor _processor;
+
+	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
 	 * @param conf
@@ -147,6 +154,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
 		_indexer = new PictureIndexer(_conf);
+
+		// TODO put the parameters into the configuration object.
+		_processor = new PictureProcessor(4, 4);
 
 		// tag cache
 		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(_conf,
@@ -269,10 +279,16 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					PictureAddExceptionType.FILE_ALREADY_EXISTS);
 		}
 
-		// TODO calc width and height
-		final int iWidth = 0;
-		final int iHeight = 0;
-		final long lCreationTimestamp = System.currentTimeMillis();
+		PictureInformation info;
+		try
+		{
+			info = _processor.identifyPicture(pictureFile);
+		}
+		catch (InterruptedException | ExecutionException e1)
+		{
+			throw new PictureAddException(strPictureId,
+					PictureAddExceptionType.IDENTIFY_EXECUTION_ERROR);
+		}
 		// copy file
 		final Path destPath = FileSystems.getDefault()
 				.getPath(
@@ -294,8 +310,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					PictureAddExceptionType.COPY_ERROR, e);
 		}
 		final FsPicture picture = new FsPicture(_imageLoader, this,
-				strPictureId, pictureFile.getName(), iWidth, iHeight,
-				lAddedTimestamp, lCreationTimestamp, lAddedTimestamp);
+				strPictureId, lAddedTimestamp, lAddedTimestamp, info);
 		try
 		{
 			_fileListConnection.insertPicture(picture);

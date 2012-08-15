@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
+import yapto.datasource.PictureInformation;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
 
@@ -69,14 +70,25 @@ public final class SQLFileListConnection
 	public static final String PICTURE_ID_COLUMN_NAME = "id";
 
 	/**
-	 * Name for the'original_name' column of the 'picture' table.
-	 */
-	public static final String PICTURE_ORIGINAL_NAME = "original_name";
-
-	/**
 	 * Name for the 'grade' column of the 'picture' table.
 	 */
 	public static final String PICTURE_GRADE_COLUMN_NAME = "grade";
+
+	/**
+	 * Name for the 'modified_timestamp' column of the 'picture' table.
+	 */
+	public static final String PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME = "modified_timestamp";
+
+	/**
+	 * Name for the 'adding_timestamp' column of the 'picture' table.
+	 */
+	public static final String PICTURE_ADDING_TIMESTAMP_COLUMN_NAME = "adding_timestamp";
+
+	// picture table, PictureInformation section
+	/**
+	 * Name for the'original_name' column of the 'picture' table.
+	 */
+	public static final String PICTURE_ORIGINAL_NAME = "original_name";
 
 	/**
 	 * Name for the 'width' column of the 'picture' table.
@@ -89,19 +101,24 @@ public final class SQLFileListConnection
 	public static final String PICTURE_HEIGTH_COLUMN_NAME = "height";
 
 	/**
-	 * Name for the 'modified_timestamp' column of the 'picture' table.
-	 */
-	public static final String PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME = "modified_timestamp";
-
-	/**
 	 * Name for the 'creation_timestamp' column of the 'picture' table.
 	 */
 	public static final String PICTURE_CREATION_TIMESTAMP_COLUMN_NAME = "creation_timestamp";
 
 	/**
-	 * Name for the 'adding_timestamp' column of the 'picture' table.
+	 * Name for the 'orientation' column of the 'picture' table.
 	 */
-	public static final String PICTURE_ADDING_TIMESTAMP_COLUMN_NAME = "adding_timestamp";
+	public static final String PICTURE_ORIENTATION_COLUMN_NAME = "orientation";
+
+	/**
+	 * Name for the 'make' column of the 'picture' table.
+	 */
+	public static final String PICTURE_MAKE_COLUMN_NAME = "make";
+
+	/**
+	 * Name for the 'model' column of the 'picture' table.
+	 */
+	public static final String PICTURE_MODEL_COLUMN_NAME = "model";
 
 	// picture_tag table
 	/**
@@ -223,13 +240,15 @@ public final class SQLFileListConnection
 				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
 		_psInsertPicture = _connection.prepareStatement("INSERT INTO "
 				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
-				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_GRADE_COLUMN_NAME
-				+ ", " + PICTURE_WIDTH_COLUMN_NAME + ", "
-				+ PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_GRADE_COLUMN_NAME + ", "
 				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
+				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME
-				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
+				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
+				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
@@ -248,9 +267,11 @@ public final class SQLFileListConnection
 				+ PICTURE_HEIGTH_COLUMN_NAME + ", "
 				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " FROM "
-				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
-				+ " =?");
+				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
+				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
+				+ " FROM " + PICTURE_TABLE_NAME + " WHERE "
+				+ PICTURE_ID_COLUMN_NAME + " =?");
 		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
@@ -325,13 +346,16 @@ public final class SQLFileListConnection
 			// picture table
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME
-					+ " text, " + PICTURE_ORIGINAL_NAME + " text, "
-					+ PICTURE_GRADE_COLUMN_NAME + " integer, "
+					+ " text, " + PICTURE_GRADE_COLUMN_NAME + " integer, "
+					+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
+					+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer, "
+					+ PICTURE_ORIGINAL_NAME + " text, "
 					+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
 					+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
-					+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
 					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
-					+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer)");
+					+ PICTURE_ORIENTATION_COLUMN_NAME + " integer, "
+					+ PICTURE_MAKE_COLUMN_NAME + " text, "
+					+ PICTURE_MODEL_COLUMN_NAME + " text)");
 			// picture_tag table
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TAG_TABLE_NAME + " ("
@@ -398,13 +422,24 @@ public final class SQLFileListConnection
 		{
 			_psInsertPicture.clearParameters();
 			_psInsertPicture.setString(1, picture.getId());
-			_psInsertPicture.setString(2, picture.getOriginalFileName());
-			_psInsertPicture.setInt(3, picture.getPictureGrade());
-			_psInsertPicture.setInt(4, picture.getWidth());
-			_psInsertPicture.setInt(5, picture.getHeight());
-			_psInsertPicture.setLong(6, picture.getModifiedTimestamp());
-			_psInsertPicture.setLong(7, picture.getCreationTimestamp());
-			_psInsertPicture.setLong(8, picture.getAddingTimestamp());
+			_psInsertPicture.setInt(2, picture.getPictureGrade());
+			_psInsertPicture.setLong(3, picture.getModifiedTimestamp());
+			_psInsertPicture.setLong(4, picture.getAddingTimestamp());
+			final PictureInformation info = picture.getPictureInformation();
+			if (info != null)
+			{
+				_psInsertPicture.setString(5, info.getOriginalFileName());
+				_psInsertPicture.setInt(6, info.getWidth());
+				_psInsertPicture.setInt(7, info.getHeight());
+				_psInsertPicture.setLong(8, info.getCreationTimestamp());
+				_psInsertPicture.setInt(9, info.getOrientation());
+				_psInsertPicture.setString(10, info.getMake());
+				_psInsertPicture.setString(11, info.getModel());
+			}
+			else
+			{
+				// TODO throw exception here
+			}
 			return _psInsertPicture.executeUpdate() > 0;
 		}
 	}

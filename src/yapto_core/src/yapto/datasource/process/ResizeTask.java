@@ -1,5 +1,6 @@
 package yapto.datasource.process;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.im4java.core.ConvertCmd;
@@ -16,12 +17,12 @@ public class ResizeTask implements Callable<Boolean>
 	/**
 	 * The picture to resize.
 	 */
-	private final String _strOriginalPicture;
+	private final File _fOriginalPicture;
 
 	/**
 	 * The destination picture.
 	 */
-	private final String _strDestinationPicture;
+	private final File _fDestinationPicture;
 
 	/**
 	 * The command to execute on the picture.
@@ -36,9 +37,9 @@ public class ResizeTask implements Callable<Boolean>
 	/**
 	 * Creates a new ResizeTask.
 	 * 
-	 * @param strOriginalPicture
+	 * @param fOriginalPicture
 	 *            the picture to resize.
-	 * @param strDestinationPicture
+	 * @param fDestinationPicture
 	 *            the destination for the resized picture.
 	 * @param iWidth
 	 *            the width of the resized picture.
@@ -46,12 +47,12 @@ public class ResizeTask implements Callable<Boolean>
 	 *            whether the resized picture should keep the original picture
 	 *            metadata or not.
 	 */
-	public ResizeTask(final String strOriginalPicture,
-			final String strDestinationPicture, final int iWidth,
+	public ResizeTask(final File fOriginalPicture,
+			final File fDestinationPicture, final int iWidth,
 			final boolean bkeepMetadata)
 	{
-		_strOriginalPicture = strOriginalPicture;
-		_strDestinationPicture = strDestinationPicture;
+		_fOriginalPicture = fOriginalPicture;
+		_fDestinationPicture = fDestinationPicture;
 		_operation.addImage();
 		_operation.resize(Integer.valueOf(iWidth));
 		if (!bkeepMetadata)
@@ -64,7 +65,8 @@ public class ResizeTask implements Callable<Boolean>
 	@Override
 	public Boolean call() throws Exception
 	{
-		_command.run(_operation, _strOriginalPicture, _strDestinationPicture);
+		_command.run(_operation, _fOriginalPicture.getAbsolutePath(),
+				_fDestinationPicture.getAbsolutePath());
 		return Boolean.TRUE;
 	}
 

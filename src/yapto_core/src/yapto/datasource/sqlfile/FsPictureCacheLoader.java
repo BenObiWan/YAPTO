@@ -84,19 +84,25 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 						_dataSource,
 						key,
 						pictureRes
+								.getLong(SQLFileListConnection.PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME),
+						pictureRes
+								.getLong(SQLFileListConnection.PICTURE_ADDING_TIMESTAMP_COLUMN_NAME),
+						pictureRes
+								.getInt(SQLFileListConnection.PICTURE_GRADE_COLUMN_NAME),
+						pictureRes
 								.getString(SQLFileListConnection.PICTURE_ORIGINAL_NAME),
 						pictureRes
 								.getInt(SQLFileListConnection.PICTURE_WIDTH_COLUMN_NAME),
 						pictureRes
 								.getInt(SQLFileListConnection.PICTURE_HEIGTH_COLUMN_NAME),
 						pictureRes
-								.getLong(SQLFileListConnection.PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME),
-						pictureRes
 								.getLong(SQLFileListConnection.PICTURE_CREATION_TIMESTAMP_COLUMN_NAME),
 						pictureRes
-								.getLong(SQLFileListConnection.PICTURE_ADDING_TIMESTAMP_COLUMN_NAME),
+								.getInt(SQLFileListConnection.PICTURE_ORIENTATION_COLUMN_NAME),
 						pictureRes
-								.getInt(SQLFileListConnection.PICTURE_GRADE_COLUMN_NAME),
+								.getString(SQLFileListConnection.PICTURE_MAKE_COLUMN_NAME),
+						pictureRes
+								.getString(SQLFileListConnection.PICTURE_MODEL_COLUMN_NAME),
 						tagList);
 			}
 			return null;

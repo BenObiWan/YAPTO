@@ -55,7 +55,12 @@ public enum PictureAddExceptionType
 	/**
 	 * IO error during the indexation.
 	 */
-	INDEX_ERROR("");
+	INDEX_ERROR(""),
+
+	/**
+	 * Error during the execution of identify on the picture.
+	 */
+	IDENTIFY_EXECUTION_ERROR("");
 
 	/**
 	 * Message for this exception type.

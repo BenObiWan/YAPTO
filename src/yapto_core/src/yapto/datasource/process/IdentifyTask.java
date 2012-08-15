@@ -1,5 +1,6 @@
 package yapto.datasource.process;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.im4java.core.IMOperation;
@@ -19,7 +20,7 @@ public class IdentifyTask implements Callable<PictureInformation>
 	/**
 	 * The picture to identify.
 	 */
-	private final String _strPicture;
+	private final File _fPicture;
 
 	/**
 	 * The command to execute on the picture.
@@ -39,12 +40,12 @@ public class IdentifyTask implements Callable<PictureInformation>
 	/**
 	 * Creates a new IdentifyTask.
 	 * 
-	 * @param strPicture
+	 * @param fPicture
 	 *            the picture to identify.
 	 */
-	public IdentifyTask(final String strPicture)
+	public IdentifyTask(final File fPicture)
 	{
-		_strPicture = strPicture;
+		_fPicture = fPicture;
 		_command.setOutputConsumer(_consumer);
 		_operation.verbose();
 		_operation.addImage();
@@ -53,7 +54,8 @@ public class IdentifyTask implements Callable<PictureInformation>
 	@Override
 	public PictureInformation call() throws Exception
 	{
-		_command.run(_operation, _strPicture);
-		return new PictureInformation(_consumer.getOutput());
+		_command.run(_operation, _fPicture.getAbsoluteFile());
+		return CommandOutputParser.readIdentifyOutput(_fPicture.getName(),
+				_consumer.getOutput());
 	}
 }

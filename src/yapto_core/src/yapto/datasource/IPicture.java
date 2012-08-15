@@ -1,6 +1,5 @@
 package yapto.datasource;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Set;
@@ -63,27 +62,6 @@ public interface IPicture extends Comparable<IPicture>
 	IDataSource<? extends IPicture> getDataSource();
 
 	/**
-	 * Get the {@link Dimension} of this {@link IPicture}.
-	 * 
-	 * @return the {@link Dimension} of this {@link IPicture}.
-	 */
-	Dimension getDimension();
-
-	/**
-	 * Get the height of this {@link IPicture}.
-	 * 
-	 * @return the height of this {@link IPicture}.
-	 */
-	int getHeight();
-
-	/**
-	 * Get the width of this {@link IPicture}.
-	 * 
-	 * @return the width of this {@link IPicture}.
-	 */
-	int getWidth();
-
-	/**
 	 * Add a {@link Tag} to this {@link IPicture}.
 	 * 
 	 * The {@link Tag} must be added to the list of {@link Tag}s known to the
@@ -116,4 +94,11 @@ public interface IPicture extends Comparable<IPicture>
 	 *            the new grade of this picture.
 	 */
 	public void setPictureGrade(final int iPictureGrade);
+
+	/**
+	 * Get the {@link PictureInformation} of this picture.
+	 * 
+	 * @return the {@link PictureInformation} of this picture.
+	 */
+	public PictureInformation getPictureInformation();
 }
