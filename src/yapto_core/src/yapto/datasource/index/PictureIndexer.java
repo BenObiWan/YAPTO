@@ -72,6 +72,22 @@ public final class PictureIndexer
 	public static final String WIDTH_INDEX_FIELD = "picture_width";
 
 	/**
+	 * Name of the field used to index the exif 'exposure' of the picture.
+	 */
+	public static final String PICTURE_EXPOSURE_INDEX_FIELD = "picture_exposure";
+
+	/**
+	 * Name of the field used to index the exif 'relative aperture' of the
+	 * picture.
+	 */
+	public static final String MODEL_RELATIVE_APERTURE_FIELD = "picture_relative_aperture";
+
+	/**
+	 * Name of the field used to index the exif 'focal length' of the picture.
+	 */
+	public static final String FOCAL_LENGTH_INDEX_FIELD = "picture_focal_length";
+
+	/**
 	 * The configuration.
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
@@ -178,7 +194,7 @@ public final class PictureIndexer
 					Field.Store.NO));
 		}
 		// informations
-		PictureInformation info = picture.getPictureInformation();
+		final PictureInformation info = picture.getPictureInformation();
 		doc.add(new IntField(ORIENTATION_INDEX_FIELD, info.getOrientation(),
 				Field.Store.NO));
 		doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
@@ -188,6 +204,13 @@ public final class PictureIndexer
 		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(),
 				Field.Store.NO));
 		doc.add(new IntField(WIDTH_INDEX_FIELD, info.getWidth(), Field.Store.NO));
+		doc.add(new StringField(PICTURE_EXPOSURE_INDEX_FIELD, info
+				.getExposureTime(), Field.Store.NO));
+		doc.add(new StringField(MODEL_RELATIVE_APERTURE_FIELD, info
+				.getRelativeAperture(), Field.Store.NO));
+		doc.add(new StringField(FOCAL_LENGTH_INDEX_FIELD,
+				info.getFocalLength(), Field.Store.NO));
+
 		// doc.add(new IntField("",
 		// info.getCreationTimestamp(), Field.Store.NO));
 		return doc;

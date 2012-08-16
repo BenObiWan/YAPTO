@@ -52,6 +52,30 @@ public abstract class CommandOutputParser
 			.compile("[\\s]*exif:Orientation: ([0-9]+)[\\s]*");
 
 	/**
+	 * Pattern matching the exif exposure time line of the identify command.
+	 * Example expected line : 'exif:ExposureTime: 1/60'
+	 */
+	private static Pattern EXIF_EXPOSURE_TIME_PATTERN = Pattern
+			.compile("[\\s]*exif:ExposureTime: ([0-9]/[0-9]+)[\\s]*");
+
+	/**
+	 * Pattern matching the exif relative aperture line of the identify command.
+	 * Example expected line : 'exif:FNumber: 4/1'
+	 */
+	private static Pattern EXIF_RELATIVE_APERTURE_PATTERN = Pattern
+			.compile("[\\s]*exif:FNumber: ([0-9]/[0-9]+)[\\s]*");
+
+	/**
+	 * Pattern matching the exif FNumber line of the identify command. Example
+	 * expected line : 'exif:FocalLength: 58/1'
+	 */
+	private static Pattern EXIF_FOCAL_LENGTH_PATTERN = Pattern
+			.compile("[\\s]*exif:FocalLength: ([0-9]/[0-9]+)[\\s]*");
+
+	// TODO other information to parse
+	// exif:Flash: 9
+
+	/**
 	 * Date formatter for reading the creation date of the picture.
 	 */
 	private static final ThreadLocal<SimpleDateFormat> FORMATTER = new ThreadLocal<SimpleDateFormat>()
@@ -65,12 +89,6 @@ public abstract class CommandOutputParser
 			return formatter;
 		}
 	};
-
-	// TODO other information to parse
-	// exif:ExposureTime: 1/60
-	// exif:Flash: 9
-	// exif:FNumber: 4/1
-	// exif:FocalLength: 58/1
 
 	/**
 	 * Parses the output of an identify command and creates a
@@ -91,7 +109,7 @@ public abstract class CommandOutputParser
 	{
 		int iWidth = 0, iHeigth = 0, iOrientation = 0;
 		long lCreationTimestamp = 0;
-		String strMake = null, strModel = null;
+		String strMake = null, strModel = null, strExposureTime = null, strRelativeAperture = null, strFocalLength = null;
 		Matcher matcher;
 
 		for (final String strInfo : informationList)
@@ -132,10 +150,32 @@ public abstract class CommandOutputParser
 				iOrientation = Integer.parseInt(matcher.group(1));
 				continue;
 			}
+
+			matcher = EXIF_EXPOSURE_TIME_PATTERN.matcher(strInfo);
+			if (matcher.matches())
+			{
+				strExposureTime = matcher.group(1);
+				continue;
+			}
+
+			matcher = EXIF_RELATIVE_APERTURE_PATTERN.matcher(strInfo);
+			if (matcher.matches())
+			{
+				strRelativeAperture = matcher.group(1);
+				continue;
+			}
+
+			matcher = EXIF_FOCAL_LENGTH_PATTERN.matcher(strInfo);
+			if (matcher.matches())
+			{
+				strFocalLength = matcher.group(1);
+				continue;
+			}
 		}
 
 		return new PictureInformation(strFileName, iWidth, iHeigth,
-				lCreationTimestamp, iOrientation, strMake, strModel);
+				lCreationTimestamp, iOrientation, strMake, strModel,
+				strExposureTime, strRelativeAperture, strFocalLength);
 	}
 
 }

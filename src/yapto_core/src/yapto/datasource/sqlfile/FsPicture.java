@@ -171,6 +171,12 @@ public final class FsPicture implements IPicture
 	 *            the 'Make' exif information of this picture.
 	 * @param strModel
 	 *            the 'Model' exif information of this picture.
+	 * @param strExposureTime
+	 *            the 'exposure' exif information of this picture.
+	 * @param strRelativeAperture
+	 *            the 'relative aperture' exif information of this picture.
+	 * @param strFocalLength
+	 *            the 'focal length' exif information of this picture.
 	 * @param tagList
 	 *            list of {@link Tag}s.
 	 */
@@ -180,12 +186,15 @@ public final class FsPicture implements IPicture
 			final int iPictureGrade, final String strOriginalFileName,
 			final int iWidth, final int iHeight, final long lCreationTimestamp,
 			final int iOrientation, final String strMake,
-			final String strModel, final List<Tag> tagList)
+			final String strModel, final String strExposureTime,
+			final String strRelativeAperture, final String strFocalLength,
+			final List<Tag> tagList)
 	{
 		this(imageLoader, dataSource, strId, lModifiedTimestamp,
 				lAddingTimestamp, iPictureGrade, new PictureInformation(
 						strOriginalFileName, iWidth, iHeight,
-						lCreationTimestamp, iOrientation, strMake, strModel),
+						lCreationTimestamp, iOrientation, strMake, strModel,
+						strExposureTime, strRelativeAperture, strFocalLength),
 				tagList);
 	}
 

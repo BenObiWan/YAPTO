@@ -120,6 +120,21 @@ public final class SQLFileListConnection
 	 */
 	public static final String PICTURE_MODEL_COLUMN_NAME = "model";
 
+	/**
+	 * Name for the 'exposure' column of the 'picture' table.
+	 */
+	public static final String PICTURE_EXPOSURE_COLUMN_NAME = "exposure";
+
+	/**
+	 * Name for the 'relative aperture' column of the 'picture' table.
+	 */
+	public static final String PICTURE_RELATIVE_APERTURE_COLUMN_NAME = "relative_aperture";
+
+	/**
+	 * Name for the 'focal length' column of the 'picture' table.
+	 */
+	public static final String PICTURE_FOCAL_LENGTH_COLUMN_NAME = "focal_length";
+
 	// picture_tag table
 	/**
 	 * Name for the 'picture_tag' table.
@@ -248,6 +263,9 @@ public final class SQLFileListConnection
 				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
 				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
+				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
+				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
+				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME
 				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
@@ -355,7 +373,10 @@ public final class SQLFileListConnection
 					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
 					+ PICTURE_ORIENTATION_COLUMN_NAME + " integer, "
 					+ PICTURE_MAKE_COLUMN_NAME + " text, "
-					+ PICTURE_MODEL_COLUMN_NAME + " text)");
+					+ PICTURE_MODEL_COLUMN_NAME + " text"
+					+ PICTURE_EXPOSURE_COLUMN_NAME + "text, "
+					+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + "text, "
+					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + "text)");
 			// picture_tag table
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TAG_TABLE_NAME + " ("
@@ -435,6 +456,9 @@ public final class SQLFileListConnection
 				_psInsertPicture.setInt(9, info.getOrientation());
 				_psInsertPicture.setString(10, info.getMake());
 				_psInsertPicture.setString(11, info.getModel());
+				_psInsertPicture.setString(12, info.getExposureTime());
+				_psInsertPicture.setString(13, info.getRelativeAperture());
+				_psInsertPicture.setString(14, info.getFocalLength());
 			}
 			else
 			{

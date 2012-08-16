@@ -41,6 +41,21 @@ public final class PictureInformation
 	private final String _strModel;
 
 	/**
+	 * 'exposure' exif information of this picture.
+	 */
+	private final String _strExposureTime;
+
+	/**
+	 * 'relative aperture' exif information of this picture.
+	 */
+	private final String _strRelativeAperture;
+
+	/**
+	 * 'focal length' exif information of this picture.
+	 */
+	private final String _strFocalLength;
+
+	/**
 	 * Creates a new PictureInformation.
 	 * 
 	 * @param strOriginalFileName
@@ -57,10 +72,18 @@ public final class PictureInformation
 	 *            the 'Make' exif information of this picture.
 	 * @param strModel
 	 *            the 'Model' exif information of this picture.
+	 * @param strExposureTime
+	 *            the 'exposure' exif information of this picture.
+	 * @param strRelativeAperture
+	 *            the 'relative aperture' exif information of this picture.
+	 * @param strFocalLength
+	 *            the 'focal length' exif information of this picture.
 	 */
 	public PictureInformation(final String strOriginalFileName,
 			final int iWidth, final int iHeight, final long lCreationTimestamp,
-			final int iOrientation, final String strMake, final String strModel)
+			final int iOrientation, final String strMake,
+			final String strModel, final String strExposureTime,
+			final String strRelativeAperture, final String strFocalLength)
 	{
 		super();
 		_strOriginalFileName = strOriginalFileName;
@@ -69,6 +92,9 @@ public final class PictureInformation
 		_iOrientation = iOrientation;
 		_strMake = strMake;
 		_strModel = strModel;
+		_strExposureTime = strExposureTime;
+		_strRelativeAperture = strRelativeAperture;
+		_strFocalLength = strFocalLength;
 	}
 
 	/**
@@ -151,6 +177,36 @@ public final class PictureInformation
 		return (int) _pictureDimension.getWidth();
 	}
 
+	/**
+	 * Get the 'exposure' exif information of this picture.
+	 * 
+	 * @return the 'exposure' exif information of this picture.
+	 */
+	public String getExposureTime()
+	{
+		return _strExposureTime;
+	}
+
+	/**
+	 * Get the 'relative aperture' exif information of this picture.
+	 * 
+	 * @return the 'relative aperture' exif information of this picture.
+	 */
+	public String getRelativeAperture()
+	{
+		return _strRelativeAperture;
+	}
+
+	/**
+	 * Get the 'focal length' exif information of this picture.
+	 * 
+	 * @return the 'focal length' exif information of this picture.
+	 */
+	public String getFocalLength()
+	{
+		return _strFocalLength;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -169,6 +225,12 @@ public final class PictureInformation
 		sb.append(_strMake);
 		sb.append("\nModel : ");
 		sb.append(_strModel);
+		sb.append("\nExposure time : ");
+		sb.append(_strExposureTime);
+		sb.append("\nReltaive aperture : ");
+		sb.append(_strRelativeAperture);
+		sb.append("\nFocal length : ");
+		sb.append(_strFocalLength);
 		return sb.toString();
 	}
 }
