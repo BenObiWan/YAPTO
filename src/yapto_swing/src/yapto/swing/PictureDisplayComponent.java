@@ -139,7 +139,7 @@ public final class PictureDisplayComponent extends JScrollPane
 		private final IPictureBrowser<? extends IPicture> _pictureIterator;
 
 		/**
-		 * Memory of the last scale factor used to scale the image.
+		 * Memory of the last size used to scale the image.
 		 */
 		private Dimension _size;
 
@@ -177,6 +177,7 @@ public final class PictureDisplayComponent extends JScrollPane
 			if (pic != null)
 			{
 				_img = pic.getImageData();
+				_transform = null;
 				switch (_zoomType)
 				{
 				case REAL_SIZE:
