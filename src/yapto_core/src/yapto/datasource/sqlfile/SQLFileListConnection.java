@@ -266,7 +266,7 @@ public final class SQLFileListConnection
 				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
 				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
 				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME
-				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
@@ -288,8 +288,11 @@ public final class SQLFileListConnection
 				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
 				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
 				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
-				+ " FROM " + PICTURE_TABLE_NAME + " WHERE "
-				+ PICTURE_ID_COLUMN_NAME + " =?");
+				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
+				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
+				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " FROM "
+				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
+				+ " =?");
 		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
@@ -373,10 +376,10 @@ public final class SQLFileListConnection
 					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
 					+ PICTURE_ORIENTATION_COLUMN_NAME + " integer, "
 					+ PICTURE_MAKE_COLUMN_NAME + " text, "
-					+ PICTURE_MODEL_COLUMN_NAME + " text"
-					+ PICTURE_EXPOSURE_COLUMN_NAME + "text, "
-					+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + "text, "
-					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + "text)");
+					+ PICTURE_MODEL_COLUMN_NAME + " text, "
+					+ PICTURE_EXPOSURE_COLUMN_NAME + " text, "
+					+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + " text, "
+					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " text)");
 			// picture_tag table
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TAG_TABLE_NAME + " ("
