@@ -186,6 +186,9 @@ public final class PictureDisplayComponent extends JScrollPane
 				case WINDOW_DIMENSION:
 					setPreferredSize(PictureDisplayComponent.this.getSize());
 					break;
+				case SCALE_DOWN_TO_WINDOW:
+					setPreferredSize(PictureDisplayComponent.this.getSize());
+					break;
 				case PICTURE_PERCENTAGE:
 					// TODO
 					break;
@@ -214,6 +217,19 @@ public final class PictureDisplayComponent extends JScrollPane
 			case WINDOW_DIMENSION:
 				changeTransform(PictureDisplayComponent.this.getSize());
 				g2.drawImage(_img, _transform, null);
+				break;
+			case SCALE_DOWN_TO_WINDOW:
+				if (_img.getWidth() > PictureDisplayComponent.this.getWidth()
+						|| _img.getHeight() > PictureDisplayComponent.this
+								.getHeight())
+				{
+					changeTransform(PictureDisplayComponent.this.getSize());
+					g2.drawImage(_img, _transform, null);
+				}
+				else
+				{
+					g.drawImage(_img, 0, 0, null);
+				}
 				break;
 			case PICTURE_PERCENTAGE:
 				changeTransform(_zoomScale);
@@ -288,6 +304,10 @@ public final class PictureDisplayComponent extends JScrollPane
 				_zoomDimension = null;
 				break;
 			case WINDOW_DIMENSION:
+				_zoomScale = 0;
+				_zoomDimension = null;
+				break;
+			case SCALE_DOWN_TO_WINDOW:
 				_zoomScale = 0;
 				_zoomDimension = null;
 				break;

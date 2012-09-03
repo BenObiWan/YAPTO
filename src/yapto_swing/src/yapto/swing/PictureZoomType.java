@@ -32,4 +32,9 @@ public enum PictureZoomType
 	 * Scale the picture to a percentage of the window dimension.
 	 */
 	WINDOW_PERCENTAGE,
+
+	/**
+	 * Scale the picture to the size of the window if it is bigger.
+	 */
+	SCALE_DOWN_TO_WINDOW,
 }
