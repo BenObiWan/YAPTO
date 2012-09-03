@@ -1,2 +1,32 @@
 ** yapto_core **
+
+Orientation of resized pictures
+Thumbnails creation
+Thumbnails as square (transparent background?)
+Target resolution list
+Resize to target resolution list
+Datasource without pictures
+Datasource without tags
+Time base cache eviction
+JMX commands
+Backup handling
+Other storage type
+Function to re-identify all picture
+Function to re-identify the specified picture
+Function to re-index the specified picture
+Creation of export albums
+Signature on exported pictures
+Get the most appropriate picture given a display size
+
 ** yapto_swing **
+
+Tags display
+Handling of orientation on display
+Adding of tags to a picture
+Selection of tags when adding a picture
+SCALE_DOWN_TO_WINDOW zoom type
+Zoom type selection
+Search panel
+Thumbnails panel
+Picture adding
+
