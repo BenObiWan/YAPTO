@@ -197,19 +197,34 @@ public final class PictureIndexer
 		final PictureInformation info = picture.getPictureInformation();
 		doc.add(new IntField(ORIENTATION_INDEX_FIELD, info.getOrientation(),
 				Field.Store.NO));
-		doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
-				Field.Store.NO));
-		doc.add(new StringField(MODEL_INDEX_FIELD, info.getModel(),
-				Field.Store.NO));
 		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(),
 				Field.Store.NO));
 		doc.add(new IntField(WIDTH_INDEX_FIELD, info.getWidth(), Field.Store.NO));
-		doc.add(new StringField(PICTURE_EXPOSURE_INDEX_FIELD, info
-				.getExposureTime(), Field.Store.NO));
-		doc.add(new StringField(MODEL_RELATIVE_APERTURE_FIELD, info
-				.getRelativeAperture(), Field.Store.NO));
-		doc.add(new StringField(FOCAL_LENGTH_INDEX_FIELD,
-				info.getFocalLength(), Field.Store.NO));
+		if (info.getMake() != null)
+		{
+			doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
+					Field.Store.NO));
+		}
+		if (info.getModel() != null)
+		{
+			doc.add(new StringField(MODEL_INDEX_FIELD, info.getModel(),
+					Field.Store.NO));
+		}
+		if (info.getExposureTime() != null)
+		{
+			doc.add(new StringField(PICTURE_EXPOSURE_INDEX_FIELD, info
+					.getExposureTime(), Field.Store.NO));
+		}
+		if (info.getRelativeAperture() != null)
+		{
+			doc.add(new StringField(MODEL_RELATIVE_APERTURE_FIELD, info
+					.getRelativeAperture(), Field.Store.NO));
+		}
+		if (info.getFocalLength() != null)
+		{
+			doc.add(new StringField(FOCAL_LENGTH_INDEX_FIELD, info
+					.getFocalLength(), Field.Store.NO));
+		}
 
 		// doc.add(new IntField("",
 		// info.getCreationTimestamp(), Field.Store.NO));
