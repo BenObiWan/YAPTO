@@ -262,6 +262,36 @@ public final class Tag implements Comparable<Tag>
 		_childrenSet.remove(child);
 	}
 
+	/**
+	 * Get the id of the {@link IDataSource}.
+	 * 
+	 * @return the id of the {@link IDataSource}.
+	 */
+	public int getDatasourceId()
+	{
+		return _iDatasourceId;
+	}
+
+	/**
+	 * Get the id of this {@link Tag}.
+	 * 
+	 * @return the id of this {@link Tag}.
+	 */
+	public int getTagId()
+	{
+		return _iTagId;
+	}
+
+	/**
+	 * Get the id of this {@link Tag} as a String.
+	 * 
+	 * @return the String representation of the id of this {@link Tag}.
+	 */
+	public String getTagIdAsString()
+	{
+		return _strTagId;
+	}
+
 	@Override
 	public int compareTo(final Tag arg0)
 	{
@@ -311,33 +341,98 @@ public final class Tag implements Comparable<Tag>
 		return iComp;
 	}
 
-	/**
-	 * Get the id of the {@link IDataSource}.
-	 * 
-	 * @return the id of the {@link IDataSource}.
-	 */
-	public int getDatasourceId()
+	@Override
+	public int hashCode()
 	{
-		return _iDatasourceId;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (_bSelectable ? 1231 : 1237);
+		result = prime * result + _iDatasourceId;
+		result = prime * result + _iTagId;
+		result = prime * result
+				+ ((_parentTag == null) ? 0 : _parentTag.hashCode());
+		result = prime * result
+				+ ((_strDescription == null) ? 0 : _strDescription.hashCode());
+		result = prime * result
+				+ ((_strName == null) ? 0 : _strName.hashCode());
+		result = prime * result
+				+ ((_strTagId == null) ? 0 : _strTagId.hashCode());
+		return result;
 	}
 
-	/**
-	 * Get the id of this {@link Tag}.
-	 * 
-	 * @return the id of this {@link Tag}.
-	 */
-	public int getTagId()
+	@Override
+	public boolean equals(final Object obj)
 	{
-		return _iTagId;
+		if (this == obj)
+		{
+			return true;
+		}
+		if (obj == null)
+		{
+			return false;
+		}
+		if (getClass() != obj.getClass())
+		{
+			return false;
+		}
+		final Tag other = (Tag) obj;
+		if (_bSelectable != other._bSelectable)
+		{
+			return false;
+		}
+		if (_iDatasourceId != other._iDatasourceId)
+		{
+			return false;
+		}
+		if (_iTagId != other._iTagId)
+		{
+			return false;
+		}
+		if (_parentTag == null)
+		{
+			if (other._parentTag != null)
+			{
+				return false;
+			}
+		}
+		else if (!_parentTag.equals(other._parentTag))
+		{
+			return false;
+		}
+		if (_strDescription == null)
+		{
+			if (other._strDescription != null)
+			{
+				return false;
+			}
+		}
+		else if (!_strDescription.equals(other._strDescription))
+		{
+			return false;
+		}
+		if (_strName == null)
+		{
+			if (other._strName != null)
+			{
+				return false;
+			}
+		}
+		else if (!_strName.equals(other._strName))
+		{
+			return false;
+		}
+		if (_strTagId == null)
+		{
+			if (other._strTagId != null)
+			{
+				return false;
+			}
+		}
+		else if (!_strTagId.equals(other._strTagId))
+		{
+			return false;
+		}
+		return true;
 	}
 
-	/**
-	 * Get the id of this {@link Tag} as a String.
-	 * 
-	 * @return the String representation of the id of this {@link Tag}.
-	 */
-	public String getTagIdAsString()
-	{
-		return _strTagId;
-	}
 }
