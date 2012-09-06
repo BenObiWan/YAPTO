@@ -20,12 +20,13 @@ Get the most appropriate picture given a display size
 
 ** yapto_swing **
 
-Tags display
 Handling of orientation on display
-Adding of tags to a picture
 Selection of tags when adding a picture
 Zoom type selection
 Search panel
 Thumbnails panel
-Picture adding
+Tags addition
+Tags modification
+Multiple picture addition
+Picture removal
 
