@@ -7,6 +7,8 @@ import java.util.Vector;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,16 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	 */
 	private final JList<Tag> _tagList;
 
+	/**
+	 * Vector of all {@link Tag}s.
+	 */
 	private final Vector<Tag> _vTags = new Vector<>();
+
+	/**
+	 * Boolean used to prevent the modification of the tags associated to an
+	 * {@link IPicture} when the picture is changing.
+	 */
+	private volatile boolean _bDoNotSaveTags = false;
 
 	/**
 	 * Creates a new ListTagEditorPanel.
@@ -60,11 +71,20 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 		add(scrollPane, BorderLayout.CENTER);
 		updateAvailableTags();
 		changePicture();
+		_tagList.addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(final ListSelectionEvent e)
+			{
+				savePictureTags();
+			}
+		});
 	}
 
 	@Override
-	public void selectAppropriateTags()
+	protected void selectAppropriateTags()
 	{
+		_bDoNotSaveTags = true;
 		synchronized (_lock)
 		{
 			if (_pictureIterator != null)
@@ -72,8 +92,8 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 				_tagList.clearSelection();
 				if (_picture != null)
 				{
-					Set<Tag> tags = _picture.getTagSet();
-					int[] indices = new int[tags.size()];
+					final Set<Tag> tags = _picture.getTagSet();
+					final int[] indices = new int[tags.size()];
 					int i = 0;
 					for (final Tag t : tags)
 					{
@@ -84,10 +104,11 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 				}
 			}
 		}
+		_bDoNotSaveTags = false;
 	}
 
 	@Override
-	public void updateAvailableTags()
+	protected void updateAvailableTags()
 	{
 		synchronized (_lock)
 		{
@@ -109,6 +130,24 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 			catch (final OperationNotSupportedException e)
 			{
 				LOGGER.error(e.getMessage(), e);
+			}
+		}
+	}
+
+	@Override
+	protected void savePictureTags()
+	{
+		if (!_bDoNotSaveTags)
+		{
+			synchronized (_lock)
+			{
+				if (_pictureIterator != null)
+				{
+					if (_picture != null)
+					{
+						_picture.setTagList(_tagList.getSelectedValuesList());
+					}
+				}
 			}
 		}
 	}
