@@ -54,7 +54,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	}
 
 	@Override
-	public void updateAvailableTags()
+	protected void updateAvailableTags()
 	{
 		synchronized (_lock)
 		{
@@ -121,7 +121,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	}
 
 	@Override
-	public void selectAppropriateTags()
+	protected void selectAppropriateTags()
 	{
 		synchronized (_lock)
 		{
@@ -134,5 +134,12 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void savePictureTags()
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

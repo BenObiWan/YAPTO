@@ -59,13 +59,18 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	/**
 	 * Select the {@link Tag}s appropriate to the selected {@link IPicture}.
 	 */
-	public abstract void selectAppropriateTags();
+	protected abstract void selectAppropriateTags();
 
 	/**
 	 * Update the list of available {@link Tag}s according to those available in
 	 * the {@link IPictureList}.
 	 */
-	public abstract void updateAvailableTags();
+	protected abstract void updateAvailableTags();
+
+	/**
+	 * Save the {@link Tag}s associated to an {@link IPicture}.
+	 */
+	protected abstract void savePictureTags();
 
 	/**
 	 * Change the {@link IPicture} which {@link Tag}s can be changed on this
