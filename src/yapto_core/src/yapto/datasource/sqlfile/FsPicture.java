@@ -261,13 +261,30 @@ public final class FsPicture implements IPicture
 	@Override
 	public void removeTag(final Tag tag)
 	{
-		synchronized (this)
+		if (_tagSet.contains(tag))
 		{
-			_lModifiedTimestamp = System.currentTimeMillis();
-			_bModified = true;
-			_dataSource.setPictureForUpdating(this);
+			synchronized (this)
+			{
+				_lModifiedTimestamp = System.currentTimeMillis();
+				_bModified = true;
+				_dataSource.setPictureForUpdating(this);
+			}
+			_tagSet.remove(tag);
 		}
-		_tagSet.remove(tag);
+	}
+
+	@Override
+	public void setTagList(final List<Tag> tags)
+	{
+		if (_tagSet.retainAll(tags) | _tagSet.addAll(tags))
+		{
+			synchronized (this)
+			{
+				_lModifiedTimestamp = System.currentTimeMillis();
+				_bModified = true;
+				_dataSource.setPictureForUpdating(this);
+			}
+		}
 	}
 
 	/**

@@ -2,6 +2,7 @@ package yapto.datasource;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import yapto.datasource.tag.Tag;
@@ -81,11 +82,20 @@ public interface IPicture extends Comparable<IPicture>
 	void removeTag(Tag tag);
 
 	/**
+	 * Change the {@link List} of {@link Tag}s associated with this picture.
+	 * 
+	 * @param tags
+	 *            the new {@link List} of {@link Tag}s associated with this
+	 *            picture.
+	 */
+	void setTagList(List<Tag> tags);
+
+	/**
 	 * Get the grade of this picture.
 	 * 
 	 * @return the grade of this picture.
 	 */
-	public int getPictureGrade();
+	int getPictureGrade();
 
 	/**
 	 * Set the grade of this picture.
@@ -93,12 +103,12 @@ public interface IPicture extends Comparable<IPicture>
 	 * @param iPictureGrade
 	 *            the new grade of this picture.
 	 */
-	public void setPictureGrade(final int iPictureGrade);
+	void setPictureGrade(final int iPictureGrade);
 
 	/**
 	 * Get the {@link PictureInformation} of this picture.
 	 * 
 	 * @return the {@link PictureInformation} of this picture.
 	 */
-	public PictureInformation getPictureInformation();
+	PictureInformation getPictureInformation();
 }
