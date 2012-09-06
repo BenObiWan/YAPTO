@@ -555,6 +555,10 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			if (picture.hasBeenModified())
 			{
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Updating picture, id : " + picture.getId());
+				}
 				try
 				{
 					_fileListConnection.updatePicture(picture);
