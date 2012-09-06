@@ -278,7 +278,7 @@ public final class SQLFileListConnection
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") VALUES(?, ?)");
 		_psRemoveTagsForPicture = _connection.prepareStatement("DELETE FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
 		_psLoadPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_ORIGINAL_NAME
 				+ ", " + PICTURE_WIDTH_COLUMN_NAME + ", "
