@@ -5,8 +5,12 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 import yapto.datasource.IPicture;
+import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureList;
+import yapto.datasource.PictureChangedEvent;
 import yapto.datasource.tag.Tag;
+
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Panel displaying the list of {@link Tag} that can be associated with an
@@ -23,12 +27,6 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	private static final long serialVersionUID = -5913543215027452909L;
 
 	/**
-	 * The {@link IPictureList} used to load the list of available {@link Tag}
-	 * s.
-	 */
-	protected IPictureList<?> _pictureList;
-
-	/**
 	 * The {@link IPicture} with which to associate the tags.
 	 */
 	protected IPicture _picture;
@@ -40,11 +38,22 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	protected final Object _lock = new Object();
 
 	/**
-	 * Creates a new AbstractTagEditorPanel.
+	 * The {@link IPictureBrowser} used to display picture on this
+	 * {@link AbstractTagEditorPanel}.
 	 */
-	public AbstractTagEditorPanel()
+	protected IPictureBrowser<? extends IPicture> _pictureIterator;
+
+	/**
+	 * Creates a new AbstractTagEditorPanel.
+	 * 
+	 * @param pictureIterator
+	 *            the {@link IPictureBrowser} to use.
+	 */
+	public AbstractTagEditorPanel(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(new BorderLayout());
+		_pictureIterator = pictureIterator;
 	}
 
 	/**
@@ -61,17 +70,14 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	/**
 	 * Change the {@link IPicture} which {@link Tag}s can be changed on this
 	 * {@link TreeTagEditorPanel}.
-	 * 
-	 * @param picture
-	 *            the new {@link IPicture}.
 	 */
-	public final void changePicture(final IPicture picture)
+	public final void changePicture()
 	{
 		synchronized (_lock)
 		{
-			if (_picture != picture)
+			if (_picture != _pictureIterator.getCurrentPicture())
 			{
-				_picture = picture;
+				_picture = _pictureIterator.getCurrentPicture();
 				selectAppropriateTags();
 			}
 		}
@@ -81,18 +87,32 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	 * Update the list of available {@link Tag}s according the {@link Tag}s of
 	 * the specified {@link IPictureList}.
 	 * 
-	 * @param pictureList
-	 *            the new {@link IPictureList}.
+	 * @param pictureIterator
+	 *            the new {@link IPictureBrowser}.
 	 */
-	public final void changePictureList(final IPictureList<?> pictureList)
+	public final void changePictureList(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		synchronized (_lock)
 		{
-			if (_pictureList != pictureList)
+			if (_pictureIterator != pictureIterator)
 			{
-				_pictureList = pictureList;
+				_pictureIterator = pictureIterator;
 				updateAvailableTags();
 			}
 		}
+	}
+
+	/**
+	 * Method called when the selected picture has changed.
+	 * 
+	 * @param e
+	 *            the event signaling the change of the picture.
+	 */
+	@Subscribe
+	public void handlePictureChanged(
+			@SuppressWarnings("unused") final PictureChangedEvent e)
+	{
+		changePicture();
 	}
 }

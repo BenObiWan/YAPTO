@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import yapto.datasource.IPicture;
-import yapto.datasource.IPictureList;
+import yapto.datasource.IPictureBrowser;
 import yapto.datasource.tag.Tag;
 
 /**
@@ -38,21 +38,19 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	/**
 	 * Creates a new TagEditorPanel.
 	 * 
-	 * @param pictureList
-	 *            the {@link IPictureList} from which {@link Tag}s can be
-	 *            selected.
-	 * @param picture
-	 *            the picture from which to edit the {@link Tag}s.
+	 * @param pictureIterator
+	 *            the {@link IPictureBrowser} to use.
 	 */
-	public TreeTagEditorPanel(final IPictureList<?> pictureList,
-			final IPicture picture)
+	public TreeTagEditorPanel(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
+		super(pictureIterator);
 		_rootNode = new DefaultMutableTreeNode();
 		_tagTree = new JTree(_rootNode);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
-		changePictureList(pictureList);
-		changePicture(picture);
+		updateAvailableTags();
+		changePicture();
 	}
 
 	@Override
@@ -61,9 +59,9 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 		synchronized (_lock)
 		{
 			_rootNode.removeAllChildren();
-			if (_pictureList != null)
+			if (_pictureIterator != null)
 			{
-				final Tag rootTag = _pictureList.getRootTag();
+				final Tag rootTag = _pictureIterator.getRootTag();
 				populateChildren(rootTag, _rootNode);
 				expandAll();
 				if (_picture != null)
@@ -127,7 +125,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureList != null)
+			if (_pictureIterator != null)
 			{
 				// TODO unselect all tags
 				if (_picture != null)

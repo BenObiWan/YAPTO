@@ -1,14 +1,19 @@
 package yapto.swing;
 
 import java.awt.BorderLayout;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IPicture;
-import yapto.datasource.IPictureList;
+import yapto.datasource.IPictureBrowser;
+import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.tag.Tag;
 
 /**
@@ -26,29 +31,35 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	private static final long serialVersionUID = 1577570873903931403L;
 
 	/**
+	 * Logger object.
+	 */
+	protected static transient final Logger LOGGER = LoggerFactory
+			.getLogger(ListTagEditorPanel.class);
+
+	/**
 	 * {@link JList} used to display all the {@link Tag}s.
 	 */
 	private final JList<Tag> _tagList;
 
+	private final Vector<Tag> _vTags = new Vector<>();
+
 	/**
-	 * Creates a new ListTagEditorPanel
+	 * Creates a new ListTagEditorPanel.
 	 * 
-	 * @param pictureList
-	 *            the {@link IPictureList} from which {@link Tag}s can be
-	 *            selected.
-	 * @param picture
-	 *            the picture from which to edit the {@link Tag}s.
+	 * @param pictureIterator
+	 *            the {@link IPictureBrowser} to use.
 	 */
-	public ListTagEditorPanel(final IPictureList<?> pictureList,
-			final IPicture picture)
+	public ListTagEditorPanel(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
+		super(pictureIterator);
 		_tagList = new JList<>();
 		_tagList.setLayoutOrientation(JList.VERTICAL);
 		_tagList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final JScrollPane scrollPane = new JScrollPane(_tagList);
 		add(scrollPane, BorderLayout.CENTER);
-		changePictureList(pictureList);
-		changePicture(picture);
+		updateAvailableTags();
+		changePicture();
 	}
 
 	@Override
@@ -56,12 +67,20 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureList != null)
+			if (_pictureIterator != null)
 			{
-				// TODO unselect all tags
+				_tagList.clearSelection();
 				if (_picture != null)
 				{
-					// TODO select appropriate tags
+					Set<Tag> tags = _picture.getTagSet();
+					int[] indices = new int[tags.size()];
+					int i = 0;
+					for (final Tag t : tags)
+					{
+						indices[i] = _vTags.indexOf(t);
+						i++;
+					}
+					_tagList.setSelectedIndices(indices);
 				}
 			}
 		}
@@ -72,26 +91,24 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureList != null)
+			try
 			{
-				final Vector<Tag> vTags = new Vector<>();
-				populateChildren(_pictureList.getRootTag(), vTags);
-				_tagList.setListData(vTags);
+				if (_pictureIterator != null)
+				{
+					_vTags.clear();
+					for (final Tag t : _pictureIterator.getTagSet())
+					{
+						if (t.isSelectable())
+						{
+							_vTags.add(t);
+						}
+					}
+					_tagList.setListData(_vTags);
+				}
 			}
-		}
-	}
-
-	private void populateChildren(final Tag parentTag, final Vector<Tag> vTags)
-	{
-		if (parentTag != null)
-		{
-			if (parentTag.isSelectable())
+			catch (final OperationNotSupportedException e)
 			{
-				vTags.add(parentTag);
-			}
-			for (final Tag t : parentTag.getChildren())
-			{
-				populateChildren(t, vTags);
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 	}
