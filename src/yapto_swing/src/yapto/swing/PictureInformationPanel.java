@@ -2,6 +2,7 @@ package yapto.swing;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -62,6 +63,8 @@ public final class PictureInformationPanel extends JPanel
 		_tagPanel = new ListTagEditorPanel(pictureIterator);
 		_pictureIterator.register(_tagPanel);
 		add(_tagPanel, BorderLayout.CENTER);
+		final JButton buttonAddTag = new JButton("Add tag");
+		add(buttonAddTag, BorderLayout.PAGE_END);
 	}
 
 	/**
