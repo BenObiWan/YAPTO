@@ -194,6 +194,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		switch (iAnswer)
 		{
 		case JOptionPane.YES_OPTION:
+			_dataSource.close();
 			dispose();
 			break;
 		case JOptionPane.NO_OPTION:
