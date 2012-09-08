@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,10 @@ public final class PictureInformationPanel extends JPanel
 		_pictureIterator.register(_tagPanel);
 		add(_tagPanel, BorderLayout.CENTER);
 		final JButton buttonAddTag = new JButton("Add tag");
-		add(buttonAddTag, BorderLayout.PAGE_END);
+		final JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		buttonPanel.add(buttonAddTag, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
 	/**
