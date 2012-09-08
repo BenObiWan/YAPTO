@@ -31,13 +31,48 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	void addPicture(File pictureFile) throws PictureAddException;
 
 	/**
-	 * Add a {@link Tag} to the list of {@link Tag}s know to this
+	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
 	 * {@link IDataSource}.
 	 * 
-	 * @param newTag
-	 *            the {@link Tag} to add.
+	 * @param parent
+	 *            the parent of this {@link Tag}.
+	 * @param strName
+	 *            the name of this {@link Tag}.
+	 * @param strDescription
+	 *            the description of this {@link Tag}.
+	 * @param bSelectable
+	 *            whether or not this {@link Tag} is selectable.
+	 * @return true if the datasource has a {@link Tag} with the give
+	 *         {@link Tag}.
 	 */
-	void addTag(Tag newTag);
+	boolean addTag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable);
+
+	/**
+	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
+	 * {@link IDataSource}.
+	 * 
+	 * @param strName
+	 *            the name of this {@link Tag}.
+	 * @param strDescription
+	 *            the description of this {@link Tag}.
+	 * @param bSelectable
+	 *            whether or not this {@link Tag} is selectable.
+	 * @return true if the datasource has a {@link Tag} with the give
+	 *         {@link Tag}.
+	 */
+	boolean addTag(final String strName, final String strDescription,
+			final boolean bSelectable);
+
+	/**
+	 * Check whether the datasource has a {@link Tag} with the give {@link Tag}.
+	 * 
+	 * @param strName
+	 *            the name to check.
+	 * @return true if the datasource has a {@link Tag} with the give
+	 *         {@link Tag}.
+	 */
+	boolean hasTagNamed(final String strName);
 
 	/**
 	 * Get the id of this {@link IDataSource}.

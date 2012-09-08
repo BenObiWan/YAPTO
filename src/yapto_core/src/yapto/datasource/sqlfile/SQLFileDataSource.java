@@ -73,9 +73,24 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	protected final List<String> _pictureIdList = new Vector<>();
 
 	/**
-	 * Map containing all the {@link Tag}s.
+	 * Map containing all the {@link Tag}s ordered by {@link Tag} id.
 	 */
-	private final Map<Integer, Tag> _tagMap = new TreeMap<>();
+	private final Map<Integer, Tag> _tagIdMap = new TreeMap<>();
+
+	/**
+	 * Map containing all the {@link Tag}s ordered by {@link Tag} name.
+	 */
+	private final Map<String, Tag> _tagNameMap = new TreeMap<>();
+
+	/**
+	 * Id given to the next tag added to this datasource.
+	 */
+	private int _iNextTagId = 0;
+
+	/**
+	 * Log protecting the access to the next tag id.
+	 */
+	private final Object _lockNextTag = new Object();
 
 	/**
 	 * Configuration for this {@link SQLFileDataSource}.
@@ -335,22 +350,43 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addTag(final Tag newTag)
+	public boolean addTag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable)
 	{
-		final Integer tagId = Integer.valueOf(newTag.getTagId());
-		if (!_tagMap.containsKey(tagId))
+		if (!_tagNameMap.containsKey(strName))
 		{
-			_tagSet.add(newTag);
-			_tagMap.put(tagId, newTag);
-			try
-			{
-				_fileListConnection.saveTagToDatabase(newTag);
-			}
-			catch (final SQLException e)
-			{
-				LOGGER.error(e.getMessage(), e);
-			}
+			final Tag newTag = new Tag(_conf.getDataSourceId(), _iNextTagId,
+					parent, strName, strDescription, bSelectable);
+			final Integer tagId = Integer.valueOf(_iNextTagId);
+			_tagIdMap.put(tagId, newTag);
+			_tagNameMap.put(strName, newTag);
+			_iNextTagId++;
+			return false;
 		}
+		return true;
+	}
+
+	@Override
+	public boolean addTag(final String strName, final String strDescription,
+			final boolean bSelectable)
+	{
+		if (!_tagNameMap.containsKey(strName))
+		{
+			final Tag newTag = new Tag(_conf.getDataSourceId(), _iNextTagId,
+					strName, strDescription, bSelectable);
+			final Integer tagId = Integer.valueOf(_iNextTagId);
+			_tagIdMap.put(tagId, newTag);
+			_tagNameMap.put(strName, newTag);
+			_iNextTagId++;
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean hasTagNamed(final String strName)
+	{
+		return _tagNameMap.containsKey(strName);
 	}
 
 	@Override
@@ -374,21 +410,29 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		Tag parentTag = null;
 		try
 		{
-			resLoad = _fileListConnection.loadTagList();
-			while (resLoad.next())
+			synchronized (_lockNextTag)
 			{
-				final int iTagId = resLoad
-						.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME);
-				final String strName = resLoad
-						.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME);
-				final String strDescription = resLoad
-						.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
-				final boolean bSelectable = resLoad
-						.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-				tag = new Tag(getId(), iTagId, strName, strDescription,
-						bSelectable);
-				_tagSet.add(tag);
-				_tagMap.put(Integer.valueOf(iTagId), tag);
+				resLoad = _fileListConnection.loadTagList();
+				while (resLoad.next())
+				{
+					final int iTagId = resLoad
+							.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME);
+					final String strName = resLoad
+							.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME);
+					final String strDescription = resLoad
+							.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
+					final boolean bSelectable = resLoad
+							.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
+					tag = new Tag(getId(), iTagId, strName, strDescription,
+							bSelectable);
+					_tagSet.add(tag);
+					_tagIdMap.put(Integer.valueOf(iTagId), tag);
+					_tagNameMap.put(tag.getName(), tag);
+					if (iTagId > _iNextTagId)
+					{
+						_iNextTagId = iTagId + 1;
+					}
+				}
 			}
 		}
 		finally
@@ -408,8 +452,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				final Integer iParentId = Integer
 						.valueOf(resParent
 								.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME));
-				tag = _tagMap.get(iId);
-				parentTag = _tagMap.get(iParentId);
+				tag = _tagIdMap.get(iId);
+				parentTag = _tagIdMap.get(iParentId);
 				if (tag != null && parentTag != null)
 				{
 					tag.setParent(parentTag);
