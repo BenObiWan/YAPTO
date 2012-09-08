@@ -73,7 +73,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 
 	private final JFileChooser _chooser = new JFileChooser();
 
-	private final IDataSource<?> _dataSource;
+	protected final IDataSource<?> _dataSource;
 
 	/**
 	 * Creates a new PictureDisplayFrame.
@@ -99,7 +99,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			@Override
 			public void windowClosed(final WindowEvent e)
 			{
-				// TODO do this better
+				_dataSource.close();
 				System.exit(0);
 			}
 
@@ -194,7 +194,6 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		switch (iAnswer)
 		{
 		case JOptionPane.YES_OPTION:
-			_dataSource.close();
 			dispose();
 			break;
 		case JOptionPane.NO_OPTION:
@@ -215,7 +214,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				final File file = _chooser.getSelectedFile();
-				LOGGER.info("Opening: " + file.getName() + ".");
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Opening: " + file.getName() + ".");
+				}
 				try
 				{
 					_dataSource.addPicture(file);
