@@ -13,7 +13,6 @@ Backup handling
 Other storage type
 Function to re-identify all picture
 Function to re-identify the specified picture
-Function to re-index the specified picture
 Creation of export albums
 Signature on exported pictures
 Get the most appropriate picture given a display size

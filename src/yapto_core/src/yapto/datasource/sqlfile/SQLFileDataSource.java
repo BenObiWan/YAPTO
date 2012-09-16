@@ -629,6 +629,33 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	/**
+	 * Re-index the specified picture.
+	 * 
+	 * @param strPicId
+	 *            id of the picture to re-index.
+	 * @throws CorruptIndexException
+	 *             if the index is corrupted.
+	 * @throws IOException
+	 *             if there is an error while writing the index.
+	 */
+	public void reIndexPicture(final String strPicId)
+			throws CorruptIndexException, IOException
+	{
+		try
+		{
+			final FsPicture picture = _pictureCache.get(strPicId);
+			synchronized (picture)
+			{
+				_indexer.indexPicture(picture);
+			}
+		}
+		catch (final ExecutionException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+
+	/**
 	 * Re-index all the pictures.
 	 * 
 	 * @throws CorruptIndexException
@@ -640,18 +667,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	{
 		for (final String strPicId : _pictureIdList)
 		{
-			try
-			{
-				final FsPicture picture = _pictureCache.get(strPicId);
-				synchronized (picture)
-				{
-					_indexer.indexPicture(picture);
-				}
-			}
-			catch (final ExecutionException e)
-			{
-				LOGGER.error(e.getMessage(), e);
-			}
+			reIndexPicture(strPicId);
 		}
 	}
 
