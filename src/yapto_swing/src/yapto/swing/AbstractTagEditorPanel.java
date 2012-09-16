@@ -2,7 +2,9 @@ package yapto.swing;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -54,6 +56,11 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
+		final JButton buttonAddTag = new JButton("Add tag");
+		final JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		buttonPanel.add(buttonAddTag, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
 	/**
