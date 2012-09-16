@@ -137,7 +137,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		MainPictureDisplayPanel contentPane = null;
 		try
 		{
-			contentPane = new MainPictureDisplayPanel(
+			contentPane = new MainPictureDisplayPanel(this,
 					_dataSource.getAllPictures());
 		}
 		catch (final ExecutionException e1)

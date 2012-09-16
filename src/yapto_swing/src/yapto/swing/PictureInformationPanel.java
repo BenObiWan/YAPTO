@@ -1,6 +1,7 @@
 package yapto.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 
 import javax.swing.JPanel;
 
@@ -52,14 +53,17 @@ public final class PictureInformationPanel extends JPanel
 	/**
 	 * Creates a new PictureInformationPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public PictureInformationPanel(final IPictureBrowser<?> pictureIterator)
+	public PictureInformationPanel(final Frame parent,
+			final IPictureBrowser<?> pictureIterator)
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
-		_tagPanel = new ListTagEditorPanel(pictureIterator);
+		_tagPanel = new ListTagEditorPanel(parent, pictureIterator);
 		_pictureIterator.register(_tagPanel);
 		add(_tagPanel, BorderLayout.CENTER);
 	}

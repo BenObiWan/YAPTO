@@ -1,8 +1,12 @@
 package yapto.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -21,7 +25,8 @@ import com.google.common.eventbus.Subscribe;
  * @author benobiwan
  * 
  */
-public abstract class AbstractTagEditorPanel extends JPanel
+public abstract class AbstractTagEditorPanel extends JPanel implements
+		ActionListener
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -46,21 +51,32 @@ public abstract class AbstractTagEditorPanel extends JPanel
 	protected IPictureBrowser<? extends IPicture> _pictureIterator;
 
 	/**
+	 * Dialog for tag creation.
+	 */
+	protected final JDialog _dialogCreateTag;
+
+	/**
 	 * Creates a new AbstractTagEditorPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public AbstractTagEditorPanel(
+	public AbstractTagEditorPanel(final Frame parent,
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
 		final JButton buttonAddTag = new JButton("Add tag");
+		buttonAddTag.addActionListener(this);
 		final JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		buttonPanel.add(buttonAddTag, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.PAGE_END);
+
+		_dialogCreateTag = new JDialog(parent, "Create tag", true);
+		_dialogCreateTag.setContentPane(new AddTagPanel());
 	}
 
 	/**
@@ -126,5 +142,12 @@ public abstract class AbstractTagEditorPanel extends JPanel
 			@SuppressWarnings("unused") final PictureChangedEvent e)
 	{
 		changePicture();
+	}
+
+	@Override
+	public void actionPerformed(final ActionEvent e)
+	{
+		_dialogCreateTag.pack();
+		_dialogCreateTag.setVisible(true);
 	}
 }

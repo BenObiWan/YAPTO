@@ -1,6 +1,7 @@
 package yapto.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -38,13 +39,15 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	/**
 	 * Creates a new TagEditorPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public TreeTagEditorPanel(
+	public TreeTagEditorPanel(final Frame parent,
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
-		super(pictureIterator);
+		super(parent, pictureIterator);
 		_rootNode = new DefaultMutableTreeNode();
 		_tagTree = new JTree(_rootNode);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);

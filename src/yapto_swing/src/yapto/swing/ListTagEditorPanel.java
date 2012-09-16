@@ -1,6 +1,7 @@
 package yapto.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.util.Set;
 import java.util.Vector;
 
@@ -57,13 +58,15 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	/**
 	 * Creates a new ListTagEditorPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public ListTagEditorPanel(
+	public ListTagEditorPanel(final Frame parent,
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
-		super(pictureIterator);
+		super(parent, pictureIterator);
 		_tagList = new JList<>();
 		_tagList.setLayoutOrientation(JList.VERTICAL);
 		_tagList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

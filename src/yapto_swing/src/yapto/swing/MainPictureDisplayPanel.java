@@ -2,6 +2,7 @@ package yapto.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -49,16 +50,19 @@ public final class MainPictureDisplayPanel extends JPanel
 	/**
 	 * Create a new MainPictureDisplayPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param pictureBrowser
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public MainPictureDisplayPanel(final IPictureBrowser<?> pictureBrowser)
+	public MainPictureDisplayPanel(final Frame parent,
+			final IPictureBrowser<?> pictureBrowser)
 	{
 		super(new BorderLayout());
 		_pictureBrowser = pictureBrowser;
 		_pictureComponent = new PictureDisplayComponent(_pictureBrowser);
 		_pictureBrowser.register(_pictureComponent);
-		_pictureInfoPanel = new PictureInformationPanel(_pictureBrowser);
+		_pictureInfoPanel = new PictureInformationPanel(parent, _pictureBrowser);
 		_pictureBrowser.register(_pictureInfoPanel);
 		_pictureBrowserPanel = new PictureBrowserPanel(_pictureBrowser);
 		_pictureBrowser.register(_pictureBrowserPanel);
