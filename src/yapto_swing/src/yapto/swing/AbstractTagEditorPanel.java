@@ -76,7 +76,8 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 		add(buttonPanel, BorderLayout.PAGE_END);
 
 		_dialogCreateTag = new JDialog(parent, "Create tag", true);
-		_dialogCreateTag.setContentPane(new AddTagPanel());
+		_dialogCreateTag.setContentPane(new AddTagPanel(_dialogCreateTag,
+				pictureIterator));
 	}
 
 	/**
