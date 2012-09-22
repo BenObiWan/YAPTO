@@ -42,11 +42,12 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *            the description of this {@link Tag}.
 	 * @param bSelectable
 	 *            whether or not this {@link Tag} is selectable.
-	 * @return true if the datasource has a {@link Tag} with the give
-	 *         {@link Tag}.
+	 * @throws TagAddException
+	 *             if an error occurs during the addition of the {@link Tag}.
 	 */
-	boolean addTag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable);
+	void addTag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable)
+			throws TagAddException;
 
 	/**
 	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
@@ -58,11 +59,11 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *            the description of this {@link Tag}.
 	 * @param bSelectable
 	 *            whether or not this {@link Tag} is selectable.
-	 * @return true if the datasource has a {@link Tag} with the give
-	 *         {@link Tag}.
+	 * @throws TagAddException
+	 *             if an error occurs during the addition of the {@link Tag}.
 	 */
-	boolean addTag(final String strName, final String strDescription,
-			final boolean bSelectable);
+	void addTag(final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException;
 
 	/**
 	 * Check whether the datasource has a {@link Tag} with the give {@link Tag}.

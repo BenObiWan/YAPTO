@@ -36,6 +36,8 @@ import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
 import yapto.datasource.PictureInformation;
+import yapto.datasource.TagAddException;
+import yapto.datasource.TagAddExceptionType;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
@@ -350,37 +352,60 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public boolean addTag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable)
+	public void addTag(final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException
 	{
-		if (!_tagNameMap.containsKey(strName))
-		{
-			final Tag newTag = new Tag(_conf.getDataSourceId(), _iNextTagId,
-					parent, strName, strDescription, bSelectable);
-			final Integer tagId = Integer.valueOf(_iNextTagId);
-			_tagIdMap.put(tagId, newTag);
-			_tagNameMap.put(strName, newTag);
-			_iNextTagId++;
-			return false;
-		}
-		return true;
+		addTag(null, strName, strDescription, bSelectable);
 	}
 
 	@Override
-	public boolean addTag(final String strName, final String strDescription,
-			final boolean bSelectable)
+	public void addTag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable)
+			throws TagAddException
 	{
-		if (!_tagNameMap.containsKey(strName))
+		if (_tagNameMap.containsKey(strName))
 		{
-			final Tag newTag = new Tag(_conf.getDataSourceId(), _iNextTagId,
-					strName, strDescription, bSelectable);
-			final Integer tagId = Integer.valueOf(_iNextTagId);
-			_tagIdMap.put(tagId, newTag);
-			_tagNameMap.put(strName, newTag);
-			_iNextTagId++;
-			return false;
+			throw new TagAddException(strName,
+					TagAddExceptionType.DUPLICATE_TAG_NAME);
 		}
-		return true;
+		if (_iNextTagId == Integer.MAX_VALUE)
+		{
+			throw new TagAddException(TagAddExceptionType.NO_MORE_IDS);
+		}
+		// TODO add a Pattern for better control of the tag name
+		if (strName.equals(""))
+		{
+			throw new TagAddException(strName,
+					TagAddExceptionType.MALFORMED_TAG_NAME);
+
+		}
+		if (LOGGER.isDebugEnabled())
+		{
+			LOGGER.debug("Adding tag named: " + strName);
+		}
+		Tag newTag;
+		if (parent == null)
+		{
+			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, strName,
+					strDescription, bSelectable);
+		}
+		else
+		{
+			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, parent,
+					strName, strDescription, bSelectable);
+		}
+		final Integer tagId = Integer.valueOf(_iNextTagId);
+		_tagIdMap.put(tagId, newTag);
+		_tagNameMap.put(strName, newTag);
+		_iNextTagId++;
+		try
+		{
+			_fileListConnection.saveTagToDatabase(newTag);
+		}
+		catch (final SQLException e)
+		{
+			throw new TagAddException(TagAddExceptionType.SQL_INSERT_ERROR, e);
+		}
 	}
 
 	@Override

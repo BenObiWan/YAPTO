@@ -70,7 +70,7 @@ public enum PictureAddExceptionType
 	private final String _strMessage;
 
 	/**
-	 * Creates a new PictureAddExceptionType;
+	 * Creates a new PictureAddExceptionType.
 	 * 
 	 * @param strMessage
 	 *            message for this exception type.
