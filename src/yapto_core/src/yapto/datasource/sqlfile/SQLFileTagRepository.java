@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	/**
 	 * Set containing all the {@link Tag}s.
 	 */
-	private final Set<Tag> _tagSet = new HashSet<>();
+	private final Set<Tag> _tagSet = new TreeSet<>();
 
 	/**
 	 * Map containing all the {@link Tag}s ordered by {@link Tag} id.
@@ -244,7 +244,6 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			final boolean bSelectable) throws TagAddException
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
