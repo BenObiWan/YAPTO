@@ -1,4 +1,4 @@
-package yapto.datasource;
+package yapto.datasource.tag;
 
 /**
  * Thrown when there is a problem during the adding of tag.

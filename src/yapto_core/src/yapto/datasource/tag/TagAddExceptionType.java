@@ -1,4 +1,6 @@
-package yapto.datasource;
+package yapto.datasource.tag;
+
+import yapto.datasource.PictureAddException;
 
 /**
  * Enum describing the different types of {@link PictureAddException}.

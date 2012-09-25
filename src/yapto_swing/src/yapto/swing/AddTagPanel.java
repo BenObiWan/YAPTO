@@ -18,8 +18,8 @@ import javax.swing.border.EmptyBorder;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.TagAddException;
 import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.TagAddException;
 
 /**
  * Panel used to enter all the information of a new {@link Tag} and create it.

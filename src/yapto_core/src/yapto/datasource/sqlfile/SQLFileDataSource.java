@@ -14,11 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -36,12 +36,12 @@ import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
 import yapto.datasource.PictureInformation;
-import yapto.datasource.TagAddException;
-import yapto.datasource.TagAddExceptionType;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.TagAddException;
+import yapto.datasource.tag.TagAddExceptionType;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -67,7 +67,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	/**
 	 * Set containing all the {@link Tag}s.
 	 */
-	private final Set<Tag> _tagSet = new TreeSet<>();
+	private final Set<Tag> _tagSet = new HashSet<>();
 
 	/**
 	 * List of all picture id.
@@ -77,12 +77,12 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	/**
 	 * Map containing all the {@link Tag}s ordered by {@link Tag} id.
 	 */
-	private final Map<Integer, Tag> _tagIdMap = new TreeMap<>();
+	private final Map<Integer, Tag> _tagIdMap = new HashMap<>();
 
 	/**
 	 * Map containing all the {@link Tag}s ordered by {@link Tag} name.
 	 */
-	private final Map<String, Tag> _tagNameMap = new TreeMap<>();
+	private final Map<String, Tag> _tagNameMap = new HashMap<>();
 
 	/**
 	 * Id given to the next tag added to this datasource.
@@ -394,13 +394,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, parent,
 					strName, strDescription, bSelectable);
 		}
-		final Integer tagId = Integer.valueOf(_iNextTagId);
-		_tagIdMap.put(tagId, newTag);
-		_tagNameMap.put(strName, newTag);
-		_iNextTagId++;
 		try
 		{
 			_fileListConnection.saveTagToDatabase(newTag);
+			_tagSet.add(newTag);
+			_tagIdMap.put(Integer.valueOf(_iNextTagId), newTag);
+			_tagNameMap.put(strName, newTag);
+			_iNextTagId++;
 		}
 		catch (final SQLException e)
 		{
