@@ -13,11 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -32,16 +28,15 @@ import org.slf4j.LoggerFactory;
 import yapto.datasource.AbstractIdBasedPictureBrowser;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
 import yapto.datasource.PictureInformation;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
+import yapto.datasource.tag.IWritableTagRepository;
 import yapto.datasource.tag.Tag;
 import yapto.datasource.tag.TagAddException;
-import yapto.datasource.tag.TagAddExceptionType;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -65,34 +60,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			.getLogger(SQLFileDataSource.class);
 
 	/**
-	 * Set containing all the {@link Tag}s.
-	 */
-	private final Set<Tag> _tagSet = new HashSet<>();
-
-	/**
 	 * List of all picture id.
 	 */
 	protected final List<String> _pictureIdList = new Vector<>();
-
-	/**
-	 * Map containing all the {@link Tag}s ordered by {@link Tag} id.
-	 */
-	private final Map<Integer, Tag> _tagIdMap = new HashMap<>();
-
-	/**
-	 * Map containing all the {@link Tag}s ordered by {@link Tag} name.
-	 */
-	private final Map<String, Tag> _tagNameMap = new HashMap<>();
-
-	/**
-	 * Id given to the next tag added to this datasource.
-	 */
-	private int _iNextTagId = 0;
-
-	/**
-	 * Log protecting the access to the next tag id.
-	 */
-	private final Object _lockNextTag = new Object();
 
 	/**
 	 * Configuration for this {@link SQLFileDataSource}.
@@ -108,11 +78,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 * {@link ImageLoader} used to load the {@link BufferedImage}.
 	 */
 	private final ImageLoader _imageLoader;
-
-	/**
-	 * {@link LoadingCache} used to load the {@link Tag}.
-	 */
-	private final LoadingCache<Integer, Tag> _tagCache;
 
 	/**
 	 * Object holding the connection to the database and the prepared
@@ -147,6 +112,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	private final PictureProcessor _processor;
 
 	/**
+	 * {@link IWritableTagRepository} used to load and save {@link Tag}s.
+	 */
+	private final IWritableTagRepository _tagRepository;
+
+	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
 	 * @param conf
@@ -175,16 +145,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		// TODO put the parameters into the configuration object.
 		_processor = new PictureProcessor(4, 4);
 
-		// tag cache
-		final CacheLoader<Integer, Tag> tagLoader = new TagCacheLoader(_conf,
-				_fileListConnection);
-		_tagCache = CacheBuilder.newBuilder().build(tagLoader);
+		// tag repository
+		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection);
 
 		_imageLoader = new ImageLoader(_conf);
-
 		// picture cache
 		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				_fileListConnection, _imageLoader, _tagCache, this);
+				_fileListConnection, _imageLoader, _tagRepository, this);
 		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
 				this);
 		_pictureCache = CacheBuilder.newBuilder()
@@ -198,7 +165,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 									.getPictureDirectory());
 		}
 		_fileListConnection.createTables();
-		loadTags();
+
 		loadPictureIdList();
 		_updater = new PictureUpdater();
 		final Thread t = new Thread(_updater, "picture updater");
@@ -209,19 +176,6 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	public int getPictureCount()
 	{
 		return _pictureIdList.size();
-	}
-
-	@Override
-	public Set<Tag> getTagSet() throws OperationNotSupportedException
-	{
-		return Collections.unmodifiableSet(_tagSet);
-	}
-
-	@Override
-	public Tag getRootTag()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -352,146 +306,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addTag(final String strName, final String strDescription,
-			final boolean bSelectable) throws TagAddException
-	{
-		addTag(null, strName, strDescription, bSelectable);
-	}
-
-	@Override
-	public void addTag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable)
-			throws TagAddException
-	{
-		if (_tagNameMap.containsKey(strName))
-		{
-			throw new TagAddException(strName,
-					TagAddExceptionType.DUPLICATE_TAG_NAME);
-		}
-		if (_iNextTagId == Integer.MAX_VALUE)
-		{
-			throw new TagAddException(TagAddExceptionType.NO_MORE_IDS);
-		}
-		// TODO add a Pattern for better control of the tag name
-		if (strName.equals(""))
-		{
-			throw new TagAddException(strName,
-					TagAddExceptionType.MALFORMED_TAG_NAME);
-
-		}
-		if (LOGGER.isDebugEnabled())
-		{
-			LOGGER.debug("Adding tag named: " + strName);
-		}
-		Tag newTag;
-		if (parent == null)
-		{
-			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, strName,
-					strDescription, bSelectable);
-		}
-		else
-		{
-			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, parent,
-					strName, strDescription, bSelectable);
-		}
-		try
-		{
-			_fileListConnection.saveTagToDatabase(newTag);
-			_tagSet.add(newTag);
-			_tagIdMap.put(Integer.valueOf(_iNextTagId), newTag);
-			_tagNameMap.put(strName, newTag);
-			_iNextTagId++;
-		}
-		catch (final SQLException e)
-		{
-			throw new TagAddException(TagAddExceptionType.SQL_INSERT_ERROR, e);
-		}
-	}
-
-	@Override
-	public boolean hasTagNamed(final String strName)
-	{
-		return _tagNameMap.containsKey(strName);
-	}
-
-	@Override
 	public int getId()
 	{
 		return _conf.getDataSourceId();
-	}
-
-	/**
-	 * Load {@link Tag}s from the database.
-	 * 
-	 * @throws SQLException
-	 *             if an SQL error occurred during the interrogation of the
-	 *             database.
-	 */
-	private void loadTags() throws SQLException
-	{
-		ResultSet resLoad = null;
-		ResultSet resParent = null;
-		Tag tag = null;
-		Tag parentTag = null;
-		try
-		{
-			synchronized (_lockNextTag)
-			{
-				resLoad = _fileListConnection.loadTagList();
-				while (resLoad.next())
-				{
-					final int iTagId = resLoad
-							.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME);
-					final String strName = resLoad
-							.getString(SQLFileListConnection.TAG_NAME_COLUMN_NAME);
-					final String strDescription = resLoad
-							.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
-					final boolean bSelectable = resLoad
-							.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-					tag = new Tag(getId(), iTagId, strName, strDescription,
-							bSelectable);
-					_tagSet.add(tag);
-					_tagIdMap.put(Integer.valueOf(iTagId), tag);
-					_tagNameMap.put(tag.getName(), tag);
-					if (iTagId > _iNextTagId)
-					{
-						_iNextTagId = iTagId + 1;
-					}
-				}
-			}
-		}
-		finally
-		{
-			if (resLoad != null)
-			{
-				resLoad.close();
-			}
-		}
-		try
-		{
-			resParent = _fileListConnection.loadParents();
-			while (resParent.next())
-			{
-				final Integer iId = Integer.valueOf(resParent
-						.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME));
-				final Integer iParentId = Integer
-						.valueOf(resParent
-								.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME));
-				tag = _tagIdMap.get(iId);
-				parentTag = _tagIdMap.get(iParentId);
-				if (tag != null && parentTag != null)
-				{
-					tag.setParent(parentTag);
-				}
-			}
-		}
-		finally
-		{
-			if (resParent != null)
-			{
-				resParent.close();
-			}
-		}
 	}
 
 	/**
@@ -789,5 +606,65 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				}
 			}
 		}
+	}
+
+	@Override
+	public Set<Tag> getTagSet()
+	{
+		return _tagRepository.getTagSet();
+	}
+
+	@Override
+	public Tag getRootTag()
+	{
+		return _tagRepository.getRootTag();
+	}
+
+	@Override
+	public Tag get(final int iTagId)
+	{
+		return _tagRepository.get(iTagId);
+	}
+
+	@Override
+	public Tag get(final Integer iTagId)
+	{
+		return _tagRepository.get(iTagId);
+	}
+
+	@Override
+	public Tag get(final String strTagName)
+	{
+		return _tagRepository.get(strTagName);
+	}
+
+	@Override
+	public boolean hasTagNamed(final String strName)
+	{
+		return _tagRepository.hasTagNamed(strName);
+	}
+
+	@Override
+	public void addTag(final Tag parent, final String strName,
+			final String strDescription, final boolean bSelectable)
+			throws TagAddException
+	{
+		_tagRepository.addTag(parent, strName, strDescription, bSelectable);
+	}
+
+	@Override
+	public void addTag(final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException
+	{
+		_tagRepository.addTag(strName, strDescription, bSelectable);
+	}
+
+	@Override
+	public void editTag(final int iTagId, final Tag parent,
+			final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException
+	{
+		_tagRepository.editTag(iTagId, parent, strName, strDescription,
+				bSelectable);
 	}
 }

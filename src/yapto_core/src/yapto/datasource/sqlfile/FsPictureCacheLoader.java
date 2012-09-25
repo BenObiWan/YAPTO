@@ -5,10 +5,10 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import yapto.datasource.IDataSource;
+import yapto.datasource.tag.ITagRepository;
 import yapto.datasource.tag.Tag;
 
 import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * A {@link CacheLoader} loading {@link FsPicture} from the file system.
@@ -30,9 +30,9 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	private final ImageLoader _imageLoader;
 
 	/**
-	 * {@link LoadingCache} used to load the {@link Tag}.
+	 * {@link ITagRepository} used to load {@link Tag}s.
 	 */
-	private final LoadingCache<Integer, Tag> _tagCache;
+	private final ITagRepository _tagRepository;
 
 	/**
 	 * {@link IDataSource} of this FsPictureCacheLoader.
@@ -47,19 +47,18 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 *            statements.
 	 * @param imageLoader
 	 *            {@link ImageLoader} used to load the {@link BufferedImage}.
-	 * @param tagCache
-	 *            {@link LoadingCache} used to load the {@link Tag}.
+	 * @param tagRepository
+	 *            {@link ITagRepository} used to load {@link Tag}s.
 	 * @param dataSource
 	 *            {@link IDataSource} of this FsPictureCacheLoader.
 	 */
 	public FsPictureCacheLoader(final SQLFileListConnection fileListConnection,
-			final ImageLoader imageLoader,
-			final LoadingCache<Integer, Tag> tagCache,
+			final ImageLoader imageLoader, final ITagRepository tagRepository,
 			final SQLFileDataSource dataSource)
 	{
 		_fileListConnection = fileListConnection;
 		_imageLoader = imageLoader;
-		_tagCache = tagCache;
+		_tagRepository = tagRepository;
 		_dataSource = dataSource;
 	}
 
@@ -77,7 +76,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 				final LinkedList<Tag> tagList = new LinkedList<>();
 				for (final Integer tagId : tagIds)
 				{
-					tagList.add(_tagCache.get(tagId));
+					tagList.add(_tagRepository.get(tagId));
 				}
 				return new FsPicture(
 						_imageLoader,

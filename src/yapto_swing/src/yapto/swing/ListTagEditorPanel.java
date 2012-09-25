@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.OperationNotSupportedException;
 import yapto.datasource.tag.Tag;
 
 /**
@@ -115,24 +114,17 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			try
+			if (_pictureIterator != null)
 			{
-				if (_pictureIterator != null)
+				_vTags.clear();
+				for (final Tag t : _pictureIterator.getTagSet())
 				{
-					_vTags.clear();
-					for (final Tag t : _pictureIterator.getTagSet())
+					if (t.isSelectable())
 					{
-						if (t.isSelectable())
-						{
-							_vTags.add(t);
-						}
+						_vTags.add(t);
 					}
-					_tagList.setListData(_vTags);
 				}
-			}
-			catch (final OperationNotSupportedException e)
-			{
-				LOGGER.error(e.getMessage(), e);
+				_tagList.setListData(_vTags);
 			}
 		}
 	}

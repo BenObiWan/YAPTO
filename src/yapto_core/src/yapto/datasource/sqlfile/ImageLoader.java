@@ -11,6 +11,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+/**
+ * Class used to load {@link BufferedImage} from the file system.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class ImageLoader
 {
 	/**

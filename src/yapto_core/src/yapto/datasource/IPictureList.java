@@ -1,8 +1,6 @@
 package yapto.datasource;
 
-import java.util.Set;
-
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITagRepository;
 
 /**
  * A list of {@link IPicture}.
@@ -11,7 +9,7 @@ import yapto.datasource.tag.Tag;
  * @param <PICTURE>
  *            type of {@link IPicture} of this {@link IPictureList}.
  */
-public interface IPictureList<PICTURE extends IPicture>
+public interface IPictureList<PICTURE extends IPicture> extends ITagRepository
 {
 	/**
 	 * Get the number of {@link IPicture} in this {@link IPictureList}.
@@ -19,24 +17,4 @@ public interface IPictureList<PICTURE extends IPicture>
 	 * @return the number of {@link IPicture} in this {@link IPictureList}.
 	 */
 	int getPictureCount();
-
-	/**
-	 * Get the list of {@link Tag}s associated with {@link IPicture} in this
-	 * {@link IPictureList}.
-	 * 
-	 * @return the list of {@link Tag}s associated with {@link IPicture} in this
-	 *         {@link IPictureList}.
-	 * @throws OperationNotSupportedException
-	 *             if this operation isn't supported by this
-	 *             {@link IPictureList}.
-	 */
-	Set<Tag> getTagSet() throws OperationNotSupportedException;
-
-	/**
-	 * Get the root {@link Tag} associated with {@link IPicture} in this
-	 * {@link IPictureList}.
-	 * 
-	 * @return the root {@link Tag}.
-	 */
-	Tag getRootTag();
 }

@@ -6,8 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.lucene.search.Query;
 
-import yapto.datasource.tag.Tag;
-import yapto.datasource.tag.TagAddException;
+import yapto.datasource.tag.IWritableTagRepository;
 
 /**
  * An interface describing a source for {@link IPicture}.
@@ -18,7 +17,7 @@ import yapto.datasource.tag.TagAddException;
  * 
  */
 public interface IDataSource<PICTURE extends IPicture> extends
-		IPictureList<PICTURE>
+		IPictureList<PICTURE>, IWritableTagRepository
 {
 	/**
 	 * Add an {@link IPicture} to the {@link IDataSource}.
@@ -30,71 +29,6 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *             {@link IPicture}.
 	 */
 	void addPicture(File pictureFile) throws PictureAddException;
-
-	/**
-	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
-	 * {@link IDataSource}.
-	 * 
-	 * @param parent
-	 *            the parent of this {@link Tag}.
-	 * @param strName
-	 *            the name of this {@link Tag}.
-	 * @param strDescription
-	 *            the description of this {@link Tag}.
-	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
-	 * @throws TagAddException
-	 *             if an error occurs during the addition of the {@link Tag}.
-	 */
-	void addTag(final Tag parent, final String strName,
-			final String strDescription, final boolean bSelectable)
-			throws TagAddException;
-
-	/**
-	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
-	 * {@link IDataSource}.
-	 * 
-	 * @param strName
-	 *            the name of this {@link Tag}.
-	 * @param strDescription
-	 *            the description of this {@link Tag}.
-	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
-	 * @throws TagAddException
-	 *             if an error occurs during the addition of the {@link Tag}.
-	 */
-	void addTag(final String strName, final String strDescription,
-			final boolean bSelectable) throws TagAddException;
-
-//	/**
-//	 * Edit the specified {@link Tag} of this {@link IDataSource}.
-//	 * 
-//	 * @param iTagId
-//	 *            the id of the {@link Tag} to edit.
-//	 * @param parent
-//	 *            the parent of this {@link Tag}.
-//	 * @param strName
-//	 *            the name of this {@link Tag}.
-//	 * @param strDescription
-//	 *            the description of this {@link Tag}.
-//	 * @param bSelectable
-//	 *            whether or not this {@link Tag} is selectable.
-//	 * @throws TagAddException
-//	 *             if an error occurs during the addition of the {@link Tag}.
-//	 */
-//	void editTag(final int iTagId, final Tag parent, final String strName,
-//			final String strDescription, final boolean bSelectable)
-//			throws TagAddException;
-
-	/**
-	 * Check whether the datasource has a {@link Tag} with the give {@link Tag}.
-	 * 
-	 * @param strName
-	 *            the name to check.
-	 * @return true if the datasource has a {@link Tag} with the give
-	 *         {@link Tag}.
-	 */
-	boolean hasTagNamed(final String strName);
 
 	/**
 	 * Get the id of this {@link IDataSource}.

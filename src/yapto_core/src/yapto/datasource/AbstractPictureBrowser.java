@@ -91,7 +91,7 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public Set<Tag> getTagSet() throws OperationNotSupportedException
+	public Set<Tag> getTagSet()
 	{
 		return _dataSource.getTagSet();
 	}
@@ -106,5 +106,29 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	public Query getQuery()
 	{
 		return _query;
+	}
+
+	@Override
+	public Tag get(final int iTagId)
+	{
+		return _dataSource.get(iTagId);
+	}
+
+	@Override
+	public Tag get(final Integer iTagId)
+	{
+		return _dataSource.get(iTagId);
+	}
+
+	@Override
+	public Tag get(final String strTagName)
+	{
+		return _dataSource.get(strTagName);
+	}
+
+	@Override
+	public boolean hasTagNamed(final String strName)
+	{
+		return _dataSource.hasTagNamed(strName);
 	}
 }
