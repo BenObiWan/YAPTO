@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
+import yapto.datasource.tag.EditableTag;
 import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.IWritableTagRepository;
 import yapto.datasource.tag.TagAddException;
@@ -62,7 +63,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	/**
 	 * Id given to the next tag added to this datasource.
 	 */
-	private int _iNextTagId = 0;
+	private int _iNextTagId = 1;
 
 	/**
 	 * Log protecting the access to the next tag id.
@@ -86,6 +87,11 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;
+		final ITag rootTag = new UneditableTag(conf.getDataSourceId(), this, 0,
+				-1, "/", "Root tag.", false);
+		_tagSet.add(rootTag);
+		_tagIdMap.put(Integer.valueOf(rootTag.getTagId()), rootTag);
+		_tagNameMap.put(rootTag.getName(), rootTag);
 		loadTags();
 	}
 
@@ -98,8 +104,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	@Override
 	public ITag getRootTag()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return _tagIdMap.get(Integer.valueOf(0));
 	}
 
 	@Override
@@ -137,12 +142,12 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		ITag newTag;
 		if (parent == null)
 		{
-			newTag = new UneditableTag(_conf.getDataSourceId(), this,
+			newTag = new EditableTag(_conf.getDataSourceId(), this,
 					_iNextTagId, strName, strDescription, bSelectable);
 		}
 		else
 		{
-			newTag = new UneditableTag(_conf.getDataSourceId(), this,
+			newTag = new EditableTag(_conf.getDataSourceId(), this,
 					_iNextTagId, parent.getTagId(), strName, strDescription,
 					bSelectable);
 		}
@@ -193,7 +198,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 							.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
 					final boolean bSelectable = resLoad
 							.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-					tag = new UneditableTag(_conf.getDataSourceId(), this,
+					tag = new EditableTag(_conf.getDataSourceId(), this,
 							iTagId, strName, strDescription, bSelectable);
 					_tagSet.add(tag);
 					_tagIdMap.put(Integer.valueOf(iTagId), tag);

@@ -8,7 +8,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 
 /**
- * An class describing an uneditable tag associated to an {@link IPicture}.
+ * An class describing an editable tag associated to an {@link IPicture}.
  * 
  * Not selectable {@link ITag}s are aimed at organizing other {@link ITag}s has
  * a Tree.
@@ -16,7 +16,7 @@ import yapto.datasource.IPicture;
  * @author benobiwan
  * 
  */
-public final class UneditableTag implements ITag
+public final class EditableTag implements ITag
 {
 	/**
 	 * The id parent of this {@link ITag}.
@@ -24,24 +24,24 @@ public final class UneditableTag implements ITag
 	private int _iParentTagId;
 
 	/**
-	 * Lock to protect access to the parent {@link ITag}.
+	 * Lock to protect access to other attributes.
 	 */
-	private final Object _parentLock = new Object();
+	private final Object _lock = new Object();
 
 	/**
 	 * The name of this {@link ITag}.
 	 */
-	private final String _strName;
+	private String _strName;
 
 	/**
 	 * The description of this {@link ITag}.
 	 */
-	private final String _strDescription;
+	private String _strDescription;
 
 	/**
 	 * Whether or not this {@link ITag} is selectable.
 	 */
-	private final boolean _bSelectable;
+	private boolean _bSelectable;
 
 	/**
 	 * Id of the {@link IDataSource}.
@@ -87,7 +87,7 @@ public final class UneditableTag implements ITag
 	 * @param bSelectable
 	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public UneditableTag(final int iDatasourceId,
+	public EditableTag(final int iDatasourceId,
 			final ITagRepository tagRepository, final int iTagId,
 			final int iParentTagId, final String strName,
 			final String strDescription, final boolean bSelectable)
@@ -96,13 +96,13 @@ public final class UneditableTag implements ITag
 		_iTagId = iTagId;
 		_tagRepository = tagRepository;
 		_strTagId = String.valueOf(_iTagId);
-		synchronized (_parentLock)
+		synchronized (_lock)
 		{
 			_iParentTagId = iParentTagId;
+			_strName = strName;
+			_strDescription = strDescription;
+			_bSelectable = bSelectable;
 		}
-		_strName = strName;
-		_strDescription = strDescription;
-		_bSelectable = bSelectable;
 	}
 
 	/**
@@ -126,7 +126,7 @@ public final class UneditableTag implements ITag
 	 * @param children
 	 *            the children of this {@link ITag}.
 	 */
-	public UneditableTag(final int iDatasourceId,
+	public EditableTag(final int iDatasourceId,
 			final ITagRepository tagRepository, final int iTagId,
 			final int iParentTagId, final String strName,
 			final String strDescription, final boolean bSelectable,
@@ -154,7 +154,7 @@ public final class UneditableTag implements ITag
 	 * @param bSelectable
 	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public UneditableTag(final int iDatasourceId,
+	public EditableTag(final int iDatasourceId,
 			final ITagRepository tagRepository, final int iTagId,
 			final String strName, final String strDescription,
 			final boolean bSelectable)
@@ -182,7 +182,7 @@ public final class UneditableTag implements ITag
 	 * @param children
 	 *            the children of this {@link ITag}.
 	 */
-	public UneditableTag(final int iDatasourceId,
+	public EditableTag(final int iDatasourceId,
 			final ITagRepository tagRepository, final int iTagId,
 			final String strName, final String strDescription,
 			final boolean bSelectable, final Set<ITag> children)
@@ -194,7 +194,7 @@ public final class UneditableTag implements ITag
 	@Override
 	public ITag getParent()
 	{
-		synchronized (_parentLock)
+		synchronized (_lock)
 		{
 			return _tagRepository.get(_iParentTagId);
 		}
@@ -203,7 +203,7 @@ public final class UneditableTag implements ITag
 	@Override
 	public int getParentId()
 	{
-		synchronized (_parentLock)
+		synchronized (_lock)
 		{
 			return _iParentTagId;
 		}
@@ -212,7 +212,7 @@ public final class UneditableTag implements ITag
 	@Override
 	public void setParent(final int iParentTagId)
 	{
-		synchronized (_parentLock)
+		synchronized (_lock)
 		{
 			_iParentTagId = iParentTagId;
 		}
@@ -221,7 +221,10 @@ public final class UneditableTag implements ITag
 	@Override
 	public String getName()
 	{
-		return _strName;
+		synchronized (_lock)
+		{
+			return _strName;
+		}
 	}
 
 	@Override
@@ -233,13 +236,19 @@ public final class UneditableTag implements ITag
 	@Override
 	public String getDescription()
 	{
-		return _strDescription;
+		synchronized (_lock)
+		{
+			return _strDescription;
+		}
 	}
 
 	@Override
 	public boolean isSelectable()
 	{
-		return _bSelectable;
+		synchronized (_lock)
+		{
+			return _bSelectable;
+		}
 	}
 
 	@Override
@@ -290,27 +299,29 @@ public final class UneditableTag implements ITag
 			iComp -= arg0.getTagId();
 			if (iComp == 0)
 			{
-				iComp = _strName.compareTo(arg0.getName());
-				if (iComp == 0)
+				synchronized (_lock)
 				{
-					iComp = _strDescription.compareTo(arg0.getDescription());
+					iComp = _strName.compareTo(arg0.getName());
 					if (iComp == 0)
 					{
-						if (_bSelectable == arg0.isSelectable())
+						iComp = _strDescription
+								.compareTo(arg0.getDescription());
+						if (iComp == 0)
 						{
-							synchronized (_parentLock)
+							if (_bSelectable == arg0.isSelectable())
 							{
+
 								iComp += _iParentTagId;
 								iComp -= arg0.getParentId();
 							}
-						}
-						else if (_bSelectable)
-						{
-							iComp = 1;
-						}
-						else
-						{
-							iComp = -1;
+							else if (_bSelectable)
+							{
+								iComp = 1;
+							}
+							else
+							{
+								iComp = -1;
+							}
 						}
 					}
 				}
@@ -324,20 +335,22 @@ public final class UneditableTag implements ITag
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (_bSelectable ? 1231 : 1237);
-		result = prime * result + _iDatasourceId;
-		result = prime * result + _iTagId;
-		synchronized (_parentLock)
+		synchronized (_lock)
 		{
+			result = prime * result + (_bSelectable ? 1231 : 1237);
+			result = prime * result + _iDatasourceId;
+			result = prime * result + _iTagId;
 			result = prime * result + _iParentTagId;
+			result = prime
+					* result
+					+ ((_strDescription == null) ? 0 : _strDescription
+							.hashCode());
+			result = prime * result
+					+ ((_strName == null) ? 0 : _strName.hashCode());
+			result = prime * result
+					+ ((_strTagId == null) ? 0 : _strTagId.hashCode());
+			return result;
 		}
-		result = prime * result
-				+ ((_strDescription == null) ? 0 : _strDescription.hashCode());
-		result = prime * result
-				+ ((_strName == null) ? 0 : _strName.hashCode());
-		result = prime * result
-				+ ((_strTagId == null) ? 0 : _strTagId.hashCode());
-		return result;
 	}
 
 	@Override
@@ -356,58 +369,100 @@ public final class UneditableTag implements ITag
 			return false;
 		}
 		final ITag other = (ITag) obj;
-		if (_bSelectable != other.isSelectable())
+		synchronized (_lock)
 		{
-			return false;
-		}
-		if (_iDatasourceId != other.getDatasourceId())
-		{
-			return false;
-		}
-		if (_iTagId != other.getTagId())
-		{
-			return false;
-		}
-		synchronized (_parentLock)
-		{
+			if (_bSelectable != other.isSelectable())
+			{
+				return false;
+			}
+			if (_iDatasourceId != other.getDatasourceId())
+			{
+				return false;
+			}
+			if (_iTagId != other.getTagId())
+			{
+				return false;
+			}
 			if (_iParentTagId != other.getParentId())
 			{
 				return false;
 			}
-		}
-		if (_strDescription == null)
-		{
-			if (other.getDescription() != null)
+			if (_strDescription == null)
+			{
+				if (other.getDescription() != null)
+				{
+					return false;
+				}
+			}
+			else if (!_strDescription.equals(other.getDescription()))
 			{
 				return false;
 			}
-		}
-		else if (!_strDescription.equals(other.getDescription()))
-		{
-			return false;
-		}
-		if (_strName == null)
-		{
-			if (other.getName() != null)
+			if (_strName == null)
+			{
+				if (other.getName() != null)
+				{
+					return false;
+				}
+			}
+			else if (!_strName.equals(other.getName()))
 			{
 				return false;
 			}
-		}
-		else if (!_strName.equals(other.getName()))
-		{
-			return false;
-		}
-		if (_strTagId == null)
-		{
-			if (other.getTagIdAsString() != null)
+			if (_strTagId == null)
+			{
+				if (other.getTagIdAsString() != null)
+				{
+					return false;
+				}
+			}
+			else if (!_strTagId.equals(other.getTagIdAsString()))
 			{
 				return false;
 			}
+			return true;
 		}
-		else if (!_strTagId.equals(other.getTagIdAsString()))
+	}
+
+	/**
+	 * Change the name of this {@link ITag}.
+	 * 
+	 * @param strName
+	 *            the new name of the {@link ITag}.
+	 */
+	void setName(final String strName)
+	{
+		synchronized (_lock)
 		{
-			return false;
+			_strName = strName;
 		}
-		return true;
+	}
+
+	/**
+	 * Change the description of this {@link ITag}.
+	 * 
+	 * @param strDescription
+	 *            the description of this {@link ITag}.
+	 */
+	void setDescription(final String strDescription)
+	{
+		synchronized (_lock)
+		{
+			_strDescription = strDescription;
+		}
+	}
+
+	/**
+	 * Change the selectable/unselectable status of this {@link ITag}.
+	 * 
+	 * @param bSelectable
+	 *            the new selectable/unselectable status of this {@link ITag}.
+	 */
+	void setSelectable(final boolean bSelectable)
+	{
+		synchronized (_lock)
+		{
+			_bSelectable = bSelectable;
+		}
 	}
 }
