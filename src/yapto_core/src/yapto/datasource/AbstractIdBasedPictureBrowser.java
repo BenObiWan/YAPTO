@@ -63,7 +63,10 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		super(dataSource, query, bus);
 		_idList = idList;
-		_currentPicture = getPicture(_idList.get(0));
+		if (_idList.size() > 0)
+		{
+			_currentPicture = getPicture(_idList.get(0));
+		}
 	}
 
 	@Override
