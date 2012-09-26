@@ -1,7 +1,7 @@
 package yapto.datasource.tag;
 
 /**
- * Interface describing an object used to load and save {@link Tag}s.
+ * Interface describing an object used to load and save {@link ITag}s.
  * 
  * @author benobiwan
  * 
@@ -9,57 +9,57 @@ package yapto.datasource.tag;
 public interface IWritableTagRepository extends ITagRepository
 {
 	/**
-	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
+	 * Add a new {@link ITag} to the list of {@link ITag}s know to this
 	 * {@link IWritableTagRepository}.
 	 * 
 	 * @param parent
-	 *            the parent of this {@link Tag}.
+	 *            the parent of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 * @throws TagAddException
-	 *             if an error occurs during the addition of the {@link Tag}.
+	 *             if an error occurs during the addition of the {@link ITag}.
 	 */
-	void addTag(final Tag parent, final String strName,
+	void addTag(final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException;
 
 	/**
-	 * Add a new {@link Tag} to the list of {@link Tag}s know to this
+	 * Add a new {@link ITag} to the list of {@link ITag}s know to this
 	 * {@link IWritableTagRepository}.
 	 * 
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 * @throws TagAddException
-	 *             if an error occurs during the addition of the {@link Tag}.
+	 *             if an error occurs during the addition of the {@link ITag}.
 	 */
 	void addTag(final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException;
 
 	/**
-	 * Edit the specified {@link Tag} of this {@link IWritableTagRepository}.
+	 * Edit the specified {@link ITag} of this {@link IWritableTagRepository}.
 	 * 
 	 * @param iTagId
-	 *            the id of the {@link Tag} to edit.
+	 *            the id of the {@link ITag} to edit.
 	 * @param parent
-	 *            the parent of this {@link Tag}.
+	 *            the parent of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 * @throws TagAddException
-	 *             if an error occurs during the addition of the {@link Tag}.
+	 *             if an error occurs during the addition of the {@link ITag}.
 	 */
-	void editTag(final int iTagId, final Tag parent, final String strName,
+	void editTag(final int iTagId, final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException;
 }

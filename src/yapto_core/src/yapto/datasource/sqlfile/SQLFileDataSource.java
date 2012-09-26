@@ -34,8 +34,8 @@ import yapto.datasource.PictureInformation;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
+import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.IWritableTagRepository;
-import yapto.datasource.tag.Tag;
 import yapto.datasource.tag.TagAddException;
 
 import com.google.common.cache.CacheBuilder;
@@ -112,7 +112,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	private final PictureProcessor _processor;
 
 	/**
-	 * {@link IWritableTagRepository} used to load and save {@link Tag}s.
+	 * {@link IWritableTagRepository} used to load and save {@link ITag}s.
 	 */
 	private final IWritableTagRepository _tagRepository;
 
@@ -609,31 +609,31 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public Set<Tag> getTagSet()
+	public Set<ITag> getTagSet()
 	{
 		return _tagRepository.getTagSet();
 	}
 
 	@Override
-	public Tag getRootTag()
+	public ITag getRootTag()
 	{
 		return _tagRepository.getRootTag();
 	}
 
 	@Override
-	public Tag get(final int iTagId)
+	public ITag get(final int iTagId)
 	{
 		return _tagRepository.get(iTagId);
 	}
 
 	@Override
-	public Tag get(final Integer iTagId)
+	public ITag get(final Integer iTagId)
 	{
 		return _tagRepository.get(iTagId);
 	}
 
 	@Override
-	public Tag get(final String strTagName)
+	public ITag get(final String strTagName)
 	{
 		return _tagRepository.get(strTagName);
 	}
@@ -645,7 +645,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addTag(final Tag parent, final String strName,
+	public void addTag(final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException
 	{
@@ -660,7 +660,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void editTag(final int iTagId, final Tag parent,
+	public void editTag(final int iTagId, final ITag parent,
 			final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{

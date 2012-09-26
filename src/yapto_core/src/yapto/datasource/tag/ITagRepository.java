@@ -3,7 +3,7 @@ package yapto.datasource.tag;
 import java.util.Set;
 
 /**
- * Interface describing an object used to load {@link Tag}s.
+ * Interface describing an object used to load {@link ITag}s.
  * 
  * @author benobiwan
  * 
@@ -11,53 +11,54 @@ import java.util.Set;
 public interface ITagRepository
 {
 	/**
-	 * Get the {@link Tag} with the given id.
+	 * Get the {@link ITag} with the given id.
 	 * 
 	 * @param iTagId
-	 *            the id of the {@link Tag}.
-	 * @return the {@link Tag} with the given id.
+	 *            the id of the {@link ITag}.
+	 * @return the {@link ITag} with the given id.
 	 */
-	Tag get(final int iTagId);
+	ITag get(final int iTagId);
 
 	/**
-	 * Get the {@link Tag} with the given id.
+	 * Get the {@link ITag} with the given id.
 	 * 
 	 * @param iTagId
-	 *            the id of the {@link Tag}.
-	 * @return the {@link Tag} with the given id.
+	 *            the id of the {@link ITag}.
+	 * @return the {@link ITag} with the given id.
 	 */
-	Tag get(final Integer iTagId);
+	ITag get(final Integer iTagId);
 
 	/**
-	 * Get the {@link Tag} with the given name.
+	 * Get the {@link ITag} with the given name.
 	 * 
 	 * @param strTagName
-	 *            the name of the {@link Tag}.
-	 * @return the {@link Tag} with the given name.
+	 *            the name of the {@link ITag}.
+	 * @return the {@link ITag} with the given name.
 	 */
-	Tag get(String strTagName);
+	ITag get(String strTagName);
 
 	/**
-	 * Check whether the repository has a {@link Tag} with the give {@link Tag}.
+	 * Check whether the repository has a {@link ITag} with the give
+	 * {@link ITag}.
 	 * 
 	 * @param strName
 	 *            the name to check.
-	 * @return true if the repository has a {@link Tag} with the give
-	 *         {@link Tag}.
+	 * @return true if the repository has a {@link ITag} with the give
+	 *         {@link ITag}.
 	 */
 	boolean hasTagNamed(final String strName);
 
 	/**
-	 * Get a Set of all {@link Tag}s in this repository.
+	 * Get a Set of all {@link ITag}s in this repository.
 	 * 
-	 * @return a Set of all {@link Tag}s in this repository.
+	 * @return a Set of all {@link ITag}s in this repository.
 	 */
-	Set<Tag> getTagSet();
+	Set<ITag> getTagSet();
 
 	/**
-	 * Get the root {@link Tag} of this repository.
+	 * Get the root {@link ITag} of this repository.
 	 * 
-	 * @return the root {@link Tag} of this repository.
+	 * @return the root {@link ITag} of this repository.
 	 */
-	Tag getRootTag();
+	ITag getRootTag();
 }

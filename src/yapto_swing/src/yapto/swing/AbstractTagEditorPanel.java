@@ -14,12 +14,12 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureList;
 import yapto.datasource.PictureChangedEvent;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 import com.google.common.eventbus.Subscribe;
 
 /**
- * Panel displaying the list of {@link Tag} that can be associated with an
+ * Panel displaying the list of {@link ITag} that can be associated with an
  * {@link IPicture}.
  * 
  * @author benobiwan
@@ -81,23 +81,23 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	}
 
 	/**
-	 * Select the {@link Tag}s appropriate to the selected {@link IPicture}.
+	 * Select the {@link ITag}s appropriate to the selected {@link IPicture}.
 	 */
 	protected abstract void selectAppropriateTags();
 
 	/**
-	 * Update the list of available {@link Tag}s according to those available in
-	 * the {@link IPictureList}.
+	 * Update the list of available {@link ITag}s according to those available
+	 * in the {@link IPictureList}.
 	 */
 	protected abstract void updateAvailableTags();
 
 	/**
-	 * Save the {@link Tag}s associated to an {@link IPicture}.
+	 * Save the {@link ITag}s associated to an {@link IPicture}.
 	 */
 	protected abstract void savePictureTags();
 
 	/**
-	 * Change the {@link IPicture} which {@link Tag}s can be changed on this
+	 * Change the {@link IPicture} which {@link ITag}s can be changed on this
 	 * {@link TreeTagEditorPanel}.
 	 */
 	public final void changePicture()
@@ -113,7 +113,7 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	}
 
 	/**
-	 * Update the list of available {@link Tag}s according the {@link Tag}s of
+	 * Update the list of available {@link ITag}s according the {@link ITag}s of
 	 * the specified {@link IPictureList}.
 	 * 
 	 * @param pictureIterator

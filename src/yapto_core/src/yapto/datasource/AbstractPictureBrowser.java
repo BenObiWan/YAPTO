@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.apache.lucene.search.Query;
 
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 import com.google.common.eventbus.EventBus;
 
@@ -91,13 +91,13 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public Set<Tag> getTagSet()
+	public Set<ITag> getTagSet()
 	{
 		return _dataSource.getTagSet();
 	}
 
 	@Override
-	public Tag getRootTag()
+	public ITag getRootTag()
 	{
 		return _dataSource.getRootTag();
 	}
@@ -109,19 +109,19 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public Tag get(final int iTagId)
+	public ITag get(final int iTagId)
 	{
 		return _dataSource.get(iTagId);
 	}
 
 	@Override
-	public Tag get(final Integer iTagId)
+	public ITag get(final Integer iTagId)
 	{
 		return _dataSource.get(iTagId);
 	}
 
 	@Override
-	public Tag get(final String strTagName)
+	public ITag get(final String strTagName)
 	{
 		return _dataSource.get(strTagName);
 	}

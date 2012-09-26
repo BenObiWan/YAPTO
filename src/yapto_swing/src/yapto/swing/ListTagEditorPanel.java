@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
- * Panel displaying the list of {@link Tag} that can be associated with an
+ * Panel displaying the list of {@link ITag} that can be associated with an
  * {@link IPicture} using a {@link JList}.
  * 
  * @author benobiwan
@@ -39,14 +39,14 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 			.getLogger(ListTagEditorPanel.class);
 
 	/**
-	 * {@link JList} used to display all the {@link Tag}s.
+	 * {@link JList} used to display all the {@link ITag}s.
 	 */
-	private final JList<Tag> _tagList;
+	private final JList<ITag> _tagList;
 
 	/**
-	 * Vector of all {@link Tag}s.
+	 * Vector of all {@link ITag}s.
 	 */
-	private final Vector<Tag> _vTags = new Vector<>();
+	private final Vector<ITag> _vTags = new Vector<>();
 
 	/**
 	 * Boolean used to prevent the modification of the tags associated to an
@@ -94,10 +94,10 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 				_tagList.clearSelection();
 				if (_picture != null)
 				{
-					final Set<Tag> tags = _picture.getTagSet();
+					final Set<ITag> tags = _picture.getTagSet();
 					final int[] indices = new int[tags.size()];
 					int i = 0;
-					for (final Tag t : tags)
+					for (final ITag t : tags)
 					{
 						indices[i] = _vTags.indexOf(t);
 						i++;
@@ -117,7 +117,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 			if (_pictureIterator != null)
 			{
 				_vTags.clear();
-				for (final Tag t : _pictureIterator.getTagSet())
+				for (final ITag t : _pictureIterator.getTagSet())
 				{
 					if (t.isSelectable())
 					{

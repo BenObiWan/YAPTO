@@ -6,7 +6,7 @@ import javax.swing.tree.TreeNode;
 import common.ISelectableTreeNode;
 
 /**
- * A {@link TreeNode} based on a {@link Tag}.
+ * A {@link TreeNode} based on a {@link ITag}.
  * 
  * @author benobiwan
  * 
@@ -48,9 +48,9 @@ public class TagTreeNode extends DefaultMutableTreeNode implements
 	 * Creates a new {@link TagTreeNode}.
 	 * 
 	 * @param tag
-	 *            the {@link Tag} to use.
+	 *            the {@link ITag} to use.
 	 */
-	public TagTreeNode(final Tag tag)
+	public TagTreeNode(final ITag tag)
 	{
 		this(tag.getName(), tag.getDescription(), tag.isSelectable(), false);
 	}

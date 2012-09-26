@@ -8,38 +8,38 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 
 /**
- * An class describing a tag associated to an {@link IPicture}.
+ * An class describing a uneditable tag associated to an {@link IPicture}.
  * 
- * Unselectable {@link Tag}s are aimed at organizing other {@link Tag}s has a
- * Tree.
+ * Not selectable {@link ITag}s are aimed at organizing other {@link ITag}s has
+ * a Tree.
  * 
  * @author benobiwan
  * 
  */
-public final class Tag implements Comparable<Tag>
+public final class UneditableTag implements ITag
 {
 	/**
-	 * The parent of this {@link Tag}.
+	 * The parent of this {@link ITag}.
 	 */
-	private Tag _parentTag;
+	private ITag _parentTag;
 
 	/**
-	 * Lock to protect access to the parent {@link Tag}.
+	 * Lock to protect access to the parent {@link ITag}.
 	 */
 	private final Object _parentLock = new Object();
 
 	/**
-	 * The name of this {@link Tag}.
+	 * The name of this {@link ITag}.
 	 */
 	private final String _strName;
 
 	/**
-	 * The description of this {@link Tag}.
+	 * The description of this {@link ITag}.
 	 */
 	private final String _strDescription;
 
 	/**
-	 * Whether or not this {@link Tag} is selectable.
+	 * Whether or not this {@link ITag} is selectable.
 	 */
 	private final boolean _bSelectable;
 
@@ -49,19 +49,19 @@ public final class Tag implements Comparable<Tag>
 	private final int _iDatasourceId;
 
 	/**
-	 * Id of this {@link Tag}.
+	 * Id of this {@link ITag}.
 	 */
 	private final int _iTagId;
 
 	/**
-	 * Id of this {@link Tag} as a String.
+	 * Id of this {@link ITag} as a String.
 	 */
 	private final String _strTagId;
 
 	/**
-	 * Set containing the children of this {@link Tag}.
+	 * Set containing the children of this {@link ITag}.
 	 */
-	private final ConcurrentSkipListSet<Tag> _childrenSet = new ConcurrentSkipListSet<>();
+	private final ConcurrentSkipListSet<ITag> _childrenSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * Creates a new Tag.
@@ -69,19 +69,19 @@ public final class Tag implements Comparable<Tag>
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
 	 * @param iTagId
-	 *            id of this {@link Tag}.
+	 *            id of this {@link ITag}.
 	 * @param parent
-	 *            the parent of this {@link Tag}.
+	 *            the parent of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public Tag(final int iDatasourceId, final int iTagId, final Tag parent,
-			final String strName, final String strDescription,
-			final boolean bSelectable)
+	public UneditableTag(final int iDatasourceId, final int iTagId,
+			final ITag parent, final String strName,
+			final String strDescription, final boolean bSelectable)
 	{
 		_iDatasourceId = iDatasourceId;
 		_iTagId = iTagId;
@@ -101,21 +101,22 @@ public final class Tag implements Comparable<Tag>
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
 	 * @param iTagId
-	 *            id of this {@link Tag}.
+	 *            id of this {@link ITag}.
 	 * @param parent
-	 *            the parent of this {@link Tag}.
+	 *            the parent of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 * @param children
-	 *            the children of this {@link Tag}.
+	 *            the children of this {@link ITag}.
 	 */
-	public Tag(final int iDatasourceId, final int iTagId, final Tag parent,
-			final String strName, final String strDescription,
-			final boolean bSelectable, final Set<Tag> children)
+	public UneditableTag(final int iDatasourceId, final int iTagId,
+			final ITag parent, final String strName,
+			final String strDescription, final boolean bSelectable,
+			final Set<ITag> children)
 	{
 		this(iDatasourceId, iTagId, parent, strName, strDescription,
 				bSelectable);
@@ -128,16 +129,17 @@ public final class Tag implements Comparable<Tag>
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
 	 * @param iTagId
-	 *            id of this {@link Tag}.
+	 *            id of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public Tag(final int iDatasourceId, final int iTagId, final String strName,
-			final String strDescription, final boolean bSelectable)
+	public UneditableTag(final int iDatasourceId, final int iTagId,
+			final String strName, final String strDescription,
+			final boolean bSelectable)
 	{
 		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable);
 	}
@@ -148,30 +150,26 @@ public final class Tag implements Comparable<Tag>
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
 	 * @param iTagId
-	 *            id of this {@link Tag}.
+	 *            id of this {@link ITag}.
 	 * @param strName
-	 *            the name of this {@link Tag}.
+	 *            the name of this {@link ITag}.
 	 * @param strDescription
-	 *            the description of this {@link Tag}.
+	 *            the description of this {@link ITag}.
 	 * @param bSelectable
-	 *            whether or not this {@link Tag} is selectable.
+	 *            whether or not this {@link ITag} is selectable.
 	 * @param children
-	 *            the children of this {@link Tag}.
+	 *            the children of this {@link ITag}.
 	 */
-	public Tag(final int iDatasourceId, final int iTagId, final String strName,
-			final String strDescription, final boolean bSelectable,
-			final Set<Tag> children)
+	public UneditableTag(final int iDatasourceId, final int iTagId,
+			final String strName, final String strDescription,
+			final boolean bSelectable, final Set<ITag> children)
 	{
 		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable,
 				children);
 	}
 
-	/**
-	 * Get the parent of this {@link Tag}.
-	 * 
-	 * @return the parent of this {@link Tag}.
-	 */
-	public Tag getParent()
+	@Override
+	public ITag getParent()
 	{
 		synchronized (_parentLock)
 		{
@@ -179,13 +177,8 @@ public final class Tag implements Comparable<Tag>
 		}
 	}
 
-	/**
-	 * Set the parent of this {@link Tag}.
-	 * 
-	 * @param parentTag
-	 *            the new parent of this {@link Tag}.
-	 */
-	public void setParent(final Tag parentTag)
+	@Override
+	public void setParent(final ITag parentTag)
 	{
 		synchronized (_parentLock)
 		{
@@ -193,11 +186,7 @@ public final class Tag implements Comparable<Tag>
 		}
 	}
 
-	/**
-	 * Get the name of this {@link Tag}.
-	 * 
-	 * @return the name of this {@link Tag}.
-	 */
+	@Override
 	public String getName()
 	{
 		return _strName;
@@ -209,91 +198,56 @@ public final class Tag implements Comparable<Tag>
 		return getName();
 	}
 
-	/**
-	 * Get the description of this {@link Tag}.
-	 * 
-	 * @return the description of this {@link Tag}.
-	 */
+	@Override
 	public String getDescription()
 	{
 		return _strDescription;
 	}
 
-	/**
-	 * Check whether this {@link Tag} can be selected or not.
-	 * 
-	 * @return true if this {@link Tag} can be selected.
-	 */
+	@Override
 	public boolean isSelectable()
 	{
 		return _bSelectable;
 	}
 
-	/**
-	 * Get the children of this {@link Tag}.
-	 * 
-	 * @return an unmodifiable set of the {@link Tag}s children of this
-	 *         {@link Tag}.
-	 */
-	public Set<Tag> getChildren()
+	@Override
+	public Set<ITag> getChildren()
 	{
 		return Collections.unmodifiableSet(_childrenSet);
 	}
 
-	/**
-	 * Add a child to this {@link Tag}.
-	 * 
-	 * @param child
-	 *            the child to add.
-	 */
-	public void addChild(final Tag child)
+	@Override
+	public void addChild(final ITag child)
 	{
 		_childrenSet.add(child);
 	}
 
-	/**
-	 * Remove a child from this {@link Tag}.
-	 * 
-	 * @param child
-	 *            the child to remove.
-	 */
-	public void removeChild(final Tag child)
+	@Override
+	public void removeChild(final ITag child)
 	{
 		_childrenSet.remove(child);
 	}
 
-	/**
-	 * Get the id of the {@link IDataSource}.
-	 * 
-	 * @return the id of the {@link IDataSource}.
-	 */
+	@Override
 	public int getDatasourceId()
 	{
 		return _iDatasourceId;
 	}
 
-	/**
-	 * Get the id of this {@link Tag}.
-	 * 
-	 * @return the id of this {@link Tag}.
-	 */
+	@Override
 	public int getTagId()
 	{
 		return _iTagId;
 	}
 
-	/**
-	 * Get the id of this {@link Tag} as a String.
-	 * 
-	 * @return the String representation of the id of this {@link Tag}.
-	 */
+	@Override
 	public String getTagIdAsString()
 	{
 		return _strTagId;
 	}
 
 	@Override
-	public int compareTo(final Tag arg0)
+	public int compareTo(final ITag arg0)
 	{
 		int iComp = 0;
 		iComp += _iDatasourceId;
@@ -375,64 +329,63 @@ public final class Tag implements Comparable<Tag>
 		{
 			return false;
 		}
-		final Tag other = (Tag) obj;
-		if (_bSelectable != other._bSelectable)
+		final ITag other = (ITag) obj;
+		if (_bSelectable != other.isSelectable())
 		{
 			return false;
 		}
-		if (_iDatasourceId != other._iDatasourceId)
+		if (_iDatasourceId != other.getDatasourceId())
 		{
 			return false;
 		}
-		if (_iTagId != other._iTagId)
+		if (_iTagId != other.getTagId())
 		{
 			return false;
 		}
 		if (_parentTag == null)
 		{
-			if (other._parentTag != null)
+			if (other.getParent() != null)
 			{
 				return false;
 			}
 		}
-		else if (!_parentTag.equals(other._parentTag))
+		else if (!_parentTag.equals(other.getParent()))
 		{
 			return false;
 		}
 		if (_strDescription == null)
 		{
-			if (other._strDescription != null)
+			if (other.getDescription() != null)
 			{
 				return false;
 			}
 		}
-		else if (!_strDescription.equals(other._strDescription))
+		else if (!_strDescription.equals(other.getDescription()))
 		{
 			return false;
 		}
 		if (_strName == null)
 		{
-			if (other._strName != null)
+			if (other.getName() != null)
 			{
 				return false;
 			}
 		}
-		else if (!_strName.equals(other._strName))
+		else if (!_strName.equals(other.getName()))
 		{
 			return false;
 		}
 		if (_strTagId == null)
 		{
-			if (other._strTagId != null)
+			if (other.getTagIdAsString() != null)
 			{
 				return false;
 			}
 		}
-		else if (!_strTagId.equals(other._strTagId))
+		else if (!_strTagId.equals(other.getTagIdAsString()))
 		{
 			return false;
 		}
 		return true;
 	}
-
 }

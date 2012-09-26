@@ -12,10 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
+import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.IWritableTagRepository;
-import yapto.datasource.tag.Tag;
 import yapto.datasource.tag.TagAddException;
 import yapto.datasource.tag.TagAddExceptionType;
+import yapto.datasource.tag.UneditableTag;
 
 /**
  * Implementation of the IWritableTagRepository for use with
@@ -44,19 +45,19 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	private final SQLFileListConnection _fileListConnection;
 
 	/**
-	 * Set containing all the {@link Tag}s.
+	 * Set containing all the {@link ITag}s.
 	 */
-	private final Set<Tag> _tagSet = new TreeSet<>();
+	private final Set<ITag> _tagSet = new TreeSet<>();
 
 	/**
-	 * Map containing all the {@link Tag}s ordered by {@link Tag} id.
+	 * Map containing all the {@link ITag}s ordered by {@link ITag} id.
 	 */
-	private final Map<Integer, Tag> _tagIdMap = new HashMap<>();
+	private final Map<Integer, ITag> _tagIdMap = new HashMap<>();
 
 	/**
-	 * Map containing all the {@link Tag}s ordered by {@link Tag} name.
+	 * Map containing all the {@link ITag}s ordered by {@link ITag} name.
 	 */
-	private final Map<String, Tag> _tagNameMap = new HashMap<>();
+	private final Map<String, ITag> _tagNameMap = new HashMap<>();
 
 	/**
 	 * Id given to the next tag added to this datasource.
@@ -89,13 +90,13 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
-	public Set<Tag> getTagSet()
+	public Set<ITag> getTagSet()
 	{
 		return Collections.unmodifiableSet(_tagSet);
 	}
 
 	@Override
-	public Tag getRootTag()
+	public ITag getRootTag()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -109,7 +110,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
-	public void addTag(final Tag parent, final String strName,
+	public void addTag(final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException
 	{
@@ -133,16 +134,16 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		{
 			LOGGER.debug("Adding tag named: " + strName);
 		}
-		Tag newTag;
+		ITag newTag;
 		if (parent == null)
 		{
-			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, strName,
-					strDescription, bSelectable);
+			newTag = new UneditableTag(_conf.getDataSourceId(), _iNextTagId,
+					strName, strDescription, bSelectable);
 		}
 		else
 		{
-			newTag = new Tag(_conf.getDataSourceId(), _iNextTagId, parent,
-					strName, strDescription, bSelectable);
+			newTag = new UneditableTag(_conf.getDataSourceId(), _iNextTagId,
+					parent, strName, strDescription, bSelectable);
 		}
 		try
 		{
@@ -165,7 +166,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	/**
-	 * Load {@link Tag}s from the database.
+	 * Load {@link ITag}s from the database.
 	 * 
 	 * @throws SQLException
 	 *             if an SQL error occurred during the interrogation of the
@@ -175,8 +176,8 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	{
 		ResultSet resLoad = null;
 		ResultSet resParent = null;
-		Tag tag = null;
-		Tag parentTag = null;
+		ITag tag = null;
+		ITag parentTag = null;
 		try
 		{
 			synchronized (_lockNextTag)
@@ -192,8 +193,8 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 							.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
 					final boolean bSelectable = resLoad
 							.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-					tag = new Tag(_conf.getDataSourceId(), iTagId, strName,
-							strDescription, bSelectable);
+					tag = new UneditableTag(_conf.getDataSourceId(), iTagId,
+							strName, strDescription, bSelectable);
 					_tagSet.add(tag);
 					_tagIdMap.put(Integer.valueOf(iTagId), tag);
 					_tagNameMap.put(tag.getName(), tag);
@@ -239,7 +240,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
-	public void editTag(final int iTagId, final Tag parent,
+	public void editTag(final int iTagId, final ITag parent,
 			final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{
@@ -247,20 +248,20 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
-	public Tag get(final int iTagId)
+	public ITag get(final int iTagId)
 	{
 
 		return _tagIdMap.get(Integer.valueOf(iTagId));
 	}
 
 	@Override
-	public Tag get(final Integer iTagId)
+	public ITag get(final Integer iTagId)
 	{
 		return _tagIdMap.get(iTagId);
 	}
 
 	@Override
-	public Tag get(final String strTagName)
+	public ITag get(final String strTagName)
 	{
 		return _tagNameMap.get(strTagName);
 	}

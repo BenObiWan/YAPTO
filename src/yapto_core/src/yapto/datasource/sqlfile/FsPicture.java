@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.PictureInformation;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
  * Implementation of the {@link IPicture} interface.
@@ -26,10 +26,10 @@ public final class FsPicture implements IPicture
 	private final String _strId;
 
 	/**
-	 * Set containing all the {@link Tag}s associated with this
+	 * Set containing all the {@link ITag}s associated with this
 	 * {@link FsPicture}.
 	 */
-	private final Set<Tag> _tagSet = new ConcurrentSkipListSet<>();
+	private final Set<ITag> _tagSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * The {@link IDataSource} from which this {@link IPicture} is coming.
@@ -122,13 +122,14 @@ public final class FsPicture implements IPicture
 	 * @param pictureInformation
 	 *            the {@link PictureInformation} of this picture.
 	 * @param tagList
-	 *            list of {@link Tag}s.
+	 *            list of {@link ITag}s.
 	 */
 	public FsPicture(final ImageLoader imageLoader,
 			final SQLFileDataSource dataSource, final String strId,
 			final long lModifiedTimestamp, final long lAddingTimestamp,
 			final int iPictureGrade,
-			final PictureInformation pictureInformation, final List<Tag> tagList)
+			final PictureInformation pictureInformation,
+			final List<ITag> tagList)
 	{
 		this(imageLoader, dataSource, strId, lModifiedTimestamp,
 				lAddingTimestamp, pictureInformation);
@@ -178,7 +179,7 @@ public final class FsPicture implements IPicture
 	 * @param strFocalLength
 	 *            the 'focal length' exif information of this picture.
 	 * @param tagList
-	 *            list of {@link Tag}s.
+	 *            list of {@link ITag}s.
 	 */
 	public FsPicture(final ImageLoader imageLoader,
 			final SQLFileDataSource dataSource, final String strId,
@@ -188,7 +189,7 @@ public final class FsPicture implements IPicture
 			final int iOrientation, final String strMake,
 			final String strModel, final String strExposureTime,
 			final String strRelativeAperture, final String strFocalLength,
-			final List<Tag> tagList)
+			final List<ITag> tagList)
 	{
 		this(imageLoader, dataSource, strId, lModifiedTimestamp,
 				lAddingTimestamp, iPictureGrade, new PictureInformation(
@@ -205,7 +206,7 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public Set<Tag> getTagSet()
+	public Set<ITag> getTagSet()
 	{
 		return Collections.unmodifiableSet(_tagSet);
 	}
@@ -244,7 +245,7 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public void addTag(final Tag newTag)
+	public void addTag(final ITag newTag)
 	{
 		if (!_tagSet.contains(newTag))
 		{
@@ -259,7 +260,7 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public void removeTag(final Tag tag)
+	public void removeTag(final ITag tag)
 	{
 		if (_tagSet.contains(tag))
 		{
@@ -274,7 +275,7 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
-	public void setTagList(final List<Tag> tags)
+	public void setTagList(final List<ITag> tags)
 	{
 		if (_tagSet.retainAll(tags) | _tagSet.addAll(tags))
 		{

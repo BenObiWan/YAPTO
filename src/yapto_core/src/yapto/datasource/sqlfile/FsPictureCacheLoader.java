@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import yapto.datasource.IDataSource;
+import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.ITagRepository;
-import yapto.datasource.tag.Tag;
 
 import com.google.common.cache.CacheLoader;
 
@@ -30,7 +30,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	private final ImageLoader _imageLoader;
 
 	/**
-	 * {@link ITagRepository} used to load {@link Tag}s.
+	 * {@link ITagRepository} used to load {@link ITag}s.
 	 */
 	private final ITagRepository _tagRepository;
 
@@ -48,7 +48,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 	 * @param imageLoader
 	 *            {@link ImageLoader} used to load the {@link BufferedImage}.
 	 * @param tagRepository
-	 *            {@link ITagRepository} used to load {@link Tag}s.
+	 *            {@link ITagRepository} used to load {@link ITag}s.
 	 * @param dataSource
 	 *            {@link IDataSource} of this FsPictureCacheLoader.
 	 */
@@ -73,7 +73,7 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 			{
 				final Integer[] tagIds = _fileListConnection
 						.loadTagsOfPicture(key);
-				final LinkedList<Tag> tagList = new LinkedList<>();
+				final LinkedList<ITag> tagList = new LinkedList<>();
 				for (final Integer tagId : tagIds)
 				{
 					tagList.add(_tagRepository.get(tagId));

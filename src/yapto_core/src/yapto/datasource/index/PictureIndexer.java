@@ -26,7 +26,7 @@ import org.apache.lucene.util.Version;
 import yapto.datasource.IPicture;
 import yapto.datasource.PictureInformation;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
  * Object used to interact with the lucene index.
@@ -188,7 +188,7 @@ public final class PictureIndexer
 		doc.add(new IntField(GRADE_INDEX_FIELD, picture.getPictureGrade(),
 				Field.Store.YES));
 		// tags
-		for (final Tag t : picture.getTagSet())
+		for (final ITag t : picture.getTagSet())
 		{
 			doc.add(new StringField(t.getTagIdAsString(), t.getTagIdAsString(),
 					Field.Store.NO));

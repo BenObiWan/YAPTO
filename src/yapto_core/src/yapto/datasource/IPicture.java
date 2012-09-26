@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
  * An interface describing a picture.
@@ -23,11 +23,11 @@ public interface IPicture extends Comparable<IPicture>
 	String getId();
 
 	/**
-	 * Get the list of {@link Tag}s associated with this {@link IPicture}.
+	 * Get the list of {@link ITag}s associated with this {@link IPicture}.
 	 * 
-	 * @return the list of {@link Tag}s associated with this {@link IPicture}.
+	 * @return the list of {@link ITag}s associated with this {@link IPicture}.
 	 */
-	Set<Tag> getTagSet();
+	Set<ITag> getTagSet();
 
 	/**
 	 * Get the data of the main image of this {@link IPicture}.
@@ -63,32 +63,32 @@ public interface IPicture extends Comparable<IPicture>
 	IDataSource<? extends IPicture> getDataSource();
 
 	/**
-	 * Add a {@link Tag} to this {@link IPicture}.
+	 * Add a {@link ITag} to this {@link IPicture}.
 	 * 
-	 * The {@link Tag} must be added to the list of {@link Tag}s known to the
+	 * The {@link ITag} must be added to the list of {@link ITag}s known to the
 	 * {@link IDataSource}.
 	 * 
 	 * @param newTag
-	 *            the {@link Tag} to add to the picture.
+	 *            the {@link ITag} to add to the picture.
 	 */
-	void addTag(Tag newTag);
+	void addTag(ITag newTag);
 
 	/**
-	 * Remove a {@link Tag} from this {@link IPicture}.
+	 * Remove a {@link ITag} from this {@link IPicture}.
 	 * 
 	 * @param tag
-	 *            the {@link Tag} to remove from the picture.
+	 *            the {@link ITag} to remove from the picture.
 	 */
-	void removeTag(Tag tag);
+	void removeTag(ITag tag);
 
 	/**
-	 * Change the {@link List} of {@link Tag}s associated with this picture.
+	 * Change the {@link List} of {@link ITag}s associated with this picture.
 	 * 
 	 * @param tags
-	 *            the new {@link List} of {@link Tag}s associated with this
+	 *            the new {@link List} of {@link ITag}s associated with this
 	 *            picture.
 	 */
-	void setTagList(List<Tag> tags);
+	void setTagList(List<ITag> tags);
 
 	/**
 	 * Get the grade of this picture.

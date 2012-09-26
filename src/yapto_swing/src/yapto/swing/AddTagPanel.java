@@ -18,11 +18,11 @@ import javax.swing.border.EmptyBorder;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.TagAddException;
 
 /**
- * Panel used to enter all the information of a new {@link Tag} and create it.
+ * Panel used to enter all the information of a new {@link ITag} and create it.
  * 
  * @author benobiwan
  * 
@@ -50,22 +50,22 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	private static final String ERROR_DIALOG_TITLE = "Tag add error";
 
 	/**
-	 * Text field used to enter the name of the new {@link Tag}.
+	 * Text field used to enter the name of the new {@link ITag}.
 	 */
 	private final JTextField _tagNameField = new JTextField();
 
 	/**
-	 * Check box used to specify if the new {@link Tag} is selectable or not.
+	 * Check box used to specify if the new {@link ITag} is selectable or not.
 	 */
 	private final JCheckBox _tagSelectableField = new JCheckBox();
 
 	/**
-	 * Text area used to enter the description of the new {@link Tag}.
+	 * Text area used to enter the description of the new {@link ITag}.
 	 */
 	private final JTextArea _tagDescriptionField = new JTextArea();
 
 	/**
-	 * Combo box used to specify the parent of the new {@link Tag}.
+	 * Combo box used to specify the parent of the new {@link ITag}.
 	 */
 	private final JComboBox _tagParent = new JComboBox();
 

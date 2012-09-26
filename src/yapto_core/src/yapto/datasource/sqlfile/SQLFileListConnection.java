@@ -12,7 +12,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.PictureInformation;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
  * Object holding the connection to the database and the prepared statements.
@@ -157,13 +157,13 @@ public final class SQLFileListConnection
 	private final Connection _connection;
 
 	/**
-	 * Statement to insert a {@link Tag}.
+	 * Statement to insert a {@link ITag}.
 	 */
 	private final PreparedStatement _psInsertTag;
 
 	/**
 	 * Statement to count the number of {@link IPicture}s having a given
-	 * {@link Tag}.
+	 * {@link ITag}.
 	 */
 	private final PreparedStatement _psCountPicturesByTag;
 
@@ -174,7 +174,8 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psCountPictures;
 
 	/**
-	 * Statement to select all the {@link IPicture}s having a given {@link Tag}.
+	 * Statement to select all the {@link IPicture}s having a given {@link ITag}
+	 * .
 	 */
 	private final PreparedStatement _psSelectPicturesByTag;
 
@@ -189,12 +190,12 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psUpdatePictureMarkAndTimestamp;
 
 	/**
-	 * Statement to insert a {@link Tag} for an {@link IPicture}.
+	 * Statement to insert a {@link ITag} for an {@link IPicture}.
 	 */
 	private final PreparedStatement _psInsertTagForPicture;
 
 	/**
-	 * Statement to remove all the {@link Tag}s of an {@link IPicture}.
+	 * Statement to remove all the {@link ITag}s of an {@link IPicture}.
 	 */
 	private final PreparedStatement _psRemoveTagsForPicture;
 
@@ -204,12 +205,12 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psLoadPicture;
 
 	/**
-	 * Statement to load all the {@link Tag}s of an {@link IPicture}.
+	 * Statement to load all the {@link ITag}s of an {@link IPicture}.
 	 */
 	private final PreparedStatement _psLoadTagsOfPicture;
 
 	/**
-	 * Statement to load a {@link Tag}.
+	 * Statement to load a {@link ITag}.
 	 */
 	private final PreparedStatement _psLoadTag;
 
@@ -316,15 +317,15 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Save the given {@link Tag} to the database.
+	 * Save the given {@link ITag} to the database.
 	 * 
 	 * @param tag
-	 *            the {@link Tag} to save.
+	 *            the {@link ITag} to save.
 	 * @throws SQLException
-	 *             if an SQL error occurred during the saving of the {@link Tag}
-	 *             .
+	 *             if an SQL error occurred during the saving of the
+	 *             {@link ITag} .
 	 */
-	public void saveTagToDatabase(final Tag tag) throws SQLException
+	public void saveTagToDatabase(final ITag tag) throws SQLException
 	{
 		synchronized (_psInsertTag)
 		{
@@ -472,7 +473,7 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Update the {@link Tag} list of a {@link FsPicture}.
+	 * Update the {@link ITag} list of a {@link FsPicture}.
 	 * 
 	 * @param picture
 	 *            the {@link FsPicture} to update.
@@ -490,7 +491,7 @@ public final class SQLFileListConnection
 		}
 		synchronized (_psInsertTagForPicture)
 		{
-			for (final Tag tag : picture.getTagSet())
+			for (final ITag tag : picture.getTagSet())
 			{
 				_psInsertTagForPicture.clearParameters();
 				_psInsertTagForPicture.setInt(1, tag.getTagId());
@@ -525,16 +526,16 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Count the number of pictures which have a given {@link Tag}.
+	 * Count the number of pictures which have a given {@link ITag}.
 	 * 
 	 * @param tag
-	 *            the {@link Tag} to consider.
-	 * @return the number of pictures which have a given {@link Tag}.
+	 *            the {@link ITag} to consider.
+	 * @return the number of pictures which have a given {@link ITag}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.
 	 */
-	public int countPictures(final Tag tag) throws SQLException
+	public int countPictures(final ITag tag) throws SQLException
 	{
 		synchronized (_psCountPicturesByTag)
 		{
@@ -593,16 +594,16 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Select the list of pictures which have a given {@link Tag}.
+	 * Select the list of pictures which have a given {@link ITag}.
 	 * 
 	 * @param tag
-	 *            the {@link Tag} to consider.
-	 * @return the list of pictures which have a given {@link Tag}.
+	 *            the {@link ITag} to consider.
+	 * @return the list of pictures which have a given {@link ITag}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.
 	 */
-	public String[] selectPictures(final Tag tag) throws SQLException
+	public String[] selectPictures(final ITag tag) throws SQLException
 	{
 		final LinkedList<String> pictureList = new LinkedList<>();
 		synchronized (_psSelectPicturesByTag)
@@ -652,11 +653,11 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Load all the {@link Tag}s of an {@link IPicture}.
+	 * Load all the {@link ITag}s of an {@link IPicture}.
 	 * 
 	 * @param strPictureId
 	 *            the id of the picture.
-	 * @return the list of {@link Tag}s of the picture.
+	 * @return the list of {@link ITag}s of the picture.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.
@@ -692,11 +693,11 @@ public final class SQLFileListConnection
 	}
 
 	/**
-	 * Load the information about the specified {@link Tag}.
+	 * Load the information about the specified {@link ITag}.
 	 * 
 	 * @param iTagId
-	 *            the id of the {@link Tag}.
-	 * @return the information about the specified {@link Tag}.
+	 *            the id of the {@link ITag}.
+	 * @return the information about the specified {@link ITag}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.

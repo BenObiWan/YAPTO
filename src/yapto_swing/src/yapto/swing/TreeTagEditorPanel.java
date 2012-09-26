@@ -10,10 +10,10 @@ import javax.swing.tree.MutableTreeNode;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.Tag;
+import yapto.datasource.tag.ITag;
 
 /**
- * Panel displaying the list of {@link Tag} that can be associated with an
+ * Panel displaying the list of {@link ITag} that can be associated with an
  * {@link IPicture} using a {@link JTree}.
  * 
  * @author benobiwan
@@ -27,7 +27,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	private static final long serialVersionUID = 5669141686850523799L;
 
 	/**
-	 * {@link JTree} used to display all the {@link Tag}s.
+	 * {@link JTree} used to display all the {@link ITag}s.
 	 */
 	private final JTree _tagTree;
 
@@ -64,7 +64,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 			_rootNode.removeAllChildren();
 			if (_pictureIterator != null)
 			{
-				final Tag rootTag = _pictureIterator.getRootTag();
+				final ITag rootTag = _pictureIterator.getRootTag();
 				populateChildren(rootTag, _rootNode);
 				expandAll();
 				if (_picture != null)
@@ -77,13 +77,13 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 
 	/**
 	 * Creates the {@link MutableTreeNode} corresponding to the given
-	 * {@link Tag}.
+	 * {@link ITag}.
 	 * 
 	 * @param tag
-	 *            the {@link Tag}.
+	 *            the {@link ITag}.
 	 * @return the created {@link MutableTreeNode}.
 	 */
-	private static MutableTreeNode createTreeNode(final Tag tag)
+	private static MutableTreeNode createTreeNode(final ITag tag)
 	{
 		final MutableTreeNode node = new DefaultMutableTreeNode(tag.getName());
 		return node;
@@ -91,18 +91,18 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 
 	/**
 	 * Creates all the children {@link MutableTreeNode} according to the
-	 * children of the {@link Tag}. Calls itself recursively to build the entire
-	 * TreeNode.
+	 * children of the {@link ITag}. Calls itself recursively to build the
+	 * entire TreeNode.
 	 * 
 	 * @param parentTag
-	 *            the parent {@link Tag}.
+	 *            the parent {@link ITag}.
 	 * @param parentNode
 	 *            the parent {@link MutableTreeNode}.
 	 */
-	private void populateChildren(final Tag parentTag,
+	private void populateChildren(final ITag parentTag,
 			final MutableTreeNode parentNode)
 	{
-		for (final Tag t : parentTag.getChildren())
+		for (final ITag t : parentTag.getChildren())
 		{
 			final MutableTreeNode node = createTreeNode(t);
 			populateChildren(t, node);
