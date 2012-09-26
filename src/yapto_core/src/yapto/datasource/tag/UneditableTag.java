@@ -19,9 +19,9 @@ import yapto.datasource.IPicture;
 public final class UneditableTag implements ITag
 {
 	/**
-	 * The parent of this {@link ITag}.
+	 * The id parent of this {@link ITag}.
 	 */
-	private ITag _parentTag;
+	private int _iParentTagId;
 
 	/**
 	 * Lock to protect access to the parent {@link ITag}.
@@ -64,14 +64,22 @@ public final class UneditableTag implements ITag
 	private final ConcurrentSkipListSet<ITag> _childrenSet = new ConcurrentSkipListSet<>();
 
 	/**
+	 * {@link ITagRepository} used to load and save {@link ITag}s.
+	 */
+	private final ITagRepository _tagRepository;
+
+	/**
 	 * Creates a new Tag.
 	 * 
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
+	 * @param tagRepository
+	 *            the {@link ITagRepository} used to load and save {@link ITag}
+	 *            s.
 	 * @param iTagId
 	 *            id of this {@link ITag}.
-	 * @param parent
-	 *            the parent of this {@link ITag}.
+	 * @param iParentTagId
+	 *            the id of the parent of this {@link ITag}.
 	 * @param strName
 	 *            the name of this {@link ITag}.
 	 * @param strDescription
@@ -79,16 +87,18 @@ public final class UneditableTag implements ITag
 	 * @param bSelectable
 	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public UneditableTag(final int iDatasourceId, final int iTagId,
-			final ITag parent, final String strName,
+	public UneditableTag(final int iDatasourceId,
+			final ITagRepository tagRepository, final int iTagId,
+			final int iParentTagId, final String strName,
 			final String strDescription, final boolean bSelectable)
 	{
 		_iDatasourceId = iDatasourceId;
 		_iTagId = iTagId;
+		_tagRepository = tagRepository;
 		_strTagId = String.valueOf(_iTagId);
 		synchronized (_parentLock)
 		{
-			_parentTag = parent;
+			_iParentTagId = iParentTagId;
 		}
 		_strName = strName;
 		_strDescription = strDescription;
@@ -100,10 +110,13 @@ public final class UneditableTag implements ITag
 	 * 
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
+	 * @param tagRepository
+	 *            the {@link ITagRepository} used to load and save {@link ITag}
+	 *            s.
 	 * @param iTagId
 	 *            id of this {@link ITag}.
-	 * @param parent
-	 *            the parent of this {@link ITag}.
+	 * @param iParentTagId
+	 *            the id of the parent of this {@link ITag}.
 	 * @param strName
 	 *            the name of this {@link ITag}.
 	 * @param strDescription
@@ -113,13 +126,14 @@ public final class UneditableTag implements ITag
 	 * @param children
 	 *            the children of this {@link ITag}.
 	 */
-	public UneditableTag(final int iDatasourceId, final int iTagId,
-			final ITag parent, final String strName,
+	public UneditableTag(final int iDatasourceId,
+			final ITagRepository tagRepository, final int iTagId,
+			final int iParentTagId, final String strName,
 			final String strDescription, final boolean bSelectable,
 			final Set<ITag> children)
 	{
-		this(iDatasourceId, iTagId, parent, strName, strDescription,
-				bSelectable);
+		this(iDatasourceId, tagRepository, iTagId, iParentTagId, strName,
+				strDescription, bSelectable);
 		_childrenSet.addAll(children);
 	}
 
@@ -128,6 +142,9 @@ public final class UneditableTag implements ITag
 	 * 
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
+	 * @param tagRepository
+	 *            the {@link ITagRepository} used to load and save {@link ITag}
+	 *            s.
 	 * @param iTagId
 	 *            id of this {@link ITag}.
 	 * @param strName
@@ -137,11 +154,13 @@ public final class UneditableTag implements ITag
 	 * @param bSelectable
 	 *            whether or not this {@link ITag} is selectable.
 	 */
-	public UneditableTag(final int iDatasourceId, final int iTagId,
+	public UneditableTag(final int iDatasourceId,
+			final ITagRepository tagRepository, final int iTagId,
 			final String strName, final String strDescription,
 			final boolean bSelectable)
 	{
-		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable);
+		this(iDatasourceId, tagRepository, iTagId, 0, strName, strDescription,
+				bSelectable);
 	}
 
 	/**
@@ -149,6 +168,9 @@ public final class UneditableTag implements ITag
 	 * 
 	 * @param iDatasourceId
 	 *            id of the {@link IDataSource}.
+	 * @param tagRepository
+	 *            the {@link ITagRepository} used to load and save {@link ITag}
+	 *            s.
 	 * @param iTagId
 	 *            id of this {@link ITag}.
 	 * @param strName
@@ -160,12 +182,13 @@ public final class UneditableTag implements ITag
 	 * @param children
 	 *            the children of this {@link ITag}.
 	 */
-	public UneditableTag(final int iDatasourceId, final int iTagId,
+	public UneditableTag(final int iDatasourceId,
+			final ITagRepository tagRepository, final int iTagId,
 			final String strName, final String strDescription,
 			final boolean bSelectable, final Set<ITag> children)
 	{
-		this(iDatasourceId, iTagId, null, strName, strDescription, bSelectable,
-				children);
+		this(iDatasourceId, tagRepository, iTagId, 0, strName, strDescription,
+				bSelectable, children);
 	}
 
 	@Override
@@ -173,16 +196,22 @@ public final class UneditableTag implements ITag
 	{
 		synchronized (_parentLock)
 		{
-			return _parentTag;
+			return _tagRepository.get(_iParentTagId);
 		}
 	}
 
 	@Override
-	public void setParent(final ITag parentTag)
+	public int getParentId()
+	{
+		return _iParentTagId;
+	}
+
+	@Override
+	public void setParent(final int iParentTagId)
 	{
 		synchronized (_parentLock)
 		{
-			_parentTag = parentTag;
+			_iParentTagId = iParentTagId;
 		}
 	}
 
@@ -268,16 +297,8 @@ public final class UneditableTag implements ITag
 						{
 							synchronized (_parentLock)
 							{
-								if (_parentTag != null
-										&& arg0.getParent() != null)
-								{
-									iComp = _parentTag.getName().compareTo(
-											arg0.getParent().getName());
-								}
-								else
-								{
-									iComp = 0;
-								}
+								iComp += _iParentTagId;
+								iComp -= arg0.getParentId();
 							}
 						}
 						else if (_bSelectable)
@@ -303,8 +324,7 @@ public final class UneditableTag implements ITag
 		result = prime * result + (_bSelectable ? 1231 : 1237);
 		result = prime * result + _iDatasourceId;
 		result = prime * result + _iTagId;
-		result = prime * result
-				+ ((_parentTag == null) ? 0 : _parentTag.hashCode());
+		result = prime * result + _iParentTagId;
 		result = prime * result
 				+ ((_strDescription == null) ? 0 : _strDescription.hashCode());
 		result = prime * result
@@ -342,14 +362,7 @@ public final class UneditableTag implements ITag
 		{
 			return false;
 		}
-		if (_parentTag == null)
-		{
-			if (other.getParent() != null)
-			{
-				return false;
-			}
-		}
-		else if (!_parentTag.equals(other.getParent()))
+		if (_iParentTagId != other.getParentId())
 		{
 			return false;
 		}

@@ -24,12 +24,19 @@ public interface ITag extends Comparable<ITag>
 	ITag getParent();
 
 	/**
+	 * Get the id of the parent of this {@link ITag}.
+	 * 
+	 * @return the id of the parent of this {@link ITag}.
+	 */
+	int getParentId();
+
+	/**
 	 * Set the parent of this {@link ITag}.
 	 * 
-	 * @param parentTag
-	 *            the new parent of this {@link ITag}.
+	 * @param iParentTagId
+	 *            the id new parent of this {@link ITag}.
 	 */
-	void setParent(final ITag parentTag);
+	void setParent(final int iParentTagId);
 
 	/**
 	 * Get the name of this {@link ITag}.

@@ -137,13 +137,14 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		ITag newTag;
 		if (parent == null)
 		{
-			newTag = new UneditableTag(_conf.getDataSourceId(), _iNextTagId,
-					strName, strDescription, bSelectable);
+			newTag = new UneditableTag(_conf.getDataSourceId(), this,
+					_iNextTagId, strName, strDescription, bSelectable);
 		}
 		else
 		{
-			newTag = new UneditableTag(_conf.getDataSourceId(), _iNextTagId,
-					parent, strName, strDescription, bSelectable);
+			newTag = new UneditableTag(_conf.getDataSourceId(), this,
+					_iNextTagId, parent.getTagId(), strName, strDescription,
+					bSelectable);
 		}
 		try
 		{
@@ -177,7 +178,6 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		ResultSet resLoad = null;
 		ResultSet resParent = null;
 		ITag tag = null;
-		ITag parentTag = null;
 		try
 		{
 			synchronized (_lockNextTag)
@@ -193,8 +193,8 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 							.getString(SQLFileListConnection.TAG_DESCRIPTION_COLUMN_NAME);
 					final boolean bSelectable = resLoad
 							.getBoolean(SQLFileListConnection.TAG_SELECTABLE_COLUMN_NAME);
-					tag = new UneditableTag(_conf.getDataSourceId(), iTagId,
-							strName, strDescription, bSelectable);
+					tag = new UneditableTag(_conf.getDataSourceId(), this,
+							iTagId, strName, strDescription, bSelectable);
 					_tagSet.add(tag);
 					_tagIdMap.put(Integer.valueOf(iTagId), tag);
 					_tagNameMap.put(tag.getName(), tag);
@@ -219,15 +219,10 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			{
 				final Integer iId = Integer.valueOf(resParent
 						.getInt(SQLFileListConnection.TAG_ID_COLUMN_NAME));
-				final Integer iParentId = Integer
-						.valueOf(resParent
-								.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME));
+				final int iParentId = resParent
+						.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME);
 				tag = _tagIdMap.get(iId);
-				parentTag = _tagIdMap.get(iParentId);
-				if (tag != null && parentTag != null)
-				{
-					tag.setParent(parentTag);
-				}
+				tag.setParent(iParentId);
 			}
 		}
 		finally
