@@ -321,10 +321,72 @@ public final class SQLFileListConnection
 
 	/**
 	 * Properly close the connection to the database.
+	 * 
+	 * @throws SQLException
+	 *             if a error occurs during the closing of the database.
 	 */
-	public void close()
+	public void close() throws SQLException
 	{
-		// TODO
+		if (_psInsertTag != null)
+		{
+			_psInsertTag.close();
+		}
+		if (_psEditTag != null)
+		{
+			_psEditTag.close();
+		}
+		if (_psCountPicturesByTag != null)
+		{
+			_psCountPicturesByTag.close();
+		}
+		if (_psCountPictures != null)
+		{
+			_psCountPictures.close();
+		}
+		if (_psSelectPicturesByTag != null)
+		{
+			_psSelectPicturesByTag.close();
+		}
+		if (_psSelectPicturesByTag != null)
+		{
+			_psSelectPicturesByTag.close();
+		}
+		if (_psInsertPicture != null)
+		{
+			_psInsertPicture.close();
+		}
+		if (_psUpdatePictureMarkAndTimestamp != null)
+		{
+			_psUpdatePictureMarkAndTimestamp.close();
+		}
+		if (_psInsertTagForPicture != null)
+		{
+			_psInsertTagForPicture.close();
+		}
+		if (_psRemoveTagsForPicture != null)
+		{
+			_psRemoveTagsForPicture.close();
+		}
+		if (_psLoadPicture != null)
+		{
+			_psLoadPicture.close();
+		}
+		if (_psLoadTagsOfPicture != null)
+		{
+			_psLoadTagsOfPicture.close();
+		}
+		if (_psLoadTag != null)
+		{
+			_psLoadTag.close();
+		}
+		if (_psListPicture != null)
+		{
+			_psListPicture.close();
+		}
+		if (_connection != null)
+		{
+			_connection.close();
+		}
 	}
 
 	/**

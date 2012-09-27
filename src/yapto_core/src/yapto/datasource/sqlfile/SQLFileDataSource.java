@@ -394,6 +394,14 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			LOGGER.error(e.getMessage(), e);
 		}
+		try
+		{
+			_fileListConnection.close();
+		}
+		catch (final SQLException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
