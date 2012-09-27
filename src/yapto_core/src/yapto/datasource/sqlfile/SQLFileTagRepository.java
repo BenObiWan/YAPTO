@@ -252,6 +252,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		final boolean bSameSelectableStatus = (currentTag.isSelectable() == bSelectable);
 		final boolean bSameParent = (currentTag.getParentId() == parent
 				.getTagId());
+		// check if another tag has the same name
 		if (!bSameName && _tagNameMap.containsKey(strName))
 		{
 			throw new TagAddException(TagAddExceptionType.DUPLICATE_TAG_NAME);
@@ -261,7 +262,9 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			final EditableTag editTag = (EditableTag) currentTag;
 			if (!bSameName)
 			{
+				_tagNameMap.remove(editTag.getName());
 				editTag.setName(strName);
+				_tagNameMap.put(strName, editTag);
 			}
 			if (!bSameDescription)
 			{
@@ -275,6 +278,19 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			{
 				editTag.getParent().removeChild(editTag);
 				editTag.setParent(parent.getParentId());
+			}
+			if (!bSameName || !bSameDescription || !bSameSelectableStatus
+					|| !bSameParent)
+			{
+				try
+				{
+					_fileListConnection.modifyTagIntoDatabase(editTag);
+				}
+				catch (final SQLException e)
+				{
+					throw new TagAddException(
+							TagAddExceptionType.SQL_INSERT_ERROR, e);
+				}
 			}
 		}
 	}

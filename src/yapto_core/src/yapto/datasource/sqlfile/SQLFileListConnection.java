@@ -162,6 +162,11 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psInsertTag;
 
 	/**
+	 * Statement to edit a {@link ITag}.
+	 */
+	private final PreparedStatement _psEditTag;
+
+	/**
 	 * Statement to count the number of {@link IPicture}s having a given
 	 * {@link ITag}.
 	 */
@@ -244,6 +249,12 @@ public final class SQLFileListConnection
 				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
 				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?)");
+		_psEditTag = _connection.prepareStatement("UPDATE " + TAG_TABLE_NAME
+				+ " SET " + TAG_NAME_COLUMN_NAME + "=?, "
+				+ TAG_DESCRIPTION_COLUMN_NAME + "=?, "
+				+ TAG_PARENT_ID_COLUMN_NAME + "=?, "
+				+ TAG_SELECTABLE_COLUMN_NAME + "=? WHERE " + TAG_ID_COLUMN_NAME
+				+ "=?");
 		_psCountPicturesByTag = _connection.prepareStatement("SELECT COUNT("
 				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
@@ -335,14 +346,37 @@ public final class SQLFileListConnection
 			_psInsertTag.setString(3, tag.getDescription());
 			if (tag.getParent() == null)
 			{
-				_psInsertTag.setInt(4, -1);
+				_psInsertTag.setInt(4, 0);
 			}
 			else
 			{
-				_psInsertTag.setInt(4, tag.getParent().getTagId());
+				_psInsertTag.setInt(4, tag.getParentId());
 			}
 			_psInsertTag.setBoolean(5, tag.isSelectable());
 			_psInsertTag.executeUpdate();
+		}
+	}
+
+	/**
+	 * Modify the given {@link ITag} into the database.
+	 * 
+	 * @param tag
+	 *            the {@link ITag} to modify.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the saving of the
+	 *             {@link ITag} .
+	 */
+	public void modifyTagIntoDatabase(final ITag tag) throws SQLException
+	{
+		synchronized (_psEditTag)
+		{
+			_psEditTag.clearParameters();
+			_psEditTag.setString(1, tag.getName());
+			_psEditTag.setString(2, tag.getDescription());
+			_psEditTag.setInt(3, tag.getParentId());
+			_psEditTag.setBoolean(4, tag.isSelectable());
+			_psEditTag.setInt(5, tag.getTagId());
+			_psEditTag.executeUpdate();
 		}
 	}
 
