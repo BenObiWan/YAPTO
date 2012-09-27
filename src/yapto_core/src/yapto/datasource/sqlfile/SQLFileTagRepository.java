@@ -244,7 +244,39 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{
-		// TODO Auto-generated method stub
+		final ITag currentTag = _tagIdMap.get(Integer.valueOf(iTagId));
+		final boolean bSameName = (currentTag.getName() != null)
+				&& currentTag.getName().equals(strName);
+		final boolean bSameDescription = (currentTag.getDescription() != null)
+				&& currentTag.getDescription().equals(strDescription);
+		final boolean bSameSelectableStatus = (currentTag.isSelectable() == bSelectable);
+		final boolean bSameParent = (currentTag.getParentId() == parent
+				.getTagId());
+		if (!bSameName && _tagNameMap.containsKey(strName))
+		{
+			throw new TagAddException(TagAddExceptionType.DUPLICATE_TAG_NAME);
+		}
+		if (currentTag instanceof EditableTag)
+		{
+			final EditableTag editTag = (EditableTag) currentTag;
+			if (!bSameName)
+			{
+				editTag.setName(strName);
+			}
+			if (!bSameDescription)
+			{
+				editTag.setDescription(strDescription);
+			}
+			if (!bSameSelectableStatus)
+			{
+				editTag.setSelectable(bSelectable);
+			}
+			if (!bSameParent)
+			{
+				editTag.getParent().removeChild(editTag);
+				editTag.setParent(parent.getParentId());
+			}
+		}
 	}
 
 	@Override

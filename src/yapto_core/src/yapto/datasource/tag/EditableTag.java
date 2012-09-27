@@ -430,7 +430,7 @@ public final class EditableTag implements ITag
 	 * @param strName
 	 *            the new name of the {@link ITag}.
 	 */
-	void setName(final String strName)
+	public void setName(final String strName)
 	{
 		synchronized (_lock)
 		{
@@ -444,7 +444,7 @@ public final class EditableTag implements ITag
 	 * @param strDescription
 	 *            the description of this {@link ITag}.
 	 */
-	void setDescription(final String strDescription)
+	public void setDescription(final String strDescription)
 	{
 		synchronized (_lock)
 		{
@@ -458,7 +458,7 @@ public final class EditableTag implements ITag
 	 * @param bSelectable
 	 *            the new selectable/unselectable status of this {@link ITag}.
 	 */
-	void setSelectable(final boolean bSelectable)
+	public void setSelectable(final boolean bSelectable)
 	{
 		synchronized (_lock)
 		{

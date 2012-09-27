@@ -28,7 +28,12 @@ public enum TagAddExceptionType
 	/**
 	 * The tag name is malformed.
 	 */
-	MALFORMED_TAG_NAME("The tag name is malformed.");
+	MALFORMED_TAG_NAME("The tag name is malformed."),
+
+	/**
+	 * The tag is uneditable.
+	 */
+	UNEDITABLE_TAG("The tag is uneditable.");
 
 	/**
 	 * Message for this exception type.
