@@ -147,10 +147,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
 		_indexer = new PictureIndexer(_conf);
-		_lWaitBeforeWrite = 3 * 1000;
-
-		// TODO put the parameters into the configuration object.
-		_processor = new PictureProcessor(4, 4);
+		_lWaitBeforeWrite = _conf.getWaitBeforeWrite() * 1000;
+		_processor = new PictureProcessor(_conf.getMaxConcurrentIdentifyTask(),
+				_conf.getMaxConcurrentOtherTask());
 
 		// tag repository
 		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection);

@@ -2,6 +2,7 @@ package yapto.datasource.sqlfile.config;
 
 import javax.management.MBeanServer;
 
+import yapto.datasource.process.IdentifyTask;
 import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
 
 import common.config.AbstractConfigurationBranch;
@@ -46,6 +47,24 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 */
 	private final ConfigurationString _leafIndexDirectory;
 
+	/**
+	 * Leaf configuring the maximum number of {@link IdentifyTask} to run at the
+	 * same time.
+	 */
+	private final ConfigurationInteger _leafMaxIdentifyTask;
+
+	/**
+	 * Leaf configuring the maximum number of task other than
+	 * {@link IdentifyTask} to run at the same time.
+	 */
+	private final ConfigurationInteger _leafMaxOtherTask;
+
+	/**
+	 * Leaf configuring the minimum number of seconds to wait between picture
+	 * modification and saving to the database.
+	 */
+	private final ConfigurationInteger _leafWaitBeforeWrite;
+
 	private final static String DATASOURCE_ID_SHORT_DESC = "DataSource Id";
 	private final static String DATASOURCE_ID_LONG_DESC = "Id of this DataSource.";
 	private final static String DATASOURCE_ID_INVALID_MESSAGE = "Invalid Id for this DataSource.";
@@ -61,6 +80,15 @@ public class SQLFileDataSourceConfigurationImpl extends
 	private final static String INDEX_DIRECTORY_SHORT_DESC = "Index directory";
 	private final static String INDEX_DIRECTORY_LONG_DESC = "Base directory for the indexes.";
 	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
+	private final static String MAX_IDENTIFY_TASK_SHORT_DESC = "TODO";
+	private final static String MAX_IDENTIFY_TASK_LONG_DESC = "TODO";
+	private final static String MAX_IDENTIFY_TASK_MESSAGE = "TODO";
+	private final static String MAX_OTHER_TASK_SHORT_DESC = "TODO";
+	private final static String MAX_OTHER_TASK_LONG_DESC = "TODO";
+	private final static String MAX_OTHER_TASK_MESSAGE = "TODO";
+	private final static String WAIT_BEFORE_WRITE_SHORT_DESC = "TODO";
+	private final static String WAIT_BEFORE_WRITE_LONG_DESC = "TODO";
+	private final static String WAIT_BEFORE_WRITE_MESSAGE = "TODO";
 
 	/**
 	 * {@link IBufferedImageCacheLoaderConfiguration} for the pictures.
@@ -109,11 +137,29 @@ public class SQLFileDataSourceConfigurationImpl extends
 				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "");
+		_leafMaxIdentifyTask = new ConfigurationInteger(this,
+				MAX_IDENTIFY_TASK_TAG, MAX_IDENTIFY_TASK_SHORT_DESC,
+				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
+		_leafMaxOtherTask = new ConfigurationInteger(this, MAX_OTHER_TASK_TAG,
+				MAX_OTHER_TASK_SHORT_DESC, MAX_OTHER_TASK_LONG_DESC,
+				MAX_OTHER_TASK_MESSAGE, false, IntegerDisplayType.SPINNER,
+				Integer.valueOf(0), Integer.valueOf(Integer.MAX_VALUE),
+				Integer.valueOf(0));
+		_leafWaitBeforeWrite = new ConfigurationInteger(this,
+				WAIT_BEFORE_WRITE_TAG, WAIT_BEFORE_WRITE_SHORT_DESC,
+				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		addLeaf(_leafDataSourceId);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
 		addLeaf(_leafThumbnailsDirectory);
+		addLeaf(_leafMaxIdentifyTask);
+		addLeaf(_leafMaxOtherTask);
+		addLeaf(_leafWaitBeforeWrite);
 		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
 		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
 	}
@@ -140,6 +186,17 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 * @param strCommandLineIndexDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for indexes.
+	 * @param iCommandLineMaxIdentifyTask
+	 *            the value specified on the command line for the maximum number
+	 *            of {@link IdentifyTask} to run at the same time.
+	 * @param iCommandLineMaxOtherTask
+	 *            the value specified on the command line for the maximum number
+	 *            of task other than {@link IdentifyTask} to run at the same
+	 *            time.
+	 * @param iCommandLineWaitBeforeWrite
+	 *            the value specified on the command line for the minimum number
+	 *            of seconds to wait between picture modification and saving to
+	 *            the database.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -149,7 +206,10 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
-			final String strCommandLineIndexDirectory)
+			final String strCommandLineIndexDirectory,
+			final Integer iCommandLineMaxIdentifyTask,
+			final Integer iCommandLineMaxOtherTask,
+			final Integer iCommandLineWaitBeforeWrite)
 			throws InvalidConfigurationException
 	{
 		super(parent, SQLFILE_DATASOURCE_CONFIGURATION_TAG, mBeanServer);
@@ -181,11 +241,31 @@ public class SQLFileDataSourceConfigurationImpl extends
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineIndexDirectory);
+		_leafMaxIdentifyTask = new ConfigurationInteger(this,
+				MAX_IDENTIFY_TASK_TAG, MAX_IDENTIFY_TASK_SHORT_DESC,
+				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
+				iCommandLineMaxIdentifyTask);
+		_leafMaxOtherTask = new ConfigurationInteger(this, MAX_OTHER_TASK_TAG,
+				MAX_OTHER_TASK_SHORT_DESC, MAX_OTHER_TASK_LONG_DESC,
+				MAX_OTHER_TASK_MESSAGE, false, IntegerDisplayType.SPINNER,
+				Integer.valueOf(0), Integer.valueOf(Integer.MAX_VALUE),
+				Integer.valueOf(0), iCommandLineMaxOtherTask);
+		_leafWaitBeforeWrite = new ConfigurationInteger(this,
+				WAIT_BEFORE_WRITE_TAG, WAIT_BEFORE_WRITE_SHORT_DESC,
+				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
+				iCommandLineWaitBeforeWrite);
 		addLeaf(_leafDataSourceId);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
 		addLeaf(_leafThumbnailsDirectory);
+		addLeaf(_leafMaxIdentifyTask);
+		addLeaf(_leafMaxOtherTask);
+		addLeaf(_leafWaitBeforeWrite);
 		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
 		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
 	}
@@ -211,7 +291,17 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 *            for thumbnails.
 	 * @param strCommandLineIndexDirectory
 	 *            the value specified on the command line for the base directory
-	 *            for indexes.
+	 * @param iCommandLineMaxIdentifyTask
+	 *            the value specified on the command line for the maximum number
+	 *            of {@link IdentifyTask} to run at the same time.
+	 * @param iCommandLineMaxOtherTask
+	 *            the value specified on the command line for the maximum number
+	 *            of task other than {@link IdentifyTask} to run at the same
+	 *            time.
+	 * @param iCommandLineWaitBeforeWrite
+	 *            the value specified on the command line for the minimum number
+	 *            of seconds to wait between picture modification and saving to
+	 *            the database.
 	 * @param iConfigurationDataSourceId
 	 *            the value specified in the configuration file for the
 	 *            DataSource id.
@@ -227,6 +317,17 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 * @param strConfigurationIndexDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for indexes.
+	 * @param iConfigurationMaxIdentifyTask
+	 *            the value specified in the configuration file for the maximum
+	 *            number of {@link IdentifyTask} to run at the same time.
+	 * @param iConfigurationMaxOtherTask
+	 *            the value specified in the configuration file for the maximum
+	 *            number of task other than {@link IdentifyTask} to run at the
+	 *            same time.
+	 * @param iConfigurationWaitBeforeWrite
+	 *            the value specified in the configuration file for the minimum
+	 *            number of seconds to wait between picture modification and
+	 *            saving to the database.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -237,16 +338,24 @@ public class SQLFileDataSourceConfigurationImpl extends
 			final String strCommandLinePictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
 			final String strCommandLineIndexDirectory,
+			final Integer iCommandLineMaxIdentifyTask,
+			final Integer iCommandLineMaxOtherTask,
+			final Integer iCommandLineWaitBeforeWrite,
 			final Integer iConfigurationDataSourceId,
 			final String strConfigurationDatabaseFileName,
 			final String strConfigurationPictureDirectory,
 			final String strConfigurationThumbnailsDirectory,
-			final String strConfigurationIndexDirectory)
+			final String strConfigurationIndexDirectory,
+			final Integer iConfigurationMaxIdentifyTask,
+			final Integer iConfigurationMaxOtherTask,
+			final Integer iConfigurationWaitBeforeWrite)
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLineDataSourceId,
 				strCommandLineDatabaseFileName, strCommandLinePictureDirectory,
-				strCommandLineThumbnailsDirectory, strCommandLineIndexDirectory);
+				strCommandLineThumbnailsDirectory,
+				strCommandLineIndexDirectory, iCommandLineMaxIdentifyTask,
+				iCommandLineMaxOtherTask, iCommandLineWaitBeforeWrite);
 		_leafDataSourceId.setConfigurationValue(iConfigurationDataSourceId);
 		_leafDatabaseFileName
 				.setConfigurationValue(strConfigurationDatabaseFileName);
@@ -256,6 +365,11 @@ public class SQLFileDataSourceConfigurationImpl extends
 				.setConfigurationValue(strConfigurationIndexDirectory);
 		_leafThumbnailsDirectory
 				.setConfigurationValue(strConfigurationThumbnailsDirectory);
+		_leafMaxIdentifyTask
+				.setConfigurationValue(iConfigurationMaxIdentifyTask);
+		_leafMaxOtherTask.setConfigurationValue(iConfigurationMaxOtherTask);
+		_leafWaitBeforeWrite
+				.setConfigurationValue(iConfigurationWaitBeforeWrite);
 	}
 
 	@Override
@@ -356,5 +470,23 @@ public class SQLFileDataSourceConfigurationImpl extends
 		{
 			return _leafThumbnailsDirectory.getCurrentValue();
 		}
+	}
+
+	@Override
+	public int getMaxConcurrentIdentifyTask()
+	{
+		return _leafMaxIdentifyTask.getCurrentValue().intValue();
+	}
+
+	@Override
+	public int getMaxConcurrentOtherTask()
+	{
+		return _leafMaxOtherTask.getCurrentValue().intValue();
+	}
+
+	@Override
+	public int getWaitBeforeWrite()
+	{
+		return _leafWaitBeforeWrite.getCurrentValue().intValue();
 	}
 }

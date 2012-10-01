@@ -261,7 +261,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				"/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
-				"/home/benobiwan/images/photoDB/index/");
+				"/home/benobiwan/images/photoDB/index/", 4, 4, 3);
 		final EventBus bus = new AsyncEventBus(Executors.newFixedThreadPool(10));
 		final SQLFileDataSource dataSource = new SQLFileDataSource(conf, bus);
 
