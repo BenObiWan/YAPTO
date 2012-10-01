@@ -19,6 +19,7 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.search.Query;
@@ -117,6 +118,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	private final IWritableTagRepository _tagRepository;
 
 	/**
+	 * Time to wait before writing picture information to the database.
+	 */
+	private final long _lWaitBeforeWrite;
+
+	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
 	 * @param conf
@@ -141,6 +147,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_conf = conf;
 		_fileListConnection = new SQLFileListConnection(_conf);
 		_indexer = new PictureIndexer(_conf);
+		_lWaitBeforeWrite = 3 * 1000;
 
 		// TODO put the parameters into the configuration object.
 		_processor = new PictureProcessor(4, 4);
@@ -438,17 +445,36 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	/**
-	 * Update the picture in the database and the index.
+	 * Update the picture in the database and the index. A configured amount of
+	 * time between picture update sand writing can be configured.
 	 * 
 	 * @param picture
 	 *            the picture to update.
+	 * @param bImmediat
+	 *            true if the picture has to be updated right now.
 	 */
-	public void updatePicture(final FsPicture picture)
+	public void updatePicture(final FsPicture picture, final boolean bImmediat)
 	{
 		synchronized (picture)
 		{
 			if (picture.hasBeenModified())
 			{
+				if (!bImmediat)
+				{
+					final long waitTime = picture.getModifiedTimestamp()
+							+ _lWaitBeforeWrite - System.currentTimeMillis();
+					if (waitTime > 0)
+					{
+						try
+						{
+							TimeUnit.SECONDS.sleep(waitTime);
+						}
+						catch (final InterruptedException e1)
+						{
+							// nothing to do
+						}
+					}
+				}
 				if (LOGGER.isDebugEnabled())
 				{
 					LOGGER.debug("Updating picture, id : " + picture.getId());
@@ -606,7 +632,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			{
 				try
 				{
-					updatePicture(_updateQueue.take());
+					updatePicture(_updateQueue.take(), false);
 				}
 				catch (final InterruptedException e)
 				{

@@ -33,6 +33,6 @@ public final class FsPictureRemovalListener implements
 	public void onRemoval(
 			final RemovalNotification<String, FsPicture> notification)
 	{
-		_dataSource.updatePicture(notification.getValue());
+		_dataSource.updatePicture(notification.getValue(), true);
 	}
 }
