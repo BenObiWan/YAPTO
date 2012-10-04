@@ -39,7 +39,7 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	protected IPicture _picture;
 
 	/**
-	 * Lock protecting access to the {@link IPictureList} and the
+	 * Lock protecting access to the {@link IPictureBrowser} and the
 	 * {@link IPicture}.
 	 */
 	protected final Object _lock = new Object();

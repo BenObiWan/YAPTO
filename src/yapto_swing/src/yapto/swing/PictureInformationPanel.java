@@ -35,7 +35,7 @@ public final class PictureInformationPanel extends JPanel
 
 	/**
 	 * The {@link IPictureBrowser} used to display picture on this
-	 * {@link PictureDisplayComponent}.
+	 * {@link PictureInformationPanel}.
 	 */
 	private final IPictureBrowser<?> _pictureIterator;
 
@@ -51,6 +51,12 @@ public final class PictureInformationPanel extends JPanel
 	private final AbstractTagEditorPanel _tagPanel;
 
 	/**
+	 * The {@link PictureGradePanel} used to view and modify the grade of the
+	 * current picture.
+	 */
+	private final PictureGradePanel _gradePanel;
+
+	/**
 	 * Creates a new PictureInformationPanel.
 	 * 
 	 * @param parent
@@ -64,8 +70,11 @@ public final class PictureInformationPanel extends JPanel
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
 		_tagPanel = new ListTagEditorPanel(parent, pictureIterator);
+		_gradePanel = new PictureGradePanel(pictureIterator);
 		_pictureIterator.register(_tagPanel);
+		_pictureIterator.register(_gradePanel);
 		add(_tagPanel, BorderLayout.CENTER);
+		add(_gradePanel, BorderLayout.PAGE_END);
 	}
 
 	/**
