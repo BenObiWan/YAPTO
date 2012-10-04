@@ -19,7 +19,6 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.search.Query;
@@ -464,9 +463,14 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 							+ _lWaitBeforeWrite - System.currentTimeMillis();
 					if (waitTime > 0)
 					{
+						if (LOGGER.isDebugEnabled())
+						{
+							LOGGER.debug("Waiting for : " + waitTime
+									+ " before updating.");
+						}
 						try
 						{
-							TimeUnit.SECONDS.sleep(waitTime);
+							picture.wait(waitTime);
 						}
 						catch (final InterruptedException e1)
 						{
