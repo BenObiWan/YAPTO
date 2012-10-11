@@ -10,6 +10,9 @@ import java.io.IOException;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.PictureChangedEvent;
@@ -28,6 +31,12 @@ public final class PictureDisplayComponent extends JScrollPane
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 6664591741974259719L;
+
+	/**
+	 * Logger object.
+	 */
+	protected static transient final Logger LOGGER = LoggerFactory
+			.getLogger(PictureDisplayComponent.class);
 
 	/**
 	 * The {@link DisplayPane} used to display the picture.
@@ -80,21 +89,20 @@ public final class PictureDisplayComponent extends JScrollPane
 	/**
 	 * Method called when the selected picture has changed.
 	 * 
-	 * @param e
+	 * @param ev
 	 *            the event signaling the change of the picture.
 	 */
 	@Subscribe
 	public void handlePictureChanged(
-			@SuppressWarnings("unused") final PictureChangedEvent e)
+			@SuppressWarnings("unused") final PictureChangedEvent ev)
 	{
 		try
 		{
 			_displayPane.loadPicture();
 		}
-		catch (final IOException e1)
+		catch (final IOException ex)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(ex.getMessage(), ex);
 		}
 	}
 

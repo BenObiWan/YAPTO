@@ -7,6 +7,9 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 
@@ -22,6 +25,12 @@ public final class MainPictureDisplayPanel extends JPanel
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 5806024455179560922L;
+
+	/**
+	 * Logger object.
+	 */
+	protected static transient final Logger LOGGER = LoggerFactory
+			.getLogger(MainPictureDisplayPanel.class);
 
 	/**
 	 * {@link PictureDisplayComponent} used to display the current
@@ -78,8 +87,7 @@ public final class MainPictureDisplayPanel extends JPanel
 		}
 		catch (final IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 }
