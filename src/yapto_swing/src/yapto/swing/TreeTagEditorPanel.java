@@ -1,5 +1,8 @@
 package yapto.swing;
 
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 
@@ -27,9 +30,9 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	private static final long serialVersionUID = 5669141686850523799L;
 
 	/**
-	 * {@link JTree} used to display all the {@link ITag}s.
+	 * {@link CheckboxTree} used to display all the {@link ITag}s.
 	 */
-	private final JTree _tagTree;
+	private final CheckboxTree _tagTree;
 
 	/**
 	 * Root node of the JTree.
@@ -49,7 +52,8 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	{
 		super(parent, pictureIterator);
 		_rootNode = new DefaultMutableTreeNode();
-		_tagTree = new JTree(_rootNode);
+		_tagTree = new CheckboxTree(_rootNode);
+		_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SIMPLE);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
 		updateAvailableTags();

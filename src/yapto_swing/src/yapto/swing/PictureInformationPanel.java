@@ -69,7 +69,7 @@ public final class PictureInformationPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
-		_tagPanel = new ListTagEditorPanel(parent, pictureIterator);
+		_tagPanel = new TreeTagEditorPanel(parent, pictureIterator);
 		_gradePanel = new PictureGradePanel(pictureIterator);
 		_pictureIterator.register(_tagPanel);
 		_pictureIterator.register(_gradePanel);
