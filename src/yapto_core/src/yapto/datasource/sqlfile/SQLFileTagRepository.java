@@ -157,6 +157,16 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			_tagSet.add(newTag);
 			_tagIdMap.put(Integer.valueOf(_iNextTagId), newTag);
 			_tagNameMap.put(strName, newTag);
+			final ITag parentTag = _tagIdMap.get(Integer.valueOf(newTag
+					.getParentId()));
+			if (parentTag != null)
+			{
+				parentTag.addChild(newTag);
+			}
+			else
+			{
+				_tagIdMap.get(Integer.valueOf(0)).addChild(newTag);
+			}
 			_iNextTagId++;
 		}
 		catch (final SQLException e)
@@ -228,6 +238,16 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 						.getInt(SQLFileListConnection.TAG_PARENT_ID_COLUMN_NAME);
 				tag = _tagIdMap.get(iId);
 				tag.setParent(iParentId);
+				final ITag parentTag = _tagIdMap
+						.get(Integer.valueOf(iParentId));
+				if (parentTag != null)
+				{
+					parentTag.addChild(tag);
+				}
+				else
+				{
+					_tagIdMap.get(Integer.valueOf(0)).addChild(tag);
+				}
 			}
 		}
 		finally
