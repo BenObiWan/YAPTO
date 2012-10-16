@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -67,7 +66,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	/**
 	 * Combo box used to specify the parent of the new {@link ITag}.
 	 */
-	private final JComboBox _tagParent = new JComboBox();
+	private final PanelTreeTag _tagParent;
 
 	/**
 	 * Parent {@link JDialog} of this Panel.
@@ -91,20 +90,22 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final IPictureBrowser<? extends IPicture> pictureBrowser)
 	{
 		super(new BorderLayout(5, 5));
+		setBorder(new EmptyBorder(10, 10, 10, 10));
+
 		_parent = parent;
 		_pictureBrowser = pictureBrowser;
-
-		setBorder(new EmptyBorder(10, 10, 10, 10));
-		final JPanel panelHead = new JPanel(new GridLayout(3, 2, 5, 5));
-
+		_tagParent = new PanelTreeTag(pictureBrowser, false);
+		
+		final JPanel panelHead = new JPanel(new GridLayout(2, 2, 5, 5));
 		panelHead.add(new JLabel("Name "));
 		panelHead.add(_tagNameField);
-
 		panelHead.add(new JLabel("Selectable "));
 		panelHead.add(_tagSelectableField);
 		_tagSelectableField.setSelected(true);
-		panelHead.add(new JLabel("Parent "));
-		panelHead.add(_tagParent);
+
+		final JPanel panelCenter = new JPanel(new GridLayout(2, 1, 5, 5));
+		panelCenter.add(_tagParent);
+		panelCenter.add(_tagDescriptionField);
 
 		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 5, 5));
 		panelButton.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -116,8 +117,9 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		buttonCancel.addActionListener(this);
 		panelButton.add(buttonCreate);
 		panelButton.add(buttonCancel);
+		
 		add(panelHead, BorderLayout.PAGE_START);
-		add(_tagDescriptionField, BorderLayout.CENTER);
+		add(panelCenter, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
 	}
 
