@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -95,7 +96,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		_parent = parent;
 		_pictureBrowser = pictureBrowser;
 		_tagParent = new PanelTreeTag(pictureBrowser, false);
-		
+
 		final JPanel panelHead = new JPanel(new GridLayout(2, 2, 5, 5));
 		panelHead.add(new JLabel("Name "));
 		panelHead.add(_tagNameField);
@@ -103,12 +104,21 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		panelHead.add(_tagSelectableField);
 		_tagSelectableField.setSelected(true);
 
-		final JPanel panelCenter = new JPanel(new GridLayout(2, 1, 5, 5));
-		panelCenter.add(_tagParent);
-		panelCenter.add(_tagDescriptionField);
+		final JPanel panelParent = new JPanel(new BorderLayout());
+		panelParent.add(new JLabel("Parent :"), BorderLayout.PAGE_START);
+		panelParent.add(_tagParent, BorderLayout.CENTER);
 
-		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 5, 5));
-		panelButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+		final JPanel panelDescription = new JPanel(new BorderLayout());
+		panelDescription.add(new JLabel("Description :"),
+				BorderLayout.PAGE_START);
+		final JScrollPane scrollPane = new JScrollPane(_tagDescriptionField);
+		panelDescription.add(scrollPane, BorderLayout.CENTER);
+
+		final JPanel panelCenter = new JPanel(new GridLayout(2, 1, 5, 5));
+		panelCenter.add(panelParent);
+		panelCenter.add(panelDescription);
+
+		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 10, 10));
 		final JButton buttonCreate = new JButton("Create");
 		buttonCreate.setActionCommand(CREATE_ACTION_COMMAND);
 		buttonCreate.addActionListener(this);
@@ -117,7 +127,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		buttonCancel.addActionListener(this);
 		panelButton.add(buttonCreate);
 		panelButton.add(buttonCancel);
-		
+
 		add(panelHead, BorderLayout.PAGE_START);
 		add(panelCenter, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
