@@ -109,21 +109,21 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public ITag get(final int iTagId)
+	public ITag getTag(final int iTagId)
 	{
-		return _dataSource.get(iTagId);
+		return _dataSource.getTag(iTagId);
 	}
 
 	@Override
-	public ITag get(final Integer iTagId)
+	public ITag getTag(final Integer iTagId)
 	{
-		return _dataSource.get(iTagId);
+		return _dataSource.getTag(iTagId);
 	}
 
 	@Override
-	public ITag get(final String strTagName)
+	public ITag getTag(final String strTagName)
 	{
-		return _dataSource.get(strTagName);
+		return _dataSource.getTag(strTagName);
 	}
 
 	@Override

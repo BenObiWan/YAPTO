@@ -115,6 +115,14 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
+	public void addTag(final int iParentId, final String strName,
+			final String strDescription, final boolean bSelectable)
+			throws TagAddException
+	{
+		addTag(getTag(iParentId), strName, strDescription, bSelectable);
+	}
+
+	@Override
 	public void addTag(final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException
@@ -316,20 +324,20 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
-	public ITag get(final int iTagId)
+	public ITag getTag(final int iTagId)
 	{
 
 		return _tagIdMap.get(Integer.valueOf(iTagId));
 	}
 
 	@Override
-	public ITag get(final Integer iTagId)
+	public ITag getTag(final Integer iTagId)
 	{
 		return _tagIdMap.get(iTagId);
 	}
 
 	@Override
-	public ITag get(final String strTagName)
+	public ITag getTag(final String strTagName)
 	{
 		return _tagNameMap.get(strTagName);
 	}

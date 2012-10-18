@@ -17,7 +17,7 @@ public interface ITagRepository
 	 *            the id of the {@link ITag}.
 	 * @return the {@link ITag} with the given id.
 	 */
-	ITag get(final int iTagId);
+	ITag getTag(final int iTagId);
 
 	/**
 	 * Get the {@link ITag} with the given id.
@@ -26,7 +26,7 @@ public interface ITagRepository
 	 *            the id of the {@link ITag}.
 	 * @return the {@link ITag} with the given id.
 	 */
-	ITag get(final Integer iTagId);
+	ITag getTag(final Integer iTagId);
 
 	/**
 	 * Get the {@link ITag} with the given name.
@@ -35,7 +35,7 @@ public interface ITagRepository
 	 *            the name of the {@link ITag}.
 	 * @return the {@link ITag} with the given name.
 	 */
-	ITag get(String strTagName);
+	ITag getTag(String strTagName);
 
 	/**
 	 * Check whether the repository has a {@link ITag} with the give

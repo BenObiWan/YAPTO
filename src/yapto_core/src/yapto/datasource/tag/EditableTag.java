@@ -196,7 +196,7 @@ public final class EditableTag implements ITag
 	{
 		synchronized (_lock)
 		{
-			return _tagRepository.get(_iParentTagId);
+			return _tagRepository.getTag(_iParentTagId);
 		}
 	}
 

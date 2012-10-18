@@ -658,21 +658,21 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public ITag get(final int iTagId)
+	public ITag getTag(final int iTagId)
 	{
-		return _tagRepository.get(iTagId);
+		return _tagRepository.getTag(iTagId);
 	}
 
 	@Override
-	public ITag get(final Integer iTagId)
+	public ITag getTag(final Integer iTagId)
 	{
-		return _tagRepository.get(iTagId);
+		return _tagRepository.getTag(iTagId);
 	}
 
 	@Override
-	public ITag get(final String strTagName)
+	public ITag getTag(final String strTagName)
 	{
-		return _tagRepository.get(strTagName);
+		return _tagRepository.getTag(strTagName);
 	}
 
 	@Override
@@ -690,6 +690,14 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
+	public void addTag(final int iParentId, final String strName,
+			final String strDescription, final boolean bSelectable)
+			throws TagAddException
+	{
+		_tagRepository.addTag(iParentId, strName, strDescription, bSelectable);
+	}
+
+	@Override
 	public void addTag(final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{
@@ -704,4 +712,5 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		_tagRepository.editTag(iTagId, parent, strName, strDescription,
 				bSelectable);
 	}
+
 }

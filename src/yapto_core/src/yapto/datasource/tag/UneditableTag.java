@@ -196,7 +196,7 @@ public final class UneditableTag implements ITag
 	{
 		synchronized (_parentLock)
 		{
-			return _tagRepository.get(_iParentTagId);
+			return _tagRepository.getTag(_iParentTagId);
 		}
 	}
 
