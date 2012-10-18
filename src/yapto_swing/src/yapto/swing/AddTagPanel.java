@@ -65,9 +65,9 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	private final JTextArea _tagDescriptionField = new JTextArea();
 
 	/**
-	 * Combo box used to specify the parent of the new {@link ITag}.
+	 * Tree used to specify the parent of the new {@link ITag}.
 	 */
-	private final AbstractTreeTagPanel _tagParent;
+	private final ParentingTreeTagPanel _tagParent;
 
 	/**
 	 * Parent {@link JDialog} of this Panel.
@@ -141,11 +141,11 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final boolean bSelectable = _tagSelectableField.isSelected();
 			final String strName = _tagNameField.getText();
 			final String strDescription = _tagDescriptionField.getText();
-			// _tagParent
+			int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
-				_pictureBrowser.getDataSource().addTag(strName, strDescription,
-						bSelectable);
+				_pictureBrowser.getDataSource().addTag(iParentTagId, strName,
+						strDescription, bSelectable);
 				_parent.setVisible(false);
 			}
 			catch (final TagAddException ex)
@@ -159,5 +159,13 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		{
 			_parent.setVisible(false);
 		}
+	}
+
+	/**
+	 * Initialize the AddTagPanel before displaying it.
+	 */
+	public void initialize()
+	{
+		_tagParent.setSelectedTag(0);
 	}
 }

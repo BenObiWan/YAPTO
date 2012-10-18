@@ -53,7 +53,12 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	/**
 	 * Dialog for tag creation.
 	 */
-	protected final JDialog _dialogCreateTag;
+	private final JDialog _dialogCreateTag;
+
+	/**
+	 * Panel used for tag creation.
+	 */
+	private final AddTagPanel _addTagPanel;
 
 	/**
 	 * Creates a new AbstractTagEditorPanel.
@@ -76,8 +81,8 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 		add(buttonPanel, BorderLayout.PAGE_END);
 
 		_dialogCreateTag = new JDialog(parent, "Create tag", true);
-		_dialogCreateTag.setContentPane(new AddTagPanel(_dialogCreateTag,
-				pictureIterator));
+		_addTagPanel = new AddTagPanel(_dialogCreateTag, pictureIterator);
+		_dialogCreateTag.setContentPane(_addTagPanel);
 	}
 
 	/**
@@ -148,6 +153,7 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	@Override
 	public void actionPerformed(final ActionEvent e)
 	{
+		_addTagPanel.initialize();
 		_dialogCreateTag.pack();
 		_dialogCreateTag.setVisible(true);
 	}
