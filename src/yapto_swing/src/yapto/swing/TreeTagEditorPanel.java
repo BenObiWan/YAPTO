@@ -23,7 +23,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	 */
 	private static final long serialVersionUID = 5669141686850523799L;
 
-	private final PanelTreeTag _panelTreeTag;
+	private final AbstractTreeTagPanel _panelTreeTag;
 
 	/**
 	 * Creates a new TagEditorPanel.
@@ -37,7 +37,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(parent, pictureIterator);
-		_panelTreeTag = new PanelTreeTag(pictureIterator, true);
+		_panelTreeTag = new SelectingTreeTagPanel(pictureIterator);
 		add(_panelTreeTag, BorderLayout.CENTER);
 		changePicture();
 	}

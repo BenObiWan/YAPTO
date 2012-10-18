@@ -1,7 +1,6 @@
 package yapto.swing;
 
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
 
 import java.awt.BorderLayout;
 
@@ -16,7 +15,7 @@ import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureList;
 import yapto.datasource.tag.ITag;
 
-public final class PanelTreeTag extends JPanel
+public abstract class AbstractTreeTagPanel extends JPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -26,7 +25,7 @@ public final class PanelTreeTag extends JPanel
 	/**
 	 * {@link CheckboxTree} used to display all the {@link ITag}s.
 	 */
-	private final CheckboxTree _tagTree;
+	protected final CheckboxTree _tagTree;
 
 	/**
 	 * Root node of the JTree.
@@ -46,29 +45,18 @@ public final class PanelTreeTag extends JPanel
 	protected IPictureBrowser<? extends IPicture> _pictureIterator;
 
 	/**
-	 * Creates a new PanelTreeTag.
+	 * Creates a new AbstractTreeTagPanel.
 	 * 
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
-	 * @param bMultiSelect
-	 *            whether or not multiple tags can be selected.
 	 */
-	public PanelTreeTag(
-			final IPictureBrowser<? extends IPicture> pictureIterator,
-			final boolean bMultiSelect)
+	public AbstractTreeTagPanel(
+			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
 		_rootNode = new DefaultMutableTreeNode();
 		_tagTree = new CheckboxTree(_rootNode);
-		if (bMultiSelect)
-		{
-			_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SIMPLE);
-		}
-		else
-		{
-			_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SINGLE);
-		}
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
 		updateAvailableTags();

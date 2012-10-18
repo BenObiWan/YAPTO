@@ -67,7 +67,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	/**
 	 * Combo box used to specify the parent of the new {@link ITag}.
 	 */
-	private final PanelTreeTag _tagParent;
+	private final AbstractTreeTagPanel _tagParent;
 
 	/**
 	 * Parent {@link JDialog} of this Panel.
@@ -95,7 +95,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 
 		_parent = parent;
 		_pictureBrowser = pictureBrowser;
-		_tagParent = new PanelTreeTag(pictureBrowser, false);
+		_tagParent = new ParentingTreeTagPanel(pictureBrowser);
 
 		final JPanel panelHead = new JPanel(new GridLayout(2, 2, 5, 5));
 		panelHead.add(new JLabel("Name "));
