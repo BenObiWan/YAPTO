@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
@@ -57,6 +58,8 @@ public abstract class AbstractTreeTagPanel extends JPanel
 		_pictureIterator = pictureIterator;
 		_rootNode = new DefaultMutableTreeNode();
 		_tagTree = new CheckboxTree(_rootNode);
+		_tagTree.setCellRenderer(new ToolTipCheckboxTreeCellRenderer());
+		ToolTipManager.sharedInstance().registerComponent(_tagTree);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
 		updateAvailableTags();
@@ -90,7 +93,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	 */
 	private static MutableTreeNode createTreeNode(final ITag tag)
 	{
-		final MutableTreeNode node = new DefaultMutableTreeNode(tag.getName());
+		final MutableTreeNode node = new DefaultMutableTreeNode(tag);
 		return node;
 	}
 
