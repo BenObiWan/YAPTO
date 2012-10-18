@@ -221,7 +221,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 					_tagSet.add(tag);
 					_tagIdMap.put(Integer.valueOf(iTagId), tag);
 					_tagNameMap.put(tag.getName(), tag);
-					if (iTagId > _iNextTagId)
+					if (iTagId >= _iNextTagId)
 					{
 						_iNextTagId = iTagId + 1;
 					}
