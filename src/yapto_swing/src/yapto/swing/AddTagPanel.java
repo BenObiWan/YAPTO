@@ -97,26 +97,22 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		_pictureBrowser = pictureBrowser;
 		_tagParent = new ParentingTreeTagPanel(pictureBrowser);
 
-		final JPanel panelHead = new JPanel(new GridLayout(2, 2, 5, 5));
-		panelHead.add(new JLabel("Name "));
-		panelHead.add(_tagNameField);
-		panelHead.add(new JLabel("Selectable "));
-		panelHead.add(_tagSelectableField);
+		final JPanel panelHeadField = new JPanel(new GridLayout(3, 2, 5, 5));
+		panelHeadField.add(new JLabel("Name "));
+		panelHeadField.add(_tagNameField);
+		panelHeadField.add(new JLabel("Selectable "));
+		panelHeadField.add(_tagSelectableField);
 		_tagSelectableField.setSelected(true);
+		panelHeadField.add(new JLabel("Description"));
 
-		final JPanel panelParent = new JPanel(new BorderLayout());
-		panelParent.add(new JLabel("Parent :"), BorderLayout.PAGE_START);
+		final JPanel panelHead = new JPanel(new GridLayout(2, 1, 5, 5));
+		panelHead.add(panelHeadField);
+		panelHead.add(new JScrollPane(_tagDescriptionField),
+				BorderLayout.CENTER);
+
+		final JPanel panelParent = new JPanel(new BorderLayout(5, 5));
+		panelParent.add(new JLabel("Parent"), BorderLayout.PAGE_START);
 		panelParent.add(_tagParent, BorderLayout.CENTER);
-
-		final JPanel panelDescription = new JPanel(new BorderLayout());
-		panelDescription.add(new JLabel("Description :"),
-				BorderLayout.PAGE_START);
-		final JScrollPane scrollPane = new JScrollPane(_tagDescriptionField);
-		panelDescription.add(scrollPane, BorderLayout.CENTER);
-
-		final JPanel panelCenter = new JPanel(new GridLayout(2, 1, 5, 5));
-		panelCenter.add(panelParent);
-		panelCenter.add(panelDescription);
 
 		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 10, 10));
 		final JButton buttonCreate = new JButton("Create");
@@ -129,7 +125,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		panelButton.add(buttonCancel);
 
 		add(panelHead, BorderLayout.PAGE_START);
-		add(panelCenter, BorderLayout.CENTER);
+		add(panelParent, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
 	}
 
@@ -141,7 +137,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final boolean bSelectable = _tagSelectableField.isSelected();
 			final String strName = _tagNameField.getText();
 			final String strDescription = _tagDescriptionField.getText();
-			int iParentTagId = _tagParent.getSelectedTagId();
+			final int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
 				_pictureBrowser.getDataSource().addTag(iParentTagId, strName,
