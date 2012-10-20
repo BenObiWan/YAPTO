@@ -164,5 +164,8 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	public void initialize()
 	{
 		_tagParent.setSelectedTag(0);
+		_tagNameField.setText("");
+		_tagSelectableField.setSelected(true);
+		_tagDescriptionField.setText("");
 	}
 }
