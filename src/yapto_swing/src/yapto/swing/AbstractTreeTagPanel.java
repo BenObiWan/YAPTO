@@ -9,12 +9,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.IPictureList;
 import yapto.datasource.tag.ITag;
+import yapto.datasource.tag.TagRepositoryChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 public abstract class AbstractTreeTagPanel extends JPanel
 {
@@ -29,9 +34,14 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	protected final CheckboxTree _tagTree;
 
 	/**
-	 * Root node of the JTree.
+	 * Root node of the {@link CheckboxTree}.
 	 */
 	private final DefaultMutableTreeNode _rootNode;
+
+	/**
+	 * {@link TreeModel} used by the {@link CheckboxTree}.
+	 */
+	private DefaultTreeModel _treeModel;
 
 	/**
 	 * Lock protecting access to the {@link IPictureBrowser} and the
@@ -59,6 +69,16 @@ public abstract class AbstractTreeTagPanel extends JPanel
 		_rootNode = new DefaultMutableTreeNode();
 		_tagTree = new CheckboxTree(_rootNode);
 		_tagTree.setCellRenderer(new ToolTipCheckboxTreeCellRenderer());
+		final TreeModel model = _tagTree.getModel();
+		if (model instanceof DefaultTreeModel)
+		{
+			_treeModel = (DefaultTreeModel) model;
+		}
+		else
+		{
+			_treeModel = new DefaultTreeModel(_rootNode);
+			_tagTree.setModel(_treeModel);
+		}
 		ToolTipManager.sharedInstance().registerComponent(_tagTree);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
@@ -78,6 +98,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 			{
 				final ITag rootTag = _pictureIterator.getRootTag();
 				populateChildren(rootTag, _rootNode);
+				_treeModel.reload();
 				expandAll();
 			}
 		}
@@ -129,5 +150,18 @@ public abstract class AbstractTreeTagPanel extends JPanel
 			_tagTree.expandRow(row);
 			row++;
 		}
+	}
+
+	/**
+	 * Method called when the list of {@link ITag}s has been modified.
+	 * 
+	 * @param ev
+	 *            the event signaling the change in the {@link ITag} list.
+	 */
+	@Subscribe
+	public void handleTagRepositoryChangedEvent(
+			@SuppressWarnings("unused") final TagRepositoryChangedEvent ev)
+	{
+		updateAvailableTags();
 	}
 }

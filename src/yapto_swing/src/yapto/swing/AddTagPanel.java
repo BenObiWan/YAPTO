@@ -96,6 +96,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		_parent = parent;
 		_pictureBrowser = pictureBrowser;
 		_tagParent = new ParentingTreeTagPanel(pictureBrowser);
+		pictureBrowser.register(_tagParent);
 
 		final JPanel panelHeadField = new JPanel(new GridLayout(3, 2, 5, 5));
 		panelHeadField.add(new JLabel("Name "));
