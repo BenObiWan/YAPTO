@@ -151,7 +151,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				_conf.getMaxConcurrentOtherTask());
 
 		// tag repository
-		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection);
+		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection,
+				_bus);
 
 		_imageLoader = new ImageLoader(_conf);
 		// picture cache

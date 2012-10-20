@@ -17,7 +17,10 @@ import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.IWritableTagRepository;
 import yapto.datasource.tag.TagAddException;
 import yapto.datasource.tag.TagAddExceptionType;
+import yapto.datasource.tag.TagRepositoryChangedEvent;
 import yapto.datasource.tag.UneditableTag;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * Implementation of the IWritableTagRepository for use with
@@ -71,6 +74,12 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	private final Object _lockNextTag = new Object();
 
 	/**
+	 * {@link EventBus} used to signal registered objects of changes in this
+	 * {@link SQLFileTagRepository}.
+	 */
+	private final EventBus _bus;
+
+	/**
 	 * Creates a new SQLFileTagRepository.
 	 * 
 	 * @param conf
@@ -78,15 +87,20 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	 * @param fileListConnection
 	 *            object holding the connection to the database and the prepared
 	 *            statements.
+	 * @param bus
+	 *            the {@link EventBus} used to signal registered objects of
+	 *            changes in this {@link SQLFileTagRepository}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the loading of the tags from
 	 *             the database.
 	 */
 	public SQLFileTagRepository(final ISQLFileDataSourceConfiguration conf,
-			final SQLFileListConnection fileListConnection) throws SQLException
+			final SQLFileListConnection fileListConnection, final EventBus bus)
+			throws SQLException
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;
+		_bus = bus;
 		final ITag rootTag = new UneditableTag(conf.getDataSourceId(), this, 0,
 				-1, "/", "Root tag.", false);
 		_tagSet.add(rootTag);
@@ -176,6 +190,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 				_tagIdMap.get(Integer.valueOf(0)).addChild(newTag);
 			}
 			_iNextTagId++;
+			_bus.post(new TagRepositoryChangedEvent());
 		}
 		catch (final SQLException e)
 		{
@@ -313,6 +328,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 				try
 				{
 					_fileListConnection.modifyTagIntoDatabase(editTag);
+					_bus.post(new TagRepositoryChangedEvent());
 				}
 				catch (final SQLException e)
 				{
