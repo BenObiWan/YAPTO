@@ -1,9 +1,9 @@
 package yapto.swing;
 
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
-
-import javax.swing.JTree;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -11,7 +11,7 @@ import yapto.datasource.tag.ITag;
 
 /**
  * Panel displaying the list of {@link ITag} that can be associated with an
- * {@link IPicture} using a {@link JTree}.
+ * {@link IPicture} using a {@link CheckboxTree}.
  * 
  * @author benobiwan
  * 
@@ -23,6 +23,9 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	 */
 	private static final long serialVersionUID = 5669141686850523799L;
 
+	/**
+	 * Panel used to display the {@link CheckboxTree}.
+	 */
 	private final SelectingTreeTagPanel _panelTreeTag;
 
 	/**
@@ -56,10 +59,10 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 		{
 			if (_pictureIterator != null)
 			{
-				// TODO unselect all tags
+				_panelTreeTag.unsetSelectedTags();
 				if (_picture != null)
 				{
-					// TODO select appropriate tags
+					_panelTreeTag.setSelectedTags();
 				}
 			}
 		}
@@ -68,7 +71,6 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	@Override
 	protected void savePictureTags()
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do, tags saved each time one of them is selected.
 	}
 }

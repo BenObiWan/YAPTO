@@ -23,6 +23,12 @@ import yapto.datasource.tag.TagRepositoryChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
+/**
+ * Abstract panel displaying a {@link CheckboxTree} for {@link ITag} selection.
+ * 
+ * @author benobiwan
+ * 
+ */
 public abstract class AbstractTreeTagPanel extends JPanel
 {
 	/**

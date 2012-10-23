@@ -10,12 +10,31 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.tag.ITag;
 
+/**
+ * Implementation of {@link AbstractTreeTagPanel} where multiple {@link ITag}s
+ * can be selected.
+ * 
+ * Used to choose to associate {@link ITag}s to an {@link IPicture}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public class SelectingTreeTagPanel extends AbstractTreeTagPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 5743908692336875510L;
+
+	/**
+	 * Boolean signaling the changing of {@link IPicture}.
+	 */
+	protected boolean _bChangingPicture = false;
+
+	/**
+	 * Lock protecting access to _bChangingPicture boolean.
+	 */
+	protected final Object _lockChangingPicture = new Object();
 
 	/**
 	 * Creates a new SelectingTreeTagPanel.
@@ -38,18 +57,69 @@ public class SelectingTreeTagPanel extends AbstractTreeTagPanel
 						.getUserObject();
 				if (userObject != null && userObject instanceof ITag)
 				{
-					final ITag tag = (ITag) userObject;
-					final IPicture pic = _pictureIterator.getCurrentPicture();
-					if (e.isCheckedPath())
+					synchronized (_lockChangingPicture)
 					{
-						pic.addTag(tag);
-					}
-					else
-					{
-						pic.removeTag(tag);
+						if (!_bChangingPicture)
+						{
+							final ITag tag = (ITag) userObject;
+							final IPicture pic = _pictureIterator
+									.getCurrentPicture();
+							if (pic != null)
+							{
+								if (e.isCheckedPath())
+								{
+									pic.addTag(tag);
+								}
+								else
+								{
+									pic.removeTag(tag);
+								}
+							}
+						}
 					}
 				}
 			}
 		});
+	}
+
+	/**
+	 * Clear checking of all the {@link ITag}s.
+	 */
+	public void unsetSelectedTags()
+	{
+		synchronized (_lockChangingPicture)
+		{
+			_bChangingPicture = true;
+		}
+		_tagTree.clearChecking();
+		synchronized (_lockChangingPicture)
+		{
+			_bChangingPicture = false;
+		}
+	}
+
+	/**
+	 * Set checking of all the {@link ITag}s according to the selected
+	 * {@link IPicture}.
+	 */
+	public void setSelectedTags()
+	{
+		synchronized (_lockChangingPicture)
+		{
+			_bChangingPicture = true;
+		}
+		final IPicture pic = _pictureIterator.getCurrentPicture();
+		if (pic != null)
+		{
+			for (final ITag tag : pic.getTagSet())
+			{
+				_tagTree.addCheckingPath(_treePathMap.get(Integer.valueOf(tag
+						.getTagId())));
+			}
+		}
+		synchronized (_lockChangingPicture)
+		{
+			_bChangingPicture = false;
+		}
 	}
 }

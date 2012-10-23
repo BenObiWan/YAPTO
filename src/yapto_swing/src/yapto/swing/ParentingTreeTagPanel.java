@@ -9,7 +9,16 @@ import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.tag.ITag;
 
-public class ParentingTreeTagPanel extends AbstractTreeTagPanel
+/**
+ * Implementation of {@link AbstractTreeTagPanel} where only one {@link ITag}
+ * can be selected.
+ * 
+ * Used to choose the parent for an {@link ITag} in {@link AddTagPanel}.
+ * 
+ * @author benobiwan
+ * 
+ */
+public final class ParentingTreeTagPanel extends AbstractTreeTagPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -37,8 +46,7 @@ public class ParentingTreeTagPanel extends AbstractTreeTagPanel
 	 */
 	public void setSelectedTag(final int iTagId)
 	{
-		final TreePath path = _treePathMap.get(Integer.valueOf(iTagId));
-		_tagTree.setCheckingPath(path);
+		_tagTree.setCheckingPath(_treePathMap.get(Integer.valueOf(iTagId)));
 	}
 
 	/**
