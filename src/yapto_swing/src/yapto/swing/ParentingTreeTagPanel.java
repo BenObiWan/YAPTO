@@ -1,9 +1,10 @@
 package yapto.swing;
 
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.tag.ITag;
@@ -36,7 +37,8 @@ public class ParentingTreeTagPanel extends AbstractTreeTagPanel
 	 */
 	public void setSelectedTag(final int iTagId)
 	{
-
+		final TreePath path = _treePathMap.get(Integer.valueOf(iTagId));
+		_tagTree.setCheckingPath(path);
 	}
 
 	/**
@@ -46,10 +48,10 @@ public class ParentingTreeTagPanel extends AbstractTreeTagPanel
 	 */
 	public int getSelectedTagId()
 	{
-		TreePath path = _tagTree.getSelectionPath();
+		final TreePath path = _tagTree.getSelectionPath();
 		if (path != null)
 		{
-			Object sel = path.getLastPathComponent();
+			final Object sel = path.getLastPathComponent();
 			if (sel != null && sel instanceof DefaultMutableTreeNode)
 			{
 				final Object userObject = ((DefaultMutableTreeNode) sel)

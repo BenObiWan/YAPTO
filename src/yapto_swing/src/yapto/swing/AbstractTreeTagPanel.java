@@ -3,6 +3,7 @@ package yapto.swing;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
 
 import java.awt.BorderLayout;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -12,6 +13,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
@@ -56,6 +58,11 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	protected IPictureBrowser<? extends IPicture> _pictureIterator;
 
 	/**
+	 * {@link HashMap} linking tag id and their {@link TreePath}.
+	 */
+	protected HashMap<Integer, TreePath> _treePathMap = new HashMap<>();
+
+	/**
 	 * Creates a new AbstractTreeTagPanel.
 	 * 
 	 * @param pictureIterator
@@ -66,7 +73,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_pictureIterator = pictureIterator;
-		_rootNode = new DefaultMutableTreeNode();
+		_rootNode = new DefaultMutableTreeNode(_pictureIterator.getRootTag());
 		_tagTree = new CheckboxTree(_rootNode);
 		_tagTree.setCellRenderer(new ToolTipCheckboxTreeCellRenderer());
 		final TreeModel model = _tagTree.getModel();
@@ -94,10 +101,13 @@ public abstract class AbstractTreeTagPanel extends JPanel
 		synchronized (_lock)
 		{
 			_rootNode.removeAllChildren();
+			_treePathMap.clear();
 			if (_pictureIterator != null)
 			{
 				final ITag rootTag = _pictureIterator.getRootTag();
-				populateChildren(rootTag, _rootNode);
+				final TreePath rootTreePath = new TreePath(_rootNode);
+				_treePathMap.put(Integer.valueOf(0), rootTreePath);
+				populateChildren(rootTag, _rootNode, rootTreePath);
 				_treeModel.reload();
 				expandAll();
 			}
@@ -127,14 +137,18 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	 *            the parent {@link ITag}.
 	 * @param parentNode
 	 *            the parent {@link MutableTreeNode}.
+	 * @param parentTreePath
+	 *            {@link TreePath} of the parent.
 	 */
 	private void populateChildren(final ITag parentTag,
-			final MutableTreeNode parentNode)
+			final MutableTreeNode parentNode, final TreePath parentTreePath)
 	{
 		for (final ITag t : parentTag.getChildren())
 		{
 			final MutableTreeNode node = createTreeNode(t);
-			populateChildren(t, node);
+			final TreePath treePath = parentTreePath.pathByAddingChild(node);
+			_treePathMap.put(Integer.valueOf(t.getTagId()), treePath);
+			populateChildren(t, node, treePath);
 			parentNode.insert(node, parentNode.getChildCount());
 		}
 	}
