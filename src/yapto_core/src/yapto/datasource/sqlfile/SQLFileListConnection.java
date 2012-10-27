@@ -225,6 +225,16 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psListPicture;
 
 	/**
+	 * Statement to remove a {@link ITag}.
+	 */
+	private final PreparedStatement _psRemoveTag;
+
+	/**
+	 * Statement to remove a {@link ITag} from all the pictures.
+	 */
+	private final PreparedStatement _psRemoveTagFromAllPictures;
+
+	/**
 	 * creates a new SQLFileListConnection.
 	 * 
 	 * @param conf
@@ -317,6 +327,11 @@ public final class SQLFileListConnection
 				+ " =?");
 		_psListPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
+		_psRemoveTag = _connection.prepareStatement("DELETE FROM "
+				+ TAG_TABLE_NAME + " WHERE " + TAG_ID_COLUMN_NAME + "=?");
+		_psRemoveTagFromAllPictures = _connection
+				.prepareStatement("DELETE FROM " + PICTURE_TAG_TABLE_NAME
+						+ " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
 	}
 
 	/**
@@ -821,6 +836,31 @@ public final class SQLFileListConnection
 		synchronized (_psListPicture)
 		{
 			return _psListPicture.executeQuery();
+		}
+	}
+
+	/**
+	 * Remove the specified {@link ITag} from the database.
+	 * 
+	 * @param iTagId
+	 *            the id of the {@link ITag} to remove.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public void removeTag(final int iTagId) throws SQLException
+	{
+		synchronized (_psRemoveTagFromAllPictures)
+		{
+			_psRemoveTag.clearParameters();
+			_psRemoveTag.setInt(1, iTagId);
+			_psRemoveTag.execute();
+		}
+		synchronized (_psRemoveTagFromAllPictures)
+		{
+			_psRemoveTagFromAllPictures.clearParameters();
+			_psRemoveTagFromAllPictures.setInt(1, iTagId);
+			_psRemoveTagFromAllPictures.execute();
 		}
 	}
 }

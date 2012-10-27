@@ -81,4 +81,15 @@ public interface IWritableTagRepository extends ITagRepository
 	void editTag(final int iTagId, final ITag parent, final String strName,
 			final String strDescription, final boolean bSelectable)
 			throws TagAddException;
+
+	/**
+	 * Remove the specified {@link ITag} from this
+	 * {@link IWritableTagRepository}.
+	 * 
+	 * @param iTagId
+	 *            the id of the {@link ITag} to remove.
+	 * @throws TagAddException
+	 *             if an error occurs during the removal of the {@link ITag}.
+	 */
+	void removeTag(final int iTagId) throws TagAddException;
 }

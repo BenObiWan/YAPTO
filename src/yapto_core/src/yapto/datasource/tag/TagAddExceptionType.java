@@ -33,7 +33,18 @@ public enum TagAddExceptionType
 	/**
 	 * The tag is uneditable.
 	 */
-	UNEDITABLE_TAG("The tag is uneditable.");
+	UNEDITABLE_TAG("The tag is uneditable."),
+
+	/**
+	 * SQL error during the removal of the tag from the database.
+	 */
+	SQL_REMOVAL_ERROR(
+			"SQL error during the removal of the tag from the database"),
+
+	/**
+	 * The specified id isn't a valid tag id, or is root tag id.
+	 */
+	ILLEGAL_TAG_ID("The specified id isn't a valid tag id, or is root tag id.");
 
 	/**
 	 * Message for this exception type.

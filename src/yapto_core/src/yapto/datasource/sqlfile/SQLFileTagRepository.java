@@ -357,4 +357,36 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	{
 		return _tagNameMap.get(strTagName);
 	}
+
+	@Override
+	public void removeTag(final int iTagId) throws TagAddException
+	{
+		if (iTagId <= 0)
+		{
+			throw new TagAddException(TagAddExceptionType.ILLEGAL_TAG_ID);
+		}
+		final ITag tagToRemove = _tagIdMap.get(Integer.valueOf(iTagId));
+		if (tagToRemove != null)
+		{
+			// parent of children changed to root tag
+			for (final ITag tag : tagToRemove.getChildren())
+			{
+				tag.setParent(0);
+			}
+			// remove tag from repository
+			_tagSet.remove(tagToRemove);
+			_tagIdMap.remove(Integer.valueOf(iTagId));
+			_tagNameMap.remove(tagToRemove.getName());
+			// remove tag from database
+			try
+			{
+				_fileListConnection.removeTag(iTagId);
+			}
+			catch (final SQLException e)
+			{
+				throw new TagAddException(
+						TagAddExceptionType.SQL_REMOVAL_ERROR, e);
+			}
+		}
+	}
 }

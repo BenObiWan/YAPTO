@@ -714,4 +714,9 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 				bSelectable);
 	}
 
+	@Override
+	public void removeTag(final int iTagId) throws TagAddException
+	{
+		_tagRepository.removeTag(iTagId);
+	}
 }
