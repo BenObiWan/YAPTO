@@ -283,6 +283,14 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	}
 
 	@Override
+	public void editTag(final int iTagId, final int iParentId,
+			final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException
+	{
+		editTag(iTagId, getTag(iParentId), strName, strDescription, bSelectable);
+	}
+
+	@Override
 	public void editTag(final int iTagId, final ITag parent,
 			final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
