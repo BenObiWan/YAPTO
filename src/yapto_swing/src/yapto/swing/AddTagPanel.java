@@ -18,11 +18,13 @@ import javax.swing.border.EmptyBorder;
 
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
+import yapto.datasource.tag.EditableTag;
 import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.TagAddException;
 
 /**
- * Panel used to enter all the information of a new {@link ITag} and create it.
+ * Panel used to enter all the information of a new {@link ITag} and create it,
+ * also used to edit an existing {@link ITag}.
  * 
  * @author benobiwan
  * 
@@ -43,6 +45,21 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	 * Action command for the cancel action.
 	 */
 	private static final String CANCEL_ACTION_COMMAND = "ca";
+
+	/**
+	 * Action command for the edit action.
+	 */
+	private static final String EDIT_ACTION_COMMAND = "ed";
+
+	/**
+	 * Text for the "create tag" button.
+	 */
+	private static final String CREATE_LABEL = "Create";
+
+	/**
+	 * Text for the "edit tag" button.
+	 */
+	private static final String EDIT_LABEL = "Edit";
 
 	/**
 	 * Title for the error dialog box.
@@ -78,6 +95,16 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	 * The {@link IPictureBrowser} where to create tags.
 	 */
 	private final IPictureBrowser<?> _pictureBrowser;
+
+	/**
+	 * {@link JButton} used to create or edit the {@link ITag}.
+	 */
+	final JButton _buttonCreate = new JButton();
+
+	/**
+	 * Id of the tag to edit when in edit mode.
+	 */
+	private int _iIdOfTagToEdit = -1;
 
 	/**
 	 * Creates a new AddTagPanel.
@@ -116,13 +143,11 @@ public final class AddTagPanel extends JPanel implements ActionListener
 		panelParent.add(_tagParent, BorderLayout.CENTER);
 
 		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 10, 10));
-		final JButton buttonCreate = new JButton("Create");
-		buttonCreate.setActionCommand(CREATE_ACTION_COMMAND);
-		buttonCreate.addActionListener(this);
+		_buttonCreate.addActionListener(this);
 		final JButton buttonCancel = new JButton("Cancel");
 		buttonCancel.setActionCommand(CANCEL_ACTION_COMMAND);
 		buttonCancel.addActionListener(this);
-		panelButton.add(buttonCreate);
+		panelButton.add(_buttonCreate);
 		panelButton.add(buttonCancel);
 
 		add(panelHead, BorderLayout.PAGE_START);
@@ -152,6 +177,25 @@ public final class AddTagPanel extends JPanel implements ActionListener
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		else if (EDIT_ACTION_COMMAND.equals(e.getActionCommand()))
+		{
+			final boolean bSelectable = _tagSelectableField.isSelected();
+			final String strName = _tagNameField.getText();
+			final String strDescription = _tagDescriptionField.getText();
+			final int iParentTagId = _tagParent.getSelectedTagId();
+			try
+			{
+				_pictureBrowser.getDataSource().editTag(_iIdOfTagToEdit,
+						iParentTagId, strName, strDescription, bSelectable);
+				_parent.setVisible(false);
+			}
+			catch (final TagAddException ex)
+			{
+				JOptionPane.showMessageDialog(_parent, ex.getExceptionType()
+						.getMessage(), ERROR_DIALOG_TITLE,
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		else if (CANCEL_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
 			_parent.setVisible(false);
@@ -160,12 +204,41 @@ public final class AddTagPanel extends JPanel implements ActionListener
 
 	/**
 	 * Initialize the AddTagPanel before displaying it.
+	 * 
+	 * @param bIsEdit
+	 *            true if we are editing a tag.
+	 * @param tag
+	 *            the tag to edit if we are in edit mode, the tag to use as
+	 *            parent otherwise.
 	 */
-	public void initialize()
+	public void initialize(final boolean bIsEdit, final EditableTag tag)
 	{
-		_tagParent.setSelectedTag(0);
-		_tagNameField.setText("");
-		_tagSelectableField.setSelected(true);
-		_tagDescriptionField.setText("");
+		if (bIsEdit && tag != null)
+		{
+			_buttonCreate.setActionCommand(EDIT_ACTION_COMMAND);
+			_buttonCreate.setText(EDIT_LABEL);
+			_tagParent.setSelectedTag(tag.getParentId());
+			_tagNameField.setText(tag.getName());
+			_tagSelectableField.setSelected(tag.isSelectable());
+			_tagDescriptionField.setText(tag.getDescription());
+			_iIdOfTagToEdit = tag.getTagId();
+		}
+		else
+		{
+			_buttonCreate.setActionCommand(CREATE_ACTION_COMMAND);
+			_buttonCreate.setText(CREATE_LABEL);
+			_tagNameField.setText("");
+			_tagSelectableField.setSelected(true);
+			_tagDescriptionField.setText("");
+			_iIdOfTagToEdit = -1;
+			if (tag == null)
+			{
+				_tagParent.setSelectedTag(0);
+			}
+			else
+			{
+				_tagParent.setSelectedTag(tag.getTagId());
+			}
+		}
 	}
 }

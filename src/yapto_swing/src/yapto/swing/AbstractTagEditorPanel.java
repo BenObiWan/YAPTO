@@ -153,7 +153,7 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	@Override
 	public void actionPerformed(final ActionEvent e)
 	{
-		_addTagPanel.initialize();
+		_addTagPanel.initialize(false, null);
 		_dialogCreateTag.pack();
 		_dialogCreateTag.setVisible(true);
 	}
