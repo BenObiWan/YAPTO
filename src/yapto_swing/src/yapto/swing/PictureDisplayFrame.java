@@ -142,6 +142,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		}
 		catch (final ExecutionException e1)
 		{
+			JOptionPane.showMessageDialog(this, e1.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 			LOGGER.error(e1.getMessage(), e1);
 		}
 
@@ -224,6 +226,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				catch (final PictureAddException e)
 				{
+					// TODO action based on type of exception
+
 					LOGGER.error(e.getMessage(), e);
 				}
 			}
@@ -234,8 +238,11 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			stop();
 			break;
 		default:
-			LOGGER.error("Action command " + ae.getActionCommand()
-					+ " unknown.");
+			final String strError = "Action command " + ae.getActionCommand()
+					+ " unknown.";
+			JOptionPane.showMessageDialog(this, strError, "Error",
+					JOptionPane.ERROR_MESSAGE);
+			LOGGER.error(strError);
 			break;
 		}
 	}

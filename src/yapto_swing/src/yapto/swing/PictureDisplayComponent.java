@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import org.slf4j.Logger;
@@ -102,6 +103,8 @@ public final class PictureDisplayComponent extends JScrollPane
 		}
 		catch (final IOException ex)
 		{
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 			LOGGER.error(ex.getMessage(), ex);
 		}
 	}
