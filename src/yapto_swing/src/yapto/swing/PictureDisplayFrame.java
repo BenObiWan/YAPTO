@@ -71,8 +71,14 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 */
 	private static final String QUIT_ACTION_COMMAND = "quit";
 
+	/**
+	 * {@link JFileChooser} used to select the file to add.
+	 */
 	private final JFileChooser _chooser = new JFileChooser();
 
+	/**
+	 * {@link IDataSource} used to load the pictures.
+	 */
 	protected final IDataSource<?> _dataSource;
 
 	/**
@@ -142,11 +148,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		}
 		catch (final ExecutionException e1)
 		{
-			JOptionPane.showMessageDialog(this, e1.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			LOGGER.error(e1.getMessage(), e1);
+			logException(e1);
 		}
-
 		setJMenuBar(createMenuBar());
 		setContentPane(contentPane);
 	}
@@ -226,9 +229,23 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				catch (final PictureAddException e)
 				{
-					// TODO action based on type of exception
-
-					LOGGER.error(e.getMessage(), e);
+					switch (e.getExceptionType())
+					{
+					case FILE_ALREADY_EXISTS:
+						final String strId = e.getPictureId();
+						if (strId != null)
+						{
+							// TODO add a dialog to compare the two pictures.
+							logException(e);
+						}
+						else
+						{
+							logException(e);
+						}
+						break;
+					default:
+						logException(e);
+					}
 				}
 			}
 			break;
@@ -238,13 +255,35 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			stop();
 			break;
 		default:
-			final String strError = "Action command " + ae.getActionCommand()
-					+ " unknown.";
-			JOptionPane.showMessageDialog(this, strError, "Error",
-					JOptionPane.ERROR_MESSAGE);
-			LOGGER.error(strError);
+			logError("Action command " + ae.getActionCommand() + " unknown.");
 			break;
 		}
+	}
+
+	/**
+	 * Method used to log an error and display it on a dialog.
+	 * 
+	 * @param strError
+	 *            the error to display.
+	 */
+	private void logError(final String strError)
+	{
+		JOptionPane.showMessageDialog(this, strError, "Error",
+				JOptionPane.ERROR_MESSAGE);
+		LOGGER.error(strError);
+	}
+
+	/**
+	 * Method used to log an exception and display it's message on a dialog.
+	 * 
+	 * @param e
+	 *            the exception to log.
+	 */
+	private void logException(final Exception e)
+	{
+		JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
+				JOptionPane.ERROR_MESSAGE);
+		LOGGER.error(e.getMessage(), e);
 	}
 
 	/**
