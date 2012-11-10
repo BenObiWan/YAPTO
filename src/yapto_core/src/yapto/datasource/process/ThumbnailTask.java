@@ -7,12 +7,12 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 
 /**
- * Task used to resize a picture.
+ * Task used to create the thumbnail of a picture.
  * 
  * @author benobiwan
  * 
  */
-public final class ResizeTask implements Callable<Boolean>
+public final class ThumbnailTask implements Callable<Boolean>
 {
 	/**
 	 * The picture to resize.
@@ -35,7 +35,7 @@ public final class ResizeTask implements Callable<Boolean>
 	private final IMOperation _operation = new IMOperation();
 
 	/**
-	 * Creates a new ResizeTask.
+	 * Creates a new ThumbnailTask.
 	 * 
 	 * @param fOriginalPicture
 	 *            the picture to resize.
@@ -43,22 +43,19 @@ public final class ResizeTask implements Callable<Boolean>
 	 *            the destination for the resized picture.
 	 * @param iWidth
 	 *            the width of the resized picture.
-	 * @param bkeepMetadata
-	 *            whether the resized picture should keep the original picture
-	 *            metadata or not.
 	 */
-	public ResizeTask(final File fOriginalPicture,
-			final File fDestinationPicture, final int iWidth,
-			final boolean bkeepMetadata)
+	public ThumbnailTask(final File fOriginalPicture,
+			final File fDestinationPicture, final int iWidth)
 	{
 		_fOriginalPicture = fOriginalPicture;
 		_fDestinationPicture = fDestinationPicture;
+		final Integer iSize = Integer.valueOf(iWidth);
 		_operation.addImage();
-		_operation.resize(Integer.valueOf(iWidth));
-		if (!bkeepMetadata)
-		{
-			_operation.strip();
-		}
+		_operation.resize(iSize, iSize);
+		_operation.background("transparent");
+		_operation.gravity("center");
+		_operation.extent(iSize, iSize);
+		_operation.strip();
 		_operation.addImage();
 	}
 

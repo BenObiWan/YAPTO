@@ -126,6 +126,48 @@ public final class PictureProcessor
 	}
 
 	/**
+	 * Create the thumbnail of the given picture.
+	 * 
+	 * @param iWidth
+	 *            the target width of the new picture.
+	 * @param fOriginalPicture
+	 *            the picture to resize.
+	 * @param fDestinationPicture
+	 *            the path to the new resized picture.
+	 * @throws InterruptedException
+	 *             if the current thread was interrupted while waiting
+	 * @throws ExecutionException
+	 *             if the computation threw an exception.
+	 */
+	public void createPictureThumbnail(final int iWidth,
+			final File fOriginalPicture, final File fDestinationPicture)
+			throws InterruptedException, ExecutionException
+	{
+		final Future<Boolean> fut = asyncCreatePictureThumbnail(iWidth,
+				fOriginalPicture, fDestinationPicture);
+		fut.get();
+	}
+
+	/**
+	 * submit a task to create a thumbnail of the given picture and return
+	 * without waiting for the task to complete. uses a ThumbnailTask.
+	 * 
+	 * @param iWidth
+	 *            the target width of the new picture.
+	 * @param fOriginalPicture
+	 *            the picture to resize.
+	 * @param fDestinationPicture
+	 *            the path to the new resized picture.
+	 * @return the {@link Future} object used to follow the submitted command.
+	 */
+	public Future<Boolean> asyncCreatePictureThumbnail(final int iWidth,
+			final File fOriginalPicture, final File fDestinationPicture)
+	{
+		return _generalPurposeExecutor.submit(new ThumbnailTask(
+				fOriginalPicture, fDestinationPicture, iWidth));
+	}
+
+	/**
 	 * Initiate a shutdown of all the {@link ExecutorService}, but waits for
 	 * already running tasks to complete.
 	 */

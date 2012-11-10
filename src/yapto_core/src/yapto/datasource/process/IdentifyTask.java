@@ -15,7 +15,7 @@ import yapto.datasource.PictureInformation;
  * @author benobiwan
  * 
  */
-public class IdentifyTask implements Callable<PictureInformation>
+public final class IdentifyTask implements Callable<PictureInformation>
 {
 	/**
 	 * The picture to identify.
