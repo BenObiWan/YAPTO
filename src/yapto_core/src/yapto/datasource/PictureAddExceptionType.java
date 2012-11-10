@@ -62,7 +62,12 @@ public enum PictureAddExceptionType
 	 * Error during the execution of identify on the picture.
 	 */
 	IDENTIFY_EXECUTION_ERROR(
-			"Error during the execution of identify on the picture.");
+			"Error during the execution of identify on the picture."),
+
+	/**
+	 * The specified file isn't a directory.
+	 */
+	NOT_A_DIRECTORY("The specified file isn't a directory.");
 
 	/**
 	 * Message for this exception type.

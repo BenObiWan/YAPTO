@@ -7,12 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -30,6 +32,7 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.PictureAddExceptionType;
+import yapto.datasource.PictureAddResult;
 import yapto.datasource.PictureInformation;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
@@ -309,6 +312,29 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 					PictureAddExceptionType.INDEX_ERROR, e);
 		}
 		_pictureIdList.add(strPictureId);
+	}
+
+	@Override
+	public PictureAddResult addDirectory(final File pictureDirectory)
+			throws PictureAddException
+	{
+		Path p = pictureDirectory.toPath();
+		if (!Files.isDirectory(p))
+		{
+			throw new PictureAddException(
+					PictureAddExceptionType.NOT_A_DIRECTORY);
+		}
+		AddingFileVisitor visitor = new AddingFileVisitor(this);
+		try
+		{
+			Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class),
+					Integer.MAX_VALUE, visitor);
+			return visitor.getResult();
+		}
+		catch (IOException e)
+		{
+			throw new PictureAddException(PictureAddExceptionType.IO_ERROR, e);
+		}
 	}
 
 	@Override

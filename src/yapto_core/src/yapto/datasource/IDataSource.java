@@ -31,6 +31,19 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	void addPicture(File pictureFile) throws PictureAddException;
 
 	/**
+	 * Add all {@link IPicture}s from a directory to the {@link IDataSource}.
+	 * 
+	 * @param pictureDirectory
+	 *            the path to the directory.
+	 * @return object containing information about every added pictures.
+	 * @throws PictureAddException
+	 *             if an error occurs during the addition of the
+	 *             {@link IPicture}.
+	 */
+	PictureAddResult addDirectory(File pictureDirectory)
+			throws PictureAddException;
+
+	/**
 	 * Get the id of this {@link IDataSource}.
 	 * 
 	 * @return the id of this {@link IDataSource}.
