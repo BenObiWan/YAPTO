@@ -72,9 +72,14 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private static final String QUIT_ACTION_COMMAND = "quit";
 
 	/**
-	 * {@link JFileChooser} used to select the file to add.
+	 * {@link JFileChooser} used to select an unique file to add.
 	 */
-	private final JFileChooser _chooser = new JFileChooser();
+	private final JFileChooser _individualPictureChooser = new JFileChooser();
+
+	/**
+	 * {@link JFileChooser} used to select a directory to add.
+	 */
+	private final JFileChooser _directoryChooser = new JFileChooser();
 
 	/**
 	 * {@link IDataSource} used to load the pictures.
@@ -92,6 +97,9 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	{
 		super("yapto");
 		_dataSource = dataSource;
+
+		_directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowListener()
 		{
@@ -214,11 +222,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		switch (ae.getActionCommand())
 		{
 		case ADD_PICTURE_ACTION_COMMAND:
-			final int returnVal = _chooser
-					.showOpenDialog(PictureDisplayFrame.this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
+			if (_individualPictureChooser
+					.showOpenDialog(PictureDisplayFrame.this) == JFileChooser.APPROVE_OPTION)
 			{
-				final File file = _chooser.getSelectedFile();
+				final File file = _individualPictureChooser.getSelectedFile();
 				if (LOGGER.isDebugEnabled())
 				{
 					LOGGER.debug("Opening: " + file.getName() + ".");
@@ -250,6 +257,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			}
 			break;
 		case ADD_DIRECTORY_ACTION_COMMAND:
+			if (_directoryChooser.showOpenDialog(PictureDisplayFrame.this) == JFileChooser.APPROVE_OPTION)
+			{
+				// TODO add all picture in the directory
+			}
 			break;
 		case QUIT_ACTION_COMMAND:
 			stop();
