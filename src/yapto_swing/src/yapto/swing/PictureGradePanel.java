@@ -13,6 +13,12 @@ import yapto.datasource.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
+/**
+ * Panel used to set and display the grade of an {@link IPicture}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class PictureGradePanel extends JPanel implements ChangeListener
 {
 	/**
