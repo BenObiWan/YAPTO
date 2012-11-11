@@ -2,9 +2,9 @@ package yapto.datasource.sqlfile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
@@ -188,13 +188,13 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public void addPicture(final File pictureFile) throws PictureAddException
+	public void addPicture(final Path pictureFile) throws PictureAddException
 	{
-		if (!pictureFile.canRead())
+		if (!Files.isReadable(pictureFile))
 		{
 			throw new PictureAddException(PictureAddExceptionType.CAN_T_READ);
 		}
-		if (!pictureFile.isFile())
+		if (!Files.isRegularFile(pictureFile))
 		{
 			throw new PictureAddException(PictureAddExceptionType.NOT_A_FILE);
 		}
@@ -212,10 +212,10 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		}
 		try
 		{
-			FileInputStream stream = null;
+			InputStream stream = null;
 			try
 			{
-				stream = new FileInputStream(pictureFile);
+				stream = Files.newInputStream(pictureFile);
 				final byte[] dataBytes = new byte[4096];
 
 				int byteRead = 0;
@@ -277,7 +277,7 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 						strPictureId.substring(0, 2), strPictureId);
 		try
 		{
-			Files.copy(pictureFile.toPath(), destPath);
+			Files.copy(pictureFile, destPath);
 		}
 		catch (final FileAlreadyExistsException e)
 		{
@@ -315,23 +315,23 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	}
 
 	@Override
-	public PictureAddResult addDirectory(final File pictureDirectory)
+	public PictureAddResult addDirectory(final Path pictureDirectory)
 			throws PictureAddException
 	{
-		Path p = pictureDirectory.toPath();
-		if (!Files.isDirectory(p))
+		if (!Files.isDirectory(pictureDirectory))
 		{
 			throw new PictureAddException(
 					PictureAddExceptionType.NOT_A_DIRECTORY);
 		}
-		AddingFileVisitor visitor = new AddingFileVisitor(this);
+		final AddingFileVisitor visitor = new AddingFileVisitor(this);
 		try
 		{
-			Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class),
-					Integer.MAX_VALUE, visitor);
+			Files.walkFileTree(pictureDirectory,
+					EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE,
+					visitor);
 			return visitor.getResult();
 		}
-		catch (IOException e)
+		catch (final IOException e)
 		{
 			throw new PictureAddException(PictureAddExceptionType.IO_ERROR, e);
 		}

@@ -1,6 +1,6 @@
 package yapto.datasource.process;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 import org.im4java.core.ConvertCmd;
@@ -17,12 +17,12 @@ public final class ThumbnailTask implements Callable<Boolean>
 	/**
 	 * The picture to resize.
 	 */
-	private final File _fOriginalPicture;
+	private final Path _fOriginalPicture;
 
 	/**
 	 * The destination picture.
 	 */
-	private final File _fDestinationPicture;
+	private final Path _fDestinationPicture;
 
 	/**
 	 * The command to execute on the picture.
@@ -44,11 +44,11 @@ public final class ThumbnailTask implements Callable<Boolean>
 	 * @param iWidth
 	 *            the width of the resized picture.
 	 */
-	public ThumbnailTask(final File fOriginalPicture,
-			final File fDestinationPicture, final int iWidth)
+	public ThumbnailTask(final Path fOriginalPicture,
+			final Path fDestinationPicture, final int iWidth)
 	{
-		_fOriginalPicture = fOriginalPicture;
-		_fDestinationPicture = fDestinationPicture;
+		_fOriginalPicture = fOriginalPicture.toAbsolutePath();
+		_fDestinationPicture = fDestinationPicture.toAbsolutePath();
 		final Integer iSize = Integer.valueOf(iWidth);
 		_operation.addImage();
 		_operation.resize(iSize, iSize);
@@ -62,8 +62,8 @@ public final class ThumbnailTask implements Callable<Boolean>
 	@Override
 	public Boolean call() throws Exception
 	{
-		_command.run(_operation, _fOriginalPicture.getAbsolutePath(),
-				_fDestinationPicture.getAbsolutePath());
+		_command.run(_operation, _fOriginalPicture.toString(),
+				_fDestinationPicture.toString());
 		return Boolean.TRUE;
 	}
 }

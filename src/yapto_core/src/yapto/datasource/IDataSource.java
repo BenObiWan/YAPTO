@@ -1,7 +1,7 @@
 package yapto.datasource;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.lucene.search.Query;
@@ -28,7 +28,7 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	void addPicture(File pictureFile) throws PictureAddException;
+	void addPicture(Path pictureFile) throws PictureAddException;
 
 	/**
 	 * Add all {@link IPicture}s from a directory to the {@link IDataSource}.
@@ -40,7 +40,7 @@ public interface IDataSource<PICTURE extends IPicture> extends
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	PictureAddResult addDirectory(File pictureDirectory)
+	PictureAddResult addDirectory(Path pictureDirectory)
 			throws PictureAddException;
 
 	/**

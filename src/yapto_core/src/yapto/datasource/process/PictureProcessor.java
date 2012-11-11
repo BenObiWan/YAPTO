@@ -1,6 +1,6 @@
 package yapto.datasource.process;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,7 +57,7 @@ public final class PictureProcessor
 	 * @throws ExecutionException
 	 *             if the computation threw an exception.
 	 */
-	public PictureInformation identifyPicture(final File fPicture)
+	public PictureInformation identifyPicture(final Path fPicture)
 			throws InterruptedException, ExecutionException
 	{
 		final Future<PictureInformation> fut = asyncIdentifyPicture(fPicture);
@@ -73,7 +73,7 @@ public final class PictureProcessor
 	 * @return the {@link Future} object used to follow the submitted command
 	 *         and gets its result when it is completed.
 	 */
-	public Future<PictureInformation> asyncIdentifyPicture(final File fPicture)
+	public Future<PictureInformation> asyncIdentifyPicture(final Path fPicture)
 	{
 		return _identifyExecutor.submit(new IdentifyTask(fPicture));
 	}
@@ -94,8 +94,8 @@ public final class PictureProcessor
 	 * @throws ExecutionException
 	 *             if the computation threw an exception.
 	 */
-	public void resizePicture(final int iWidth, final File fOriginalPicture,
-			final File fDestinationPicture, final boolean bkeepMetadata)
+	public void resizePicture(final int iWidth, final Path fOriginalPicture,
+			final Path fDestinationPicture, final boolean bkeepMetadata)
 			throws InterruptedException, ExecutionException
 	{
 		final Future<Boolean> fut = asyncResizePicture(iWidth,
@@ -118,7 +118,7 @@ public final class PictureProcessor
 	 * @return the {@link Future} object used to follow the submitted command.
 	 */
 	public Future<Boolean> asyncResizePicture(final int iWidth,
-			final File fOriginalPicture, final File fDestinationPicture,
+			final Path fOriginalPicture, final Path fDestinationPicture,
 			final boolean bkeepMetadata)
 	{
 		return _generalPurposeExecutor.submit(new ResizeTask(fOriginalPicture,
@@ -140,7 +140,7 @@ public final class PictureProcessor
 	 *             if the computation threw an exception.
 	 */
 	public void createPictureThumbnail(final int iWidth,
-			final File fOriginalPicture, final File fDestinationPicture)
+			final Path fOriginalPicture, final Path fDestinationPicture)
 			throws InterruptedException, ExecutionException
 	{
 		final Future<Boolean> fut = asyncCreatePictureThumbnail(iWidth,
@@ -161,7 +161,7 @@ public final class PictureProcessor
 	 * @return the {@link Future} object used to follow the submitted command.
 	 */
 	public Future<Boolean> asyncCreatePictureThumbnail(final int iWidth,
-			final File fOriginalPicture, final File fDestinationPicture)
+			final Path fOriginalPicture, final Path fDestinationPicture)
 	{
 		return _generalPurposeExecutor.submit(new ThumbnailTask(
 				fOriginalPicture, fDestinationPicture, iWidth));

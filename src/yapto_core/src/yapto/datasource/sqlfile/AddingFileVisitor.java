@@ -35,24 +35,24 @@ public final class AddingFileVisitor extends SimpleFileVisitor<Path>
 	 * @param dataSource
 	 *            the {@link IDataSource} used for adding pictures.
 	 */
-	public AddingFileVisitor(IDataSource<?> dataSource)
+	public AddingFileVisitor(final IDataSource<?> dataSource)
 	{
 		_dataSource = dataSource;
 		_result = new PictureAddResult();
 	}
 
 	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-			throws IOException
+	public FileVisitResult visitFile(final Path file,
+			final BasicFileAttributes attrs) throws IOException
 	{
 		FileVisitResult res;
 		try
 		{
-			_dataSource.addPicture(file.toFile());
+			_dataSource.addPicture(file);
 			_result.addFileSuccess(file);
 			res = FileVisitResult.CONTINUE;
 		}
-		catch (PictureAddException e)
+		catch (final PictureAddException e)
 		{
 			switch (e.getExceptionType())
 			{
