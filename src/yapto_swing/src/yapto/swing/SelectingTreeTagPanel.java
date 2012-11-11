@@ -14,6 +14,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import yapto.datasource.IPicture;
 import yapto.datasource.IPictureBrowser;
 import yapto.datasource.tag.ITag;
+import yapto.datasource.tag.TagRepositoryChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /**
  * Implementation of {@link AbstractTreeTagPanel} where multiple {@link ITag}s
@@ -120,6 +123,15 @@ public class SelectingTreeTagPanel extends AbstractTreeTagPanel implements
 		{
 			_bChangingPicture = false;
 		}
+	}
+
+	@Override
+	@Subscribe
+	public void handleTagRepositoryChangedEvent(
+			final TagRepositoryChangedEvent ev)
+	{
+		super.handleTagRepositoryChangedEvent(ev);
+		setSelectedTags();
 	}
 
 	@Override

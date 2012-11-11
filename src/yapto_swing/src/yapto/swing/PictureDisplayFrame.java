@@ -269,7 +269,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 					_dataSource.addDirectory(file.toPath());
 					// TODO handle return object
 				}
-				catch (PictureAddException e)
+				catch (final PictureAddException e)
 				{
 					logException(e);
 				}
