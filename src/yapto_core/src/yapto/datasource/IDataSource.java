@@ -44,6 +44,14 @@ public interface IDataSource<PICTURE extends IPicture> extends
 			throws PictureAddException;
 
 	/**
+	 * Create the thumbnail for the specified picture.
+	 * 
+	 * @param picture
+	 *            the picture.
+	 */
+	void createThumbnail(PICTURE picture);
+
+	/**
 	 * Get the id of this {@link IDataSource}.
 	 * 
 	 * @return the id of this {@link IDataSource}.

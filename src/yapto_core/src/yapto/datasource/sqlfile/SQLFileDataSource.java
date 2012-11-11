@@ -289,8 +289,12 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 			throw new PictureAddException(strPictureId,
 					PictureAddExceptionType.COPY_ERROR, e);
 		}
+		// create object
 		final FsPicture picture = new FsPicture(_imageLoader, this,
 				strPictureId, lAddedTimestamp, lAddedTimestamp, info);
+		// create thumbnail
+		createThumbnail(picture);
+		// insert to base and index
 		try
 		{
 			_fileListConnection.insertPicture(picture);
@@ -335,6 +339,21 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 		{
 			throw new PictureAddException(PictureAddExceptionType.IO_ERROR, e);
 		}
+	}
+
+	@Override
+	public void createThumbnail(final FsPicture picture)
+	{
+		final String subDir = picture.getId().substring(0, 2);
+		final Path picturePath = FileSystems
+				.getDefault()
+				.getPath(
+						_conf.getMainPictureLoaderConfiguration()
+								.getPictureDirectory(), subDir, picture.getId());
+		final Path thumbnailPath = FileSystems.getDefault().getPath(
+				_conf.getThumbnailPictureLoaderConfiguration()
+						.getPictureDirectory(), subDir, picture.getId());
+		_processor.asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
 	}
 
 	@Override

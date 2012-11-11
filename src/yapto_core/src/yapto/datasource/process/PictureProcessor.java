@@ -6,6 +6,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.datasource.PictureInformation;
 
 /**
@@ -16,6 +19,12 @@ import yapto.datasource.PictureInformation;
  */
 public final class PictureProcessor
 {
+	/**
+	 * Logger object.
+	 */
+	protected static transient final Logger LOGGER = LoggerFactory
+			.getLogger(PictureProcessor.class);
+
 	/**
 	 * ExecutorService used to execute identify commands.
 	 */
