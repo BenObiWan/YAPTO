@@ -259,7 +259,20 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		case ADD_DIRECTORY_ACTION_COMMAND:
 			if (_directoryChooser.showOpenDialog(PictureDisplayFrame.this) == JFileChooser.APPROVE_OPTION)
 			{
-				// TODO add all picture in the directory
+				final File file = _directoryChooser.getSelectedFile();
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Opening directory: " + file.getName() + ".");
+				}
+				try
+				{
+					_dataSource.addDirectory(file.toPath());
+					// TODO handle return object
+				}
+				catch (PictureAddException e)
+				{
+					logException(e);
+				}
 			}
 			break;
 		case QUIT_ACTION_COMMAND:
