@@ -1,8 +1,6 @@
 ** yapto_core **
 
 Orientation of resized pictures
-Thumbnails creation
-Thumbnails as square (transparent background?)
 Target resolution list
 Resize to target resolution list
 Datasource without pictures
@@ -24,6 +22,5 @@ Zoom type selection
 Search panel
 Thumbnails panel
 Tags modification
-Multiple picture addition
 Picture removal
 
