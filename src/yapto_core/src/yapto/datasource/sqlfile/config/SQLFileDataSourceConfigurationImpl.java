@@ -65,30 +65,125 @@ public class SQLFileDataSourceConfigurationImpl extends
 	 */
 	private final ConfigurationInteger _leafWaitBeforeWrite;
 
+	/**
+	 * Short description for the datasource id.
+	 */
 	private final static String DATASOURCE_ID_SHORT_DESC = "DataSource Id";
+
+	/**
+	 * Long description for the datasource id.
+	 */
 	private final static String DATASOURCE_ID_LONG_DESC = "Id of this DataSource.";
+
+	/**
+	 * Invalid message for the datasource id.
+	 */
 	private final static String DATASOURCE_ID_INVALID_MESSAGE = "Invalid Id for this DataSource.";
+
+	/**
+	 * Short description for the database file name id.
+	 */
 	private final static String DATASBASE_FILENAME_SHORT_DESC = "Database file name";
+
+	/**
+	 * Long description for the database file name id.
+	 */
 	private final static String DATASBASE_FILENAME_LONG_DESC = "File name for the database.";
+
+	/**
+	 * Invalid message for the database file name id.
+	 */
 	private final static String DATASBASE_FILENAME_INVALID_MESSAGE = "Invalid file name for the database.";
+
+	/**
+	 * Short description for the picture directory.
+	 */
 	private final static String PICTURE_DIRECTORY_SHORT_DESC = "Picture directory";
+
+	/**
+	 * Long description for the picture directory.
+	 */
 	private final static String PICTURE_DIRECTORY_LONG_DESC = "Base directory for the pictures.";
+
+	/**
+	 * Invalid message for the picture directory.
+	 */
 	private final static String PICTURE_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the pictures.";
+
+	/**
+	 * Short description for the thumbnails directory.
+	 */
 	private final static String THUMBNAILS_DIRECTORY_SHORT_DESC = "Thumbnails directory";
+
+	/**
+	 * Long description for the thumbnails directory.
+	 */
 	private final static String THUMBNAILS_DIRECTORY_LONG_DESC = "Base directory for the thumbnails.";
+
+	/**
+	 * Invalid message for the thumbnails directory.
+	 */
 	private final static String THUMBNAILS_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the thumbnails.";
+
+	/**
+	 * Short description for the index directory.
+	 */
 	private final static String INDEX_DIRECTORY_SHORT_DESC = "Index directory";
+
+	/**
+	 * Long description for the index directory.
+	 */
 	private final static String INDEX_DIRECTORY_LONG_DESC = "Base directory for the indexes.";
+
+	/**
+	 * Invalid message for the index directory.
+	 */
 	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
-	private final static String MAX_IDENTIFY_TASK_SHORT_DESC = "TODO";
-	private final static String MAX_IDENTIFY_TASK_LONG_DESC = "TODO";
-	private final static String MAX_IDENTIFY_TASK_MESSAGE = "TODO";
-	private final static String MAX_OTHER_TASK_SHORT_DESC = "TODO";
-	private final static String MAX_OTHER_TASK_LONG_DESC = "TODO";
-	private final static String MAX_OTHER_TASK_MESSAGE = "TODO";
-	private final static String WAIT_BEFORE_WRITE_SHORT_DESC = "TODO";
-	private final static String WAIT_BEFORE_WRITE_LONG_DESC = "TODO";
-	private final static String WAIT_BEFORE_WRITE_MESSAGE = "TODO";
+
+	/**
+	 * Short description for the maximum number of identify task.
+	 */
+	private final static String MAX_IDENTIFY_TASK_SHORT_DESC = "Maximum number of identify task.";
+
+	/**
+	 * Long description for the maximum number of identify task.
+	 */
+	private final static String MAX_IDENTIFY_TASK_LONG_DESC = "Maximum number of concurrent identify task.";
+
+	/**
+	 * Invalid message for the maximum number of identify task.
+	 */
+	private final static String MAX_IDENTIFY_TASK_INVALID_MESSAGE = "Invalid maximum number of identify task.";
+
+	/**
+	 * Short description for the maximum number of other task.
+	 */
+	private final static String MAX_OTHER_TASK_SHORT_DESC = "Maximum number of other task.";
+
+	/**
+	 * Long description for the maximum number of other task.
+	 */
+	private final static String MAX_OTHER_TASK_LONG_DESC = "Maximum number of concurrent task other than  identify task.";
+
+	/**
+	 * Invalid message for the maximum number of identify task.
+	 */
+	private final static String MAX_OTHER_TASK_INVALID_MESSAGE = "Invalid maximum number of other task.";
+
+	/**
+	 * Short description for the time waited before writing.
+	 */
+	private final static String WAIT_BEFORE_WRITE_SHORT_DESC = "Time waited before writing.";
+
+	/**
+	 * Long description for the time waited before writing.
+	 */
+	private final static String WAIT_BEFORE_WRITE_LONG_DESC = "Time waited before writing picture metadata when it's modified.";
+
+	/**
+	 * Invalid message for the time waited before writing.
+	 */
+	private final static String WAIT_BEFORE_WRITE_INVALID_MESSAGE = "Invalid waited before writing.";
 
 	/**
 	 * {@link IBufferedImageCacheLoaderConfiguration} for the pictures.
@@ -139,18 +234,18 @@ public class SQLFileDataSourceConfigurationImpl extends
 				false, StringDisplayType.TEXTFIELD, 0, "");
 		_leafMaxIdentifyTask = new ConfigurationInteger(this,
 				MAX_IDENTIFY_TASK_TAG, MAX_IDENTIFY_TASK_SHORT_DESC,
-				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_MESSAGE, false,
-				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_INVALID_MESSAGE,
+				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		_leafMaxOtherTask = new ConfigurationInteger(this, MAX_OTHER_TASK_TAG,
 				MAX_OTHER_TASK_SHORT_DESC, MAX_OTHER_TASK_LONG_DESC,
-				MAX_OTHER_TASK_MESSAGE, false, IntegerDisplayType.SPINNER,
-				Integer.valueOf(0), Integer.valueOf(Integer.MAX_VALUE),
-				Integer.valueOf(0));
+				MAX_OTHER_TASK_INVALID_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		_leafWaitBeforeWrite = new ConfigurationInteger(this,
 				WAIT_BEFORE_WRITE_TAG, WAIT_BEFORE_WRITE_SHORT_DESC,
-				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_MESSAGE, false,
-				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_INVALID_MESSAGE,
+				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		addLeaf(_leafDataSourceId);
 		addLeaf(_leafDatabaseFileName);
@@ -243,19 +338,20 @@ public class SQLFileDataSourceConfigurationImpl extends
 				strCommandLineIndexDirectory);
 		_leafMaxIdentifyTask = new ConfigurationInteger(this,
 				MAX_IDENTIFY_TASK_TAG, MAX_IDENTIFY_TASK_SHORT_DESC,
-				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_MESSAGE, false,
-				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				MAX_IDENTIFY_TASK_LONG_DESC, MAX_IDENTIFY_TASK_INVALID_MESSAGE,
+				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
 				iCommandLineMaxIdentifyTask);
 		_leafMaxOtherTask = new ConfigurationInteger(this, MAX_OTHER_TASK_TAG,
 				MAX_OTHER_TASK_SHORT_DESC, MAX_OTHER_TASK_LONG_DESC,
-				MAX_OTHER_TASK_MESSAGE, false, IntegerDisplayType.SPINNER,
-				Integer.valueOf(0), Integer.valueOf(Integer.MAX_VALUE),
-				Integer.valueOf(0), iCommandLineMaxOtherTask);
+				MAX_OTHER_TASK_INVALID_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
+				iCommandLineMaxOtherTask);
 		_leafWaitBeforeWrite = new ConfigurationInteger(this,
 				WAIT_BEFORE_WRITE_TAG, WAIT_BEFORE_WRITE_SHORT_DESC,
-				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_MESSAGE, false,
-				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_INVALID_MESSAGE,
+				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
 				iCommandLineWaitBeforeWrite);
 		addLeaf(_leafDataSourceId);
