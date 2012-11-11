@@ -232,7 +232,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				try
 				{
-					_dataSource.addPicture(file);
+					_dataSource.addPicture(file.toPath());
 				}
 				catch (final PictureAddException e)
 				{
