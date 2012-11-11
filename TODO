@@ -1,6 +1,7 @@
 ** yapto_core **
 
 Orientation of resized pictures
+Orientation of thumbnails
 Target resolution list
 Resize to target resolution list
 Datasource without pictures
@@ -23,4 +24,8 @@ Search panel
 Thumbnails panel
 Tags modification
 Picture removal
-
+Add tag when adding multiple pictures
+Show summary when adding multiple pictures
+Handle picture duplicates
+Full screen mode
+Reload picture list on addition
