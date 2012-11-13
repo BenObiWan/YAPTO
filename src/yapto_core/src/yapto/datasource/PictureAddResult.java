@@ -1,8 +1,10 @@
 package yapto.datasource;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Result of the adding of multiple pictures to an {@link IDataSource}.
@@ -33,6 +35,12 @@ public final class PictureAddResult
 	private final List<Path> _successPath;
 
 	/**
+	 * {@link Map} off the pictures that are duplicates of already present
+	 * pictures.
+	 */
+	private final Map<String, Path> _duplicateMap = new HashMap<>();
+
+	/**
 	 * Creates a new PictureAddResult.
 	 */
 	public PictureAddResult()
@@ -53,7 +61,7 @@ public final class PictureAddResult
 		switch (e.getExceptionType())
 		{
 		case FILE_ALREADY_EXISTS:
-			// TODO add file to a list
+			_duplicateMap.put(e.getPictureId(), file);
 			break;
 		case NOT_A_FILE:
 		case FILE_NOT_FOUND:
@@ -84,6 +92,14 @@ public final class PictureAddResult
 		}
 	}
 
+	/**
+	 * Register an unrecoverable error.
+	 * 
+	 * @param file
+	 *            the {@link Path} to the file in error.
+	 * @param e
+	 *            the encountered error.
+	 */
 	public void addUnrecoverableError(final Path file,
 			final PictureAddException e)
 	{
