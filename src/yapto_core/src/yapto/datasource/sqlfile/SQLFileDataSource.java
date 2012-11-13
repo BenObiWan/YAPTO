@@ -36,6 +36,7 @@ import yapto.datasource.PictureAddResult;
 import yapto.datasource.PictureInformation;
 import yapto.datasource.index.PictureIndexer;
 import yapto.datasource.process.PictureProcessor;
+import yapto.datasource.sqlfile.config.IGlobalSQLFileDataSourceConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.tag.ITag;
 import yapto.datasource.tag.IWritableTagRepository;
@@ -71,6 +72,11 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 * Configuration for this {@link SQLFileDataSource}.
 	 */
 	private final ISQLFileDataSourceConfiguration _conf;
+
+	/**
+	 * Global configuration common for all {@link SQLFileDataSource}.
+	 */
+	private final IGlobalSQLFileDataSourceConfiguration _globalConfiguration;
 
 	/**
 	 * {@link LoadingCache} used to load the {@link FsPicture}.
@@ -127,6 +133,8 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	/**
 	 * Creates a new SQLFileDataSource.
 	 * 
+	 * @param globalConfiguration
+	 *            global configuration common for all {@link SQLFileDataSource}.
 	 * @param conf
 	 *            configuration for this {@link SQLFileDataSource}.
 	 * @param bus
@@ -141,17 +149,20 @@ public class SQLFileDataSource implements IDataSource<FsPicture>
 	 *             if there is an error in creating the required picture
 	 *             directories.
 	 */
-	public SQLFileDataSource(final ISQLFileDataSourceConfiguration conf,
-			final EventBus bus) throws SQLException, ClassNotFoundException,
-			IOException
+	public SQLFileDataSource(
+			final IGlobalSQLFileDataSourceConfiguration globalConfiguration,
+			final ISQLFileDataSourceConfiguration conf, final EventBus bus)
+			throws SQLException, ClassNotFoundException, IOException
 	{
 		_bus = bus;
 		_conf = conf;
+		_globalConfiguration = globalConfiguration;
 		_fileListConnection = new SQLFileListConnection(_conf);
 		_indexer = new PictureIndexer(_conf);
-		_lWaitBeforeWrite = _conf.getWaitBeforeWrite() * 1000;
-		_processor = new PictureProcessor(_conf.getMaxConcurrentIdentifyTask(),
-				_conf.getMaxConcurrentOtherTask());
+		_lWaitBeforeWrite = _globalConfiguration.getWaitBeforeWrite() * 1000;
+		_processor = new PictureProcessor(
+				_globalConfiguration.getMaxConcurrentIdentifyTask(),
+				_globalConfiguration.getMaxConcurrentOtherTask());
 
 		// tag repository
 		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection,

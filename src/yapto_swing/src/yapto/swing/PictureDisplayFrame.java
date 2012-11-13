@@ -29,6 +29,8 @@ import yapto.datasource.IDataSource;
 import yapto.datasource.IPicture;
 import yapto.datasource.PictureAddException;
 import yapto.datasource.sqlfile.SQLFileDataSource;
+import yapto.datasource.sqlfile.config.GlobalSQLFileDataSourceConfigurationImpl;
+import yapto.datasource.sqlfile.config.IGlobalSQLFileDataSourceConfiguration;
 import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
 import yapto.datasource.sqlfile.config.SQLFileDataSourceConfigurationImpl;
 
@@ -324,16 +326,22 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			SQLException, IOException, InvalidConfigurationException
 	{
 		BasicConfigurator.configure();
+
+		final IGlobalSQLFileDataSourceConfiguration globalConf = new GlobalSQLFileDataSourceConfigurationImpl(
+				null, ManagementFactory.getPlatformMBeanServer(),
+				Integer.valueOf(4), Integer.valueOf(4), Integer.valueOf(3));
+
 		final ISQLFileDataSourceConfiguration conf = new SQLFileDataSourceConfigurationImpl(
 				null, ManagementFactory.getPlatformMBeanServer(),
 				Integer.valueOf(1),
 				"/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
-				"/home/benobiwan/images/photoDB/index/", Integer.valueOf(4),
-				Integer.valueOf(4), Integer.valueOf(3));
+				"/home/benobiwan/images/photoDB/index/");
+
 		final EventBus bus = new AsyncEventBus(Executors.newFixedThreadPool(10));
-		final SQLFileDataSource dataSource = new SQLFileDataSource(conf, bus);
+		final SQLFileDataSource dataSource = new SQLFileDataSource(globalConf,
+				conf, bus);
 
 		// final IDataSource<DummyPicture> dataSource = new DummyDataSource(
 		// new AsyncEventBus(Executors.newFixedThreadPool(10)));

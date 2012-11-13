@@ -1,7 +1,6 @@
 package yapto.datasource.sqlfile.config;
 
 import yapto.datasource.config.IDataSourceConfiguration;
-import yapto.datasource.process.IdentifyTask;
 import yapto.datasource.sqlfile.IBufferedImageCacheLoaderConfiguration;
 import yapto.datasource.sqlfile.SQLFileDataSource;
 
@@ -42,24 +41,6 @@ public interface ISQLFileDataSourceConfiguration extends
 	String INDEX_DIRECTORY_TAG = "IndexDirectory";
 
 	/**
-	 * Tag for the maximum number of {@link IdentifyTask} to run at the same
-	 * time.
-	 */
-	String MAX_IDENTIFY_TASK_TAG = "MaxIdentifyTask";
-
-	/**
-	 * Tag for the maximum number of task other than {@link IdentifyTask} to run
-	 * at the same time.
-	 */
-	String MAX_OTHER_TASK_TAG = "MaxOtherTask";
-
-	/**
-	 * Tag for the minimum number of seconds to wait between picture
-	 * modification and saving to the database.
-	 */
-	String WAIT_BEFORE_WRITE_TAG = "WaitBeforeWrite";
-
-	/**
 	 * Get the file name of the database.
 	 * 
 	 * @return the file name of the database.
@@ -90,30 +71,4 @@ public interface ISQLFileDataSourceConfiguration extends
 	 *         thumbnails {@link CacheLoader}.
 	 */
 	IBufferedImageCacheLoaderConfiguration getThumbnailPictureLoaderConfiguration();
-
-	/**
-	 * Get the maximum number of {@link IdentifyTask} to run at the same time.
-	 * 
-	 * @return the maximum number of {@link IdentifyTask} to run at the same
-	 *         time.
-	 */
-	int getMaxConcurrentIdentifyTask();
-
-	/**
-	 * Get the maximum number of task other than {@link IdentifyTask} to run at
-	 * the same time.
-	 * 
-	 * @return the maximum number of task other than {@link IdentifyTask} to run
-	 *         at the same time.
-	 */
-	int getMaxConcurrentOtherTask();
-
-	/**
-	 * Get the minimum number of seconds to wait between picture modification
-	 * and saving to the database.
-	 * 
-	 * @return the minimum number of seconds to wait between picture
-	 *         modification and saving to the database.
-	 */
-	int getWaitBeforeWrite();
 }
