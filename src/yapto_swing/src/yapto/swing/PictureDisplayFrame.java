@@ -25,14 +25,14 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import yapto.datasource.IDataSource;
-import yapto.datasource.IPicture;
-import yapto.datasource.PictureAddException;
-import yapto.datasource.sqlfile.SQLFileDataSource;
-import yapto.datasource.sqlfile.config.GlobalSQLFileDataSourceConfigurationImpl;
-import yapto.datasource.sqlfile.config.IGlobalSQLFileDataSourceConfiguration;
-import yapto.datasource.sqlfile.config.ISQLFileDataSourceConfiguration;
-import yapto.datasource.sqlfile.config.SQLFileDataSourceConfigurationImpl;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureAddException;
+import yapto.picturebank.sqlfile.SQLFilePictureBank;
+import yapto.picturebank.sqlfile.config.GlobalSQLFilePictureBankConfigurationImpl;
+import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
+import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
+import yapto.picturebank.sqlfile.config.SQLFilePictureBankConfigurationImpl;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -84,21 +84,21 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private final JFileChooser _directoryChooser = new JFileChooser();
 
 	/**
-	 * {@link IDataSource} used to load the pictures.
+	 * {@link IPictureBank} used to load the pictures.
 	 */
-	protected final IDataSource<?> _dataSource;
+	protected final IPictureBank<?> _pictureBank;
 
 	/**
 	 * Creates a new PictureDisplayFrame.
 	 * 
-	 * @param dataSource
-	 *            the {@link IDataSource} used as source for the
+	 * @param pictureBank
+	 *            the {@link IPictureBank} used as source for the
 	 *            {@link IPicture}.
 	 */
-	public PictureDisplayFrame(final IDataSource<?> dataSource)
+	public PictureDisplayFrame(final IPictureBank<?> pictureBank)
 	{
 		super("yapto");
-		_dataSource = dataSource;
+		_pictureBank = pictureBank;
 
 		_directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -115,7 +115,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			@Override
 			public void windowClosed(final WindowEvent e)
 			{
-				_dataSource.close();
+				_pictureBank.close();
 				System.exit(0);
 			}
 
@@ -154,7 +154,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		try
 		{
 			contentPane = new MainPictureDisplayPanel(this,
-					_dataSource.getAllPictures());
+					_pictureBank.getAllPictures());
 		}
 		catch (final ExecutionException e1)
 		{
@@ -234,7 +234,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				try
 				{
-					_dataSource.addPicture(file.toPath());
+					_pictureBank.addPicture(file.toPath());
 				}
 				catch (final PictureAddException e)
 				{
@@ -268,7 +268,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				try
 				{
-					_dataSource.addDirectory(file.toPath());
+					_pictureBank.addDirectory(file.toPath());
 					// TODO handle return object
 				}
 				catch (final PictureAddException e)
@@ -327,11 +327,11 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	{
 		BasicConfigurator.configure();
 
-		final IGlobalSQLFileDataSourceConfiguration globalConf = new GlobalSQLFileDataSourceConfigurationImpl(
+		final IGlobalSQLFilePictureBankConfiguration globalConf = new GlobalSQLFilePictureBankConfigurationImpl(
 				null, ManagementFactory.getPlatformMBeanServer(),
 				Integer.valueOf(4), Integer.valueOf(4), Integer.valueOf(3));
 
-		final ISQLFileDataSourceConfiguration conf = new SQLFileDataSourceConfigurationImpl(
+		final ISQLFilePictureBankConfiguration conf = new SQLFilePictureBankConfigurationImpl(
 				null, ManagementFactory.getPlatformMBeanServer(),
 				Integer.valueOf(1),
 				"/home/benobiwan/images/photoDB/photoDB.sqlite",
@@ -340,13 +340,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				"/home/benobiwan/images/photoDB/index/");
 
 		final EventBus bus = new AsyncEventBus(Executors.newFixedThreadPool(10));
-		final SQLFileDataSource dataSource = new SQLFileDataSource(globalConf,
-				conf, bus);
+		final SQLFilePictureBank pictureBank = new SQLFilePictureBank(
+				globalConf, conf, bus);
 
-		// final IDataSource<DummyPicture> dataSource = new DummyDataSource(
-		// new AsyncEventBus(Executors.newFixedThreadPool(10)));
-
-		final PictureDisplayFrame main = new PictureDisplayFrame(dataSource);
+		final PictureDisplayFrame main = new PictureDisplayFrame(pictureBank);
 		main.pack();
 		main.setVisible(true);
 	}

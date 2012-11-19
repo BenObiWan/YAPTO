@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.PictureChangedEvent;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

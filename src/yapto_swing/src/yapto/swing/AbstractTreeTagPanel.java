@@ -15,11 +15,11 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.IPictureList;
-import yapto.datasource.tag.ITag;
-import yapto.datasource.tag.TagRepositoryChangedEvent;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureList;
+import yapto.picturebank.tag.ITag;
+import yapto.picturebank.tag.TagRepositoryChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

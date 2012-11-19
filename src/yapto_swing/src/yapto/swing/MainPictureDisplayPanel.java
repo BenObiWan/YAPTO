@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
 
 /**
  * Panel displaying an {@link IPicture} and its information.

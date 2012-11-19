@@ -5,9 +5,9 @@ import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.ITag;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.tag.ITag;
 
 /**
  * Implementation of {@link AbstractTreeTagPanel} where only one {@link ITag}

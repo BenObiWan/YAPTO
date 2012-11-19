@@ -8,7 +8,7 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import yapto.datasource.tag.ITag;
+import yapto.picturebank.tag.ITag;
 
 /**
  * {@link CheckboxTreeCellRenderer} that display {ITag} description has tool

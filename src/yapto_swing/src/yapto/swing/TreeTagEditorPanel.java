@@ -5,9 +5,9 @@ import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTree;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.ITag;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.tag.ITag;
 
 /**
  * Panel displaying the list of {@link ITag} that can be associated with an

@@ -16,11 +16,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.EditableTag;
-import yapto.datasource.tag.ITag;
-import yapto.datasource.tag.TagAddException;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.tag.EditableTag;
+import yapto.picturebank.tag.ITag;
+import yapto.picturebank.tag.TagAddException;
 
 /**
  * Panel used to enter all the information of a new {@link ITag} and create it,
@@ -166,7 +166,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
-				_pictureBrowser.getDataSource().addTag(iParentTagId, strName,
+				_pictureBrowser.getPictureBank().addTag(iParentTagId, strName,
 						strDescription, bSelectable);
 				_parent.setVisible(false);
 			}
@@ -185,7 +185,7 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
-				_pictureBrowser.getDataSource().editTag(_iIdOfTagToEdit,
+				_pictureBrowser.getPictureBank().editTag(_iIdOfTagToEdit,
 						iParentTagId, strName, strDescription, bSelectable);
 				_parent.setVisible(false);
 			}

@@ -11,10 +11,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.tag.ITag;
-import yapto.datasource.tag.TagRepositoryChangedEvent;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.tag.ITag;
+import yapto.picturebank.tag.TagRepositoryChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

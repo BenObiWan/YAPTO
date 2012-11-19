@@ -10,11 +10,11 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import yapto.datasource.IPicture;
-import yapto.datasource.IPictureBrowser;
-import yapto.datasource.IPictureList;
-import yapto.datasource.PictureChangedEvent;
-import yapto.datasource.tag.ITag;
+import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureList;
+import yapto.picturebank.PictureChangedEvent;
+import yapto.picturebank.tag.ITag;
 
 import com.google.common.eventbus.Subscribe;
 
