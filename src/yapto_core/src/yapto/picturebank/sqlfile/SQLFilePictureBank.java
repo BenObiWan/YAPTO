@@ -785,4 +785,10 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	{
 		_tagRepository.removeTag(iTagId);
 	}
+
+	@Override
+	public int compareTo(final IPictureBank<?> o)
+	{
+		return getId() - o.getId();
+	}
 }

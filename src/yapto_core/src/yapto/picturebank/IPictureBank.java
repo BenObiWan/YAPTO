@@ -17,7 +17,8 @@ import yapto.picturebank.tag.IWritableTagRepository;
  * 
  */
 public interface IPictureBank<PICTURE extends IPicture> extends
-		IPictureList<PICTURE>, IWritableTagRepository
+		IPictureList<PICTURE>, IWritableTagRepository,
+		Comparable<IPictureBank<?>>
 {
 	/**
 	 * Add an {@link IPicture} to the {@link IPictureBank}.
