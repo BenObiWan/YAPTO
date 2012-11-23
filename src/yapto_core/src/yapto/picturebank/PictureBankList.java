@@ -10,7 +10,8 @@ import java.util.TreeSet;
 import com.google.common.eventbus.EventBus;
 
 /**
- * TODO
+ * Keeps track of all {@link IPictureBank}s known to the application, and also
+ * of which ones are selected.
  * 
  * @author benobiwan
  * 
@@ -21,6 +22,11 @@ public final class PictureBankList
 	 * Map of all {@link IPictureBank}.
 	 */
 	private final Map<Integer, IPictureBank<?>> _pictureBankMap = new HashMap<>();
+
+	/**
+	 * Set of all {@link IPictureBank}.
+	 */
+	private final SortedSet<IPictureBank<?>> _allPictureBankSet = new TreeSet<>();
 
 	/**
 	 * Set of selected {@link IPictureBank}.
@@ -57,6 +63,7 @@ public final class PictureBankList
 		{
 			_pictureBankMap.put(Integer.valueOf(pictureBank.getId()),
 					pictureBank);
+			_allPictureBankSet.add(pictureBank);
 			_bus.post(new PictureBankListChangedEvent());
 		}
 	}
@@ -73,8 +80,9 @@ public final class PictureBankList
 				.valueOf(iId));
 		if (pictureBank != null)
 		{
-			_bus.post(new PictureBankListChangedEvent());
+			_allPictureBankSet.remove(pictureBank);
 			_selectedPictureBankSet.remove(pictureBank);
+			_bus.post(new PictureBankListChangedEvent());
 		}
 	}
 
@@ -102,5 +110,27 @@ public final class PictureBankList
 	public Set<IPictureBank<?>> getSelectedPictureBank()
 	{
 		return Collections.unmodifiableSet(_selectedPictureBankSet);
+	}
+
+	/**
+	 * Get all {@link IPictureBank}s.
+	 * 
+	 * @return all {@link IPictureBank}s.
+	 */
+	public Set<IPictureBank<?>> getAllPictureBank()
+	{
+		return Collections.unmodifiableSet(_allPictureBankSet);
+	}
+
+	/**
+	 * Register an object to the listen for change in this
+	 * {@link PictureBankList}.
+	 * 
+	 * @param object
+	 *            the object to register.
+	 */
+	public void register(Object object)
+	{
+		_bus.register(object);
 	}
 }
