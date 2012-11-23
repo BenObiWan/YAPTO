@@ -28,6 +28,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	private final ConfigurationInteger _leafPictureBankId;
 
 	/**
+	 * Leaf configuring the {@link IPictureBank} name.
+	 */
+	private final ConfigurationString _leafPictureBankName;
+
+	/**
 	 * Leaf configuring the file name for the database.
 	 */
 	private final ConfigurationString _leafDatabaseFileName;
@@ -61,6 +66,21 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	 * Invalid message for the {@link IPictureBank} id.
 	 */
 	private final static String PICTUREBANK_ID_INVALID_MESSAGE = "Invalid Id for this PictureBank.";
+
+	/**
+	 * Short description for the {@link IPictureBank} name.
+	 */
+	private final static String PICTUREBANK_NAME_SHORT_DESC = "PictureBank Name";
+
+	/**
+	 * Long description for the {@link IPictureBank} name.
+	 */
+	private final static String PICTUREBANK_NAME_LONG_DESC = "Name of this PictureBank.";
+
+	/**
+	 * Invalid message for the {@link IPictureBank} name.
+	 */
+	private final static String PICTUREBANK_NAME_INVALID_MESSAGE = "Invalid name for this PictureBank.";
 
 	/**
 	 * Short description for the database file name id.
@@ -150,6 +170,10 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				PICTUREBANK_ID_INVALID_MESSAGE, false,
 				IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
+		_leafPictureBankName = new ConfigurationString(parent,
+				PICTUREBANK_NAME_TAG, PICTUREBANK_NAME_SHORT_DESC,
+				PICTUREBANK_NAME_LONG_DESC, PICTUREBANK_NAME_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "");
 		_leafDatabaseFileName = new ConfigurationString(parent,
 				DATABASE_FILENAME_TAG, DATASBASE_FILENAME_SHORT_DESC,
 				DATASBASE_FILENAME_LONG_DESC,
@@ -169,6 +193,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "");
 		addLeaf(_leafPictureBankId);
+		addLeaf(_leafPictureBankName);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
@@ -188,6 +213,9 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	 * @param iCommandLinePictureBankId
 	 *            the value specified on the command line for the
 	 *            {@link IPictureBank} id.
+	 * @param strCommandLinePictureBankName
+	 *            the value specified on the command line for the
+	 *            {@link IPictureBank} name.
 	 * @param strCommandLineDatabaseFileName
 	 *            the value specified on the command line for the file name of
 	 *            the database.
@@ -206,6 +234,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	public SQLFilePictureBankConfigurationImpl(final IConfiguration parent,
 			final MBeanServer mBeanServer,
 			final Integer iCommandLinePictureBankId,
+			final String strCommandLinePictureBankName,
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
@@ -219,6 +248,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
 				iCommandLinePictureBankId);
+		_leafPictureBankName = new ConfigurationString(parent,
+				PICTUREBANK_NAME_TAG, PICTUREBANK_NAME_SHORT_DESC,
+				PICTUREBANK_NAME_LONG_DESC, PICTUREBANK_NAME_INVALID_MESSAGE,
+				false, StringDisplayType.TEXTFIELD, 0, "",
+				strCommandLinePictureBankName);
 		_leafDatabaseFileName = new ConfigurationString(parent,
 				DATABASE_FILENAME_TAG, DATASBASE_FILENAME_SHORT_DESC,
 				DATASBASE_FILENAME_LONG_DESC,
@@ -242,6 +276,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineIndexDirectory);
 		addLeaf(_leafPictureBankId);
+		addLeaf(_leafPictureBankName);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
@@ -261,6 +296,9 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	 * @param iCommandLinePictureBankId
 	 *            the value specified on the command line for the
 	 *            {@link IPictureBank} id.
+	 * @param strCommandLinePictureBankName
+	 *            the value specified on the command line for the
+	 *            {@link IPictureBank} name.
 	 * @param strCommandLineDatabaseFileName
 	 *            the value specified on the command line for the file name of
 	 *            the database.
@@ -273,6 +311,9 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	 * @param strCommandLineIndexDirectory
 	 *            the value specified on the command line for the base directory
 	 * @param iConfigurationPictureBankId
+	 *            the value specified in the configuration file for the
+	 *            {@link IPictureBank} name.
+	 * @param strConfigurationPictureBankName
 	 *            the value specified in the configuration file for the
 	 *            {@link IPictureBank} id.
 	 * @param strConfigurationDatabaseFileName
@@ -293,11 +334,13 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	public SQLFilePictureBankConfigurationImpl(final IConfiguration parent,
 			final MBeanServer mBeanServer,
 			final Integer iCommandLinePictureBankId,
+			final String strCommandLinePictureBankName,
 			final String strCommandLineDatabaseFileName,
 			final String strCommandLinePictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
 			final String strCommandLineIndexDirectory,
 			final Integer iConfigurationPictureBankId,
+			final String strConfigurationPictureBankName,
 			final String strConfigurationDatabaseFileName,
 			final String strConfigurationPictureDirectory,
 			final String strConfigurationThumbnailsDirectory,
@@ -305,9 +348,12 @@ public final class SQLFilePictureBankConfigurationImpl extends
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLinePictureBankId,
-				strCommandLineDatabaseFileName, strCommandLinePictureDirectory,
+				strCommandLinePictureBankName, strCommandLineDatabaseFileName,
+				strCommandLinePictureDirectory,
 				strCommandLineThumbnailsDirectory, strCommandLineIndexDirectory);
 		_leafPictureBankId.setConfigurationValue(iConfigurationPictureBankId);
+		_leafPictureBankName
+				.setConfigurationValue(strConfigurationPictureBankName);
 		_leafDatabaseFileName
 				.setConfigurationValue(strConfigurationDatabaseFileName);
 		_leafPictureDirectory
@@ -419,5 +465,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		{
 			return _leafThumbnailsDirectory.getCurrentValue();
 		}
+	}
+
+	@Override
+	public String getPictureBankName()
+	{
+		return _leafPictureBankName.getCurrentValue();
 	}
 }
