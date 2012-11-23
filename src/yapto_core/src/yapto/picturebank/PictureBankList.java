@@ -129,7 +129,7 @@ public final class PictureBankList
 	 * @param object
 	 *            the object to register.
 	 */
-	public void register(Object object)
+	public void register(final Object object)
 	{
 		_bus.register(object);
 	}

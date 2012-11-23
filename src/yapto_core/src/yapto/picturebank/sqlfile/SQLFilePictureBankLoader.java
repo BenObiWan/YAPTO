@@ -35,7 +35,7 @@ public final class SQLFilePictureBankLoader
 
 		_confSet.add(new SQLFilePictureBankConfigurationImpl(null,
 				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(1),
-				"/home/benobiwan/images/photoDB/photoDB.sqlite",
+				"local", "/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
 				"/home/benobiwan/images/photoDB/index/"));

@@ -333,7 +333,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 
 		final ISQLFilePictureBankConfiguration conf = new SQLFilePictureBankConfigurationImpl(
 				null, ManagementFactory.getPlatformMBeanServer(),
-				Integer.valueOf(1),
+				Integer.valueOf(1), "local",
 				"/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
