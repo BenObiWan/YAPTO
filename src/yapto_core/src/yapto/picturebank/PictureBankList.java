@@ -7,11 +7,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import yapto.picturebank.config.IPictureBankConfiguration;
+
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 
 /**
- * Keeps track of all {@link IPictureBank}s known to the application, and also
- * of which ones are selected.
+ * Keeps track of all {@link IPictureBankConfiguration}s known to the
+ * application, and also of which {@link IPictureBank} are selected and loaded.
  * 
  * @author benobiwan
  * 
@@ -19,25 +22,21 @@ import com.google.common.eventbus.EventBus;
 public final class PictureBankList
 {
 	/**
-	 * Map of all {@link IPictureBank}.
+	 * Set of all {@link IPictureBankConfiguration}.
 	 */
-	private final Map<Integer, IPictureBank<?>> _pictureBankMap = new HashMap<>();
+	private final SortedSet<IPictureBankConfiguration> _allPictureBankConfSet = new TreeSet<>();
 
 	/**
-	 * Set of all {@link IPictureBank}.
+	 * Map with selected {@link IPictureBankConfiguration} and the corresponding
+	 * {@link IPictureBank} object as value.
 	 */
-	private final SortedSet<IPictureBank<?>> _allPictureBankSet = new TreeSet<>();
-
-	/**
-	 * Set of selected {@link IPictureBank}.
-	 */
-	private final SortedSet<IPictureBank<?>> _selectedPictureBankSet = new TreeSet<>();
+	private final Map<IPictureBankConfiguration, IPictureBank<?>> _selectedPictureBankMap = new HashMap<>();
 
 	/**
 	 * {@link EventBus} used to signal registered objects of changes in this
 	 * {@link PictureBankList}.
 	 */
-	protected final EventBus _bus;
+	private final EventBus _bus;
 
 	/**
 	 * Creates a new {@link PictureBankList}.
@@ -54,16 +53,16 @@ public final class PictureBankList
 	/**
 	 * Add a new {@link IPictureBank}.
 	 * 
-	 * @param pictureBank
-	 *            the new {@link IPictureBank}.
+	 * @param pictureBankConfiguration
+	 *            {@link IPictureBankConfiguration} of the new
+	 *            {@link IPictureBank}.
 	 */
-	public void addPictureBank(final IPictureBank<?> pictureBank)
+	public void addPictureBank(
+			final IPictureBankConfiguration pictureBankConfiguration)
 	{
-		if (pictureBank != null)
+		if (pictureBankConfiguration != null)
 		{
-			_pictureBankMap.put(Integer.valueOf(pictureBank.getId()),
-					pictureBank);
-			_allPictureBankSet.add(pictureBank);
+			_allPictureBankConfSet.add(pictureBankConfiguration);
 			_bus.post(new PictureBankListChangedEvent());
 		}
 	}
@@ -71,34 +70,40 @@ public final class PictureBankList
 	/**
 	 * Remove a {@link IPictureBank}.
 	 * 
-	 * @param iId
-	 *            id of the {@link IPictureBank} to remove.
+	 * @param pictureBankConfiguration
+	 *            {@link IPictureBankConfiguration} of the {@link IPictureBank}
+	 *            to remove.
 	 */
-	public void removePictureBank(final int iId)
+	public void removePictureBank(
+			final IPictureBankConfiguration pictureBankConfiguration)
 	{
-		final IPictureBank<?> pictureBank = _pictureBankMap.remove(Integer
-				.valueOf(iId));
-		if (pictureBank != null)
-		{
-			_allPictureBankSet.remove(pictureBank);
-			_selectedPictureBankSet.remove(pictureBank);
-			_bus.post(new PictureBankListChangedEvent());
-		}
+		_allPictureBankConfSet.remove(pictureBankConfiguration);
+		// TODO remove from _selectedPictureBankMap
+		_bus.post(new PictureBankListChangedEvent());
 	}
 
 	/**
 	 * Select {@link IPictureBank}s.
 	 * 
-	 * @param iIds
-	 *            ids of the {@link IPictureBank} to select.
+	 * @param confList
+	 *            {@link IPictureBankConfiguration} of the {@link IPictureBank}
+	 *            to select.
 	 */
-	public void selectPictureBank(final int... iIds)
+	public void selectPictureBank(final IPictureBankConfiguration... confList)
 	{
-		_selectedPictureBankSet.clear();
-		for (final int iId : iIds)
+		final Set<IPictureBankConfiguration> confToLoad = Sets
+				.newHashSet(confList);
+		// Closing no longer used {@link IPictureBank}.
+		for (final IPictureBankConfiguration bankToClose : Sets.difference(
+				_selectedPictureBankMap.keySet(), confToLoad))
 		{
-			_selectedPictureBankSet.add(_pictureBankMap.get(Integer
-					.valueOf(iId)));
+			// TODO
+		}
+		// Opening new {@link IPictureBank}.
+		for (final IPictureBankConfiguration bankToClose : Sets.difference(
+				confToLoad, _selectedPictureBankMap.keySet()))
+		{
+			// TODO
 		}
 	}
 
@@ -109,7 +114,8 @@ public final class PictureBankList
 	 */
 	public Set<IPictureBank<?>> getSelectedPictureBank()
 	{
-		return Collections.unmodifiableSet(_selectedPictureBankSet);
+		return Collections.unmodifiableSet(Sets
+				.newHashSet(_selectedPictureBankMap.values()));
 	}
 
 	/**
@@ -117,9 +123,9 @@ public final class PictureBankList
 	 * 
 	 * @return all {@link IPictureBank}s.
 	 */
-	public Set<IPictureBank<?>> getAllPictureBank()
+	public Set<IPictureBankConfiguration> getAllPictureBankConfiguration()
 	{
-		return Collections.unmodifiableSet(_allPictureBankSet);
+		return Collections.unmodifiableSet(_allPictureBankConfSet);
 	}
 
 	/**
