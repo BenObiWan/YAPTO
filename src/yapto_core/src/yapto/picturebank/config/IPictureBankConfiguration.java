@@ -7,9 +7,6 @@ import common.config.IConfigurationBranch;
 /**
  * Configuration for an {@link IPictureBank}.
  * 
- * The toString() method must be redefined to return the {@link IPictureBank}
- * name.
- * 
  * @author benobiwan
  * 
  */

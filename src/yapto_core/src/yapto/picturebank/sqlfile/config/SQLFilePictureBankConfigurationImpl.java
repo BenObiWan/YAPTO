@@ -407,12 +407,6 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		return _leafPictureBankName.getCurrentValue();
 	}
 
-	@Override
-	public String toString()
-	{
-		return getPictureBankName();
-	}
-
 	/**
 	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
 	 * 
