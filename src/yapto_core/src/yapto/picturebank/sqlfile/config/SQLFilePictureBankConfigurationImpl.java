@@ -401,6 +401,18 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		return _thumbnailCacheLoaderConfiguration;
 	}
 
+	@Override
+	public String getPictureBankName()
+	{
+		return _leafPictureBankName.getCurrentValue();
+	}
+
+	@Override
+	public String toString()
+	{
+		return getPictureBankName();
+	}
+
 	/**
 	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
 	 * 
@@ -465,11 +477,5 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		{
 			return _leafThumbnailsDirectory.getCurrentValue();
 		}
-	}
-
-	@Override
-	public String getPictureBankName()
-	{
-		return _leafPictureBankName.getCurrentValue();
 	}
 }
