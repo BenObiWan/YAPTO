@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureBankList;
 import yapto.picturebank.PictureBankListChangedEvent;
+import yapto.picturebank.config.IPictureBankConfiguration;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -99,16 +100,19 @@ public final class PictureBankManagerPanel extends JPanel
 		_panelChooser.removeAll();
 	}
 
-	private void addPictureBank(final IPictureBank pictureBank)
+	private void addPictureBank(
+			final IPictureBankConfiguration pictureBankConfiguration)
 	{
 		if (_checkBoxMulti.isSelected())
 		{
-			final JCheckBox button = new JCheckBox(pictureBank.toString());
+			final JCheckBox button = new JCheckBox(
+					pictureBankConfiguration.getName());
 			_panelChooser.add(button);
 		}
 		else
 		{
-			final JRadioButton radio = new JRadioButton(pictureBank.toString());
+			final JRadioButton radio = new JRadioButton(
+					pictureBankConfiguration.getName());
 			_panelChooser.add(radio);
 			_group.add(radio);
 		}
@@ -119,16 +123,19 @@ public final class PictureBankManagerPanel extends JPanel
 		_panelChooser.setVisible(false);
 		clearAll();
 
-		for (final IPictureBank<?> pb : _pictureBankList
-				.getSelectedPictureBank())
+		for (final IPictureBankConfiguration conf : _pictureBankList
+				.getAllPictureBankConfiguration())
 		{
-			addPictureBank(pb);
+			addPictureBank(conf);
+
 		}
 
-		for (final IPictureBank<?> sel : _pictureBankList.getAllPictureBank())
+		for (final IPictureBank<?> sel : _pictureBankList
+				.getSelectedPictureBank())
 		{
 			// TODO
 		}
+
 		_panelChooser.setVisible(true);
 	}
 
