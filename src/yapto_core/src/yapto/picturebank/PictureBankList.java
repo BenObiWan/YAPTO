@@ -2,6 +2,7 @@ package yapto.picturebank;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -25,6 +26,11 @@ public final class PictureBankList
 	 * Set of all {@link IPictureBankConfiguration}.
 	 */
 	private final SortedSet<IPictureBankConfiguration> _allPictureBankConfSet = new TreeSet<>();
+
+	/**
+	 * Map of {@link IPictureBankConfiguration} by id.
+	 */
+	private final Map<Integer, IPictureBankConfiguration> _configurationByIdMap = new HashMap<>();
 
 	/**
 	 * Map with selected {@link IPictureBankConfiguration} and the corresponding
@@ -63,6 +69,8 @@ public final class PictureBankList
 		if (pictureBankConfiguration != null)
 		{
 			_allPictureBankConfSet.add(pictureBankConfiguration);
+			_configurationByIdMap.put(Integer.valueOf(pictureBankConfiguration
+					.getPictureBankId()), pictureBankConfiguration);
 			_bus.post(new PictureBankListChangedEvent());
 		}
 	}
@@ -78,8 +86,22 @@ public final class PictureBankList
 			final IPictureBankConfiguration pictureBankConfiguration)
 	{
 		_allPictureBankConfSet.remove(pictureBankConfiguration);
+		_configurationByIdMap.remove(Integer.valueOf(pictureBankConfiguration
+				.getPictureBankId()));
 		// TODO remove from _selectedPictureBankMap
 		_bus.post(new PictureBankListChangedEvent());
+	}
+
+	public void selectPictureBankById(final int... iIds)
+	{
+		final Set<IPictureBankConfiguration> confToLoad = new HashSet<>();
+		for (final int iId : iIds)
+		{
+			final IPictureBankConfiguration conf = _configurationByIdMap
+					.get(Integer.valueOf(iId));
+			confToLoad.add(conf);
+		}
+		selectPictureBank(confToLoad);
 	}
 
 	/**
@@ -93,6 +115,12 @@ public final class PictureBankList
 	{
 		final Set<IPictureBankConfiguration> confToLoad = Sets
 				.newHashSet(confList);
+		selectPictureBank(confToLoad);
+	}
+
+	private void selectPictureBank(
+			final Set<IPictureBankConfiguration> confToLoad)
+	{
 		// Closing no longer used {@link IPictureBank}.
 		for (final IPictureBankConfiguration bankToClose : Sets.difference(
 				_selectedPictureBankMap.keySet(), confToLoad))
