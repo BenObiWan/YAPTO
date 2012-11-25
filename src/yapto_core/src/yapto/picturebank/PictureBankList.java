@@ -45,6 +45,11 @@ public final class PictureBankList
 	private final EventBus _bus;
 
 	/**
+	 * The {@link PictureBankLoader}.
+	 */
+	private final PictureBankLoader _loader;
+
+	/**
 	 * Creates a new {@link PictureBankList}.
 	 * 
 	 * @param bus
@@ -54,6 +59,7 @@ public final class PictureBankList
 	public PictureBankList(final EventBus bus)
 	{
 		_bus = bus;
+		_loader = new PictureBankLoader();
 	}
 
 	/**
@@ -88,10 +94,17 @@ public final class PictureBankList
 		_allPictureBankConfSet.remove(pictureBankConfiguration);
 		_configurationByIdMap.remove(Integer.valueOf(pictureBankConfiguration
 				.getPictureBankId()));
-		// TODO remove from _selectedPictureBankMap
+		_selectedPictureBankMap.remove(pictureBankConfiguration);
+		_loader.close(pictureBankConfiguration);
 		_bus.post(new PictureBankListChangedEvent());
 	}
 
+	/**
+	 * Select {@link IPictureBank} by id.
+	 * 
+	 * @param iIds
+	 *            ids of the {@link IPictureBank} to select.s
+	 */
 	public void selectPictureBankById(final int... iIds)
 	{
 		final Set<IPictureBankConfiguration> confToLoad = new HashSet<>();
@@ -105,7 +118,7 @@ public final class PictureBankList
 	}
 
 	/**
-	 * Select {@link IPictureBank}s.
+	 * Select {@link IPictureBank}s by {@link IPictureBankConfiguration}.
 	 * 
 	 * @param confList
 	 *            {@link IPictureBankConfiguration} of the {@link IPictureBank}
@@ -118,6 +131,13 @@ public final class PictureBankList
 		selectPictureBank(confToLoad);
 	}
 
+	/**
+	 * Select {@link IPictureBank}s by {@link IPictureBankConfiguration}.
+	 * 
+	 * @param confToLoad
+	 *            {@link IPictureBankConfiguration} of the {@link IPictureBank}
+	 *            to select.
+	 */
 	private void selectPictureBank(
 			final Set<IPictureBankConfiguration> confToLoad)
 	{
@@ -125,13 +145,14 @@ public final class PictureBankList
 		for (final IPictureBankConfiguration bankToClose : Sets.difference(
 				_selectedPictureBankMap.keySet(), confToLoad))
 		{
-			// TODO
+			_selectedPictureBankMap.remove(bankToClose);
+			_loader.close(bankToClose);
 		}
 		// Opening new {@link IPictureBank}.
-		for (final IPictureBankConfiguration bankToClose : Sets.difference(
+		for (final IPictureBankConfiguration bankToOpen : Sets.difference(
 				confToLoad, _selectedPictureBankMap.keySet()))
 		{
-			// TODO
+			_selectedPictureBankMap.put(bankToOpen, _loader.open(bankToOpen));
 		}
 	}
 
