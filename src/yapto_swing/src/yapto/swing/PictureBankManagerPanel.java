@@ -34,14 +34,33 @@ public final class PictureBankManagerPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 5033785594456871399L;
 
+	/**
+	 * Panel displaying the list of {@link IPictureBank} to load.
+	 */
 	private final JPanel _panelChooser = new JPanel(new GridLayout(0, 1));
 
+	/**
+	 * ButtonGroup used when only one {@link IPictureBank} can be selected.
+	 */
 	private final ButtonGroup _group = new ButtonGroup();
 
+	/**
+	 * CheckBox enabling or disabling the ability to open multiple
+	 * {@link IPictureBank}.
+	 */
 	private final JCheckBox _checkBoxMulti = new JCheckBox("Multiple sources");
 
+	/**
+	 * The {@link PictureBankList}.
+	 */
 	private final PictureBankList _pictureBankList;
 
+	/**
+	 * Creates a new {@link PictureBankManagerPanel}.
+	 * 
+	 * @param pictureBankList
+	 *            the {@link PictureBankList} to use.
+	 */
 	public PictureBankManagerPanel(final PictureBankList pictureBankList)
 	{
 		super(new BorderLayout(10, 10));
