@@ -16,6 +16,12 @@ import yapto.picturebank.sqlfile.config.SQLFilePictureBankConfigurationImpl;
 import com.google.common.eventbus.EventBus;
 import common.config.InvalidConfigurationException;
 
+/**
+ * Loader for {@link SQLFilePictureBank}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class SQLFilePictureBankLoader
 		implements
 		IPictureBankLoader<ISQLFilePictureBankConfiguration, SQLFilePictureBank>
@@ -29,7 +35,7 @@ public final class SQLFilePictureBankLoader
 	 * Creates a new {@link SQLFilePictureBankLoader}.
 	 * 
 	 * @throws InvalidConfigurationException
-	 *             TODO
+	 *             the {IGlobalSQLFilePictureBankConfiguration} is invalid.
 	 */
 	public SQLFilePictureBankLoader() throws InvalidConfigurationException
 	{

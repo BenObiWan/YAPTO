@@ -139,15 +139,15 @@ public class SelectingTreeTagPanel extends AbstractTreeTagPanel implements
 	{
 		if (ADD_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
-
+			// TODO implement add tag.
 		}
 		else if (EDIT_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
-
+			// TODO implement edit tag.
 		}
 		else if (DELETE_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
-
+			// TODO implement delete tag.
 		}
 	}
 

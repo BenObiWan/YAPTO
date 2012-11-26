@@ -34,6 +34,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import common.config.InvalidConfigurationException;
 
+/**
+ * Panel used to chose which {@link IPictureBank} to load in the list of
+ * available {@link IPictureBank}.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class PictureBankManagerPanel extends JPanel implements
 		ActionListener
 {
@@ -172,6 +179,14 @@ public final class PictureBankManagerPanel extends JPanel implements
 		_buttonList.clear();
 	}
 
+	/**
+	 * Add a button showing an {@link IPictureBank} in the list. Adds a check
+	 * box or a radio button depending of the state of the "multiple selection"
+	 * check box.
+	 * 
+	 * @param pictureBankConfiguration
+	 *            the configuration of the {@link IPictureBank} to show.
+	 */
 	private void addPictureBank(
 			final IPictureBankConfiguration pictureBankConfiguration)
 	{
@@ -193,17 +208,18 @@ public final class PictureBankManagerPanel extends JPanel implements
 				.getPictureBankId()));
 	}
 
+	/**
+	 * Reload the list of available {@link IPictureBank}.
+	 */
 	private void reload()
 	{
 		_panelChooser.setVisible(false);
 		clearAll();
-
 		for (final IPictureBankConfiguration conf : _pictureBankList
 				.getAllPictureBankConfiguration())
 		{
 			addPictureBank(conf);
 		}
-
 		for (final IPictureBank<?> sel : _pictureBankList
 				.getSelectedPictureBank())
 		{
@@ -212,6 +228,13 @@ public final class PictureBankManagerPanel extends JPanel implements
 		_panelChooser.setVisible(true);
 	}
 
+	/**
+	 * Handle a {@link PictureBankListChangedEvent} by reloading the list of
+	 * available {@link IPictureBank}.
+	 * 
+	 * @param ev
+	 *            the event to handle.
+	 */
 	@Subscribe
 	public void handlePictureBankListChangedEvent(
 			@SuppressWarnings("unused") final PictureBankListChangedEvent ev)
@@ -260,6 +283,12 @@ public final class PictureBankManagerPanel extends JPanel implements
 		}
 	}
 
+	/**
+	 * TODO remove this main block.
+	 * 
+	 * @param args
+	 * @throws InvalidConfigurationException
+	 */
 	public static void main(final String[] args)
 			throws InvalidConfigurationException
 	{
