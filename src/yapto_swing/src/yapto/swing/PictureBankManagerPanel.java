@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -26,6 +27,7 @@ import yapto.picturebank.config.IPictureBankConfiguration;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import common.config.InvalidConfigurationException;
 
 public final class PictureBankManagerPanel extends JPanel
 {
@@ -122,19 +124,20 @@ public final class PictureBankManagerPanel extends JPanel
 	private void addPictureBank(
 			final IPictureBankConfiguration pictureBankConfiguration)
 	{
+		JToggleButton comp;
 		if (_checkBoxMulti.isSelected())
 		{
-			final JCheckBox button = new JCheckBox(
-					pictureBankConfiguration.getName());
-			_panelChooser.add(button);
+			comp = new JCheckBox(pictureBankConfiguration.getPictureBankName());
 		}
 		else
 		{
-			final JRadioButton radio = new JRadioButton(
-					pictureBankConfiguration.getName());
-			_panelChooser.add(radio);
-			_group.add(radio);
+			comp = new JRadioButton(
+					pictureBankConfiguration.getPictureBankName());
+			_group.add(comp);
 		}
+		_panelChooser.add(comp);
+		comp.setActionCommand(String.valueOf(pictureBankConfiguration
+				.getPictureBankId()));
 	}
 
 	protected void reload()
@@ -146,7 +149,6 @@ public final class PictureBankManagerPanel extends JPanel
 				.getAllPictureBankConfiguration())
 		{
 			addPictureBank(conf);
-
 		}
 
 		for (final IPictureBank<?> sel : _pictureBankList
@@ -166,6 +168,7 @@ public final class PictureBankManagerPanel extends JPanel
 	}
 
 	public static void main(final String[] args)
+			throws InvalidConfigurationException
 	{
 		final JFrame main = new JFrame("test");
 		final EventBus _bus = new EventBus();

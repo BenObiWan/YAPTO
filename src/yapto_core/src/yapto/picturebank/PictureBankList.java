@@ -1,5 +1,7 @@
 package yapto.picturebank;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,10 +10,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.picturebank.config.IPictureBankConfiguration;
+import yapto.picturebank.sqlfile.SQLFilePictureBankLoader;
+import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
+import common.config.InvalidConfigurationException;
 
 /**
  * Keeps track of all {@link IPictureBankConfiguration}s known to the
@@ -22,6 +30,12 @@ import com.google.common.eventbus.EventBus;
  */
 public final class PictureBankList
 {
+	/**
+	 * Logger object.
+	 */
+	protected static final Logger LOGGER = LoggerFactory
+			.getLogger(PictureBankList.class);
+
 	/**
 	 * Set of all {@link IPictureBankConfiguration}.
 	 */
@@ -45,9 +59,9 @@ public final class PictureBankList
 	private final EventBus _bus;
 
 	/**
-	 * The {@link PictureBankLoader}.
+	 * The {@link IPictureBankLoader}.
 	 */
-	private final PictureBankLoader _loader;
+	private final SQLFilePictureBankLoader _loader;
 
 	/**
 	 * Creates a new {@link PictureBankList}.
@@ -55,11 +69,19 @@ public final class PictureBankList
 	 * @param bus
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link PictureBankList}.
+	 * @throws InvalidConfigurationException
 	 */
 	public PictureBankList(final EventBus bus)
+			throws InvalidConfigurationException
 	{
 		_bus = bus;
-		_loader = new PictureBankLoader();
+		_loader = new SQLFilePictureBankLoader();
+		// TODO add check for duplicate ids
+		for (final IPictureBankConfiguration conf : _loader
+				.getAllConfiguration())
+		{
+			addPictureBank(conf);
+		}
 	}
 
 	/**
@@ -94,8 +116,12 @@ public final class PictureBankList
 		_allPictureBankConfSet.remove(pictureBankConfiguration);
 		_configurationByIdMap.remove(Integer.valueOf(pictureBankConfiguration
 				.getPictureBankId()));
-		_selectedPictureBankMap.remove(pictureBankConfiguration);
-		_loader.close(pictureBankConfiguration);
+		final IPictureBank<?> bank = _selectedPictureBankMap
+				.remove(pictureBankConfiguration);
+		if (bank != null)
+		{
+			bank.close();
+		}
 		_bus.post(new PictureBankListChangedEvent());
 	}
 
@@ -145,15 +171,53 @@ public final class PictureBankList
 		for (final IPictureBankConfiguration bankToClose : Sets.difference(
 				_selectedPictureBankMap.keySet(), confToLoad))
 		{
-			_selectedPictureBankMap.remove(bankToClose);
-			_loader.close(bankToClose);
+			final IPictureBank<?> bank = _selectedPictureBankMap
+					.remove(bankToClose);
+			if (bank != null)
+			{
+				bank.close();
+			}
 		}
 		// Opening new {@link IPictureBank}.
 		for (final IPictureBankConfiguration bankToOpen : Sets.difference(
 				confToLoad, _selectedPictureBankMap.keySet()))
 		{
-			_selectedPictureBankMap.put(bankToOpen, _loader.open(bankToOpen));
+			try
+			{
+				final IPictureBank<?> bank = open(bankToOpen);
+				if (bank != null)
+				{
+					_selectedPictureBankMap.put(bankToOpen, bank);
+				}
+			}
+			catch (ClassNotFoundException | SQLException | IOException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
+	}
+
+	/**
+	 * Open an {@link IPictureBank}.
+	 * 
+	 * @param conf
+	 *            {@link IPictureBankConfiguration} describing the
+	 *            {@link IPictureBank} to load.
+	 * @return the loaded {@link IPictureBank}.
+	 * @throws ClassNotFoundException
+	 *             TODO
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private IPictureBank<?> open(final IPictureBankConfiguration conf)
+			throws ClassNotFoundException, SQLException, IOException
+	{
+		if (conf instanceof ISQLFilePictureBankConfiguration)
+		{
+			return _loader
+					.getPictureBank((ISQLFilePictureBankConfiguration) conf);
+		}
+		return null;
 	}
 
 	/**
