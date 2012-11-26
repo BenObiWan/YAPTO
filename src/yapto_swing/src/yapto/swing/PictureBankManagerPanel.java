@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -19,6 +21,9 @@ import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureBankList;
@@ -36,6 +41,12 @@ public final class PictureBankManagerPanel extends JPanel implements
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 5033785594456871399L;
+
+	/**
+	 * Logger object.
+	 */
+	protected static final Logger LOGGER = LoggerFactory
+			.getLogger(PictureBankManagerPanel.class);
 
 	/**
 	 * Action command for the "add {@link IPictureBank}" action.
@@ -58,6 +69,11 @@ public final class PictureBankManagerPanel extends JPanel implements
 	private static final String CANCEL_ACTION_COMMAND = "c";
 
 	/**
+	 * Action command for the "multiple selection" action.
+	 */
+	private static final String MULTIPLE_SELECTION_ACTION_COMMAND = "m";
+
+	/**
 	 * Panel displaying the list of {@link IPictureBank} to load.
 	 */
 	private final JPanel _panelChooser = new JPanel(new GridLayout(0, 1));
@@ -66,6 +82,11 @@ public final class PictureBankManagerPanel extends JPanel implements
 	 * ButtonGroup used when only one {@link IPictureBank} can be selected.
 	 */
 	private final ButtonGroup _group = new ButtonGroup();
+
+	/**
+	 * List of buttons used to select the {@link IPictureBank}s.
+	 */
+	private final List<JToggleButton> _buttonList = new LinkedList<>();
 
 	/**
 	 * CheckBox enabling or disabling the ability to open multiple
@@ -114,14 +135,9 @@ public final class PictureBankManagerPanel extends JPanel implements
 		buttonRemove.addActionListener(this);
 		panelButtonsChooser.add(buttonRemove);
 
-		_checkBoxMulti.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(final ActionEvent e)
-			{
-				reload();
-			}
-		});
+		_checkBoxMulti.setActionCommand(MULTIPLE_SELECTION_ACTION_COMMAND);
+		_checkBoxMulti.addActionListener(this);
+		_checkBoxMulti.setEnabled(false);
 
 		final JPanel panelButtons = new JPanel(new GridLayout(1, 0, 10, 0));
 
@@ -153,28 +169,31 @@ public final class PictureBankManagerPanel extends JPanel implements
 			_group.remove(but);
 		}
 		_panelChooser.removeAll();
+		_buttonList.clear();
 	}
 
 	private void addPictureBank(
 			final IPictureBankConfiguration pictureBankConfiguration)
 	{
-		JToggleButton comp;
+		JToggleButton toggleButton;
 		if (_checkBoxMulti.isSelected())
 		{
-			comp = new JCheckBox(pictureBankConfiguration.getPictureBankName());
+			toggleButton = new JCheckBox(
+					pictureBankConfiguration.getPictureBankName());
+			_buttonList.add(toggleButton);
 		}
 		else
 		{
-			comp = new JRadioButton(
+			toggleButton = new JRadioButton(
 					pictureBankConfiguration.getPictureBankName());
-			_group.add(comp);
+			_group.add(toggleButton);
 		}
-		_panelChooser.add(comp);
-		comp.setActionCommand(String.valueOf(pictureBankConfiguration
+		_panelChooser.add(toggleButton);
+		toggleButton.setActionCommand(String.valueOf(pictureBankConfiguration
 				.getPictureBankId()));
 	}
 
-	protected void reload()
+	private void reload()
 	{
 		_panelChooser.setVisible(false);
 		clearAll();
@@ -188,9 +207,8 @@ public final class PictureBankManagerPanel extends JPanel implements
 		for (final IPictureBank<?> sel : _pictureBankList
 				.getSelectedPictureBank())
 		{
-			// TODO
+			// TODO select appropriate IPictureBank
 		}
-
 		_panelChooser.setVisible(true);
 	}
 
@@ -204,9 +222,42 @@ public final class PictureBankManagerPanel extends JPanel implements
 	@Override
 	public void actionPerformed(final ActionEvent ae)
 	{
-		System.out.println(ae.getActionCommand());
-		// TODO Auto-generated method stub
-
+		final String strCommand = ae.getActionCommand();
+		// TODO replace with a switch/case
+		if (ADD_ACTION_COMMAND.equals(strCommand))
+		{
+			// TODO handle adding of an IPictureBank
+		}
+		else if (REMOVE_ACTION_COMMAND.equals(strCommand))
+		{
+			// TODO handle removing of an IPictureBank
+		}
+		else if (OPEN_ACTION_COMMAND.equals(strCommand))
+		{
+			if (_checkBoxMulti.isSelected())
+			{
+				// TODO enable selection of multiple {@IPictureBank}.
+			}
+			else
+			{
+				final int iSelected = Integer.valueOf(
+						_group.getSelection().getActionCommand()).intValue();
+				_pictureBankList.selectPictureBankById(iSelected);
+			}
+			// TODO close the dialog
+		}
+		else if (CANCEL_ACTION_COMMAND.equals(strCommand))
+		{
+			// TODO close the dialog
+		}
+		else if (MULTIPLE_SELECTION_ACTION_COMMAND.equals(strCommand))
+		{
+			reload();
+		}
+		else
+		{
+			LOGGER.error("Unknown action command : " + strCommand);
+		}
 	}
 
 	public static void main(final String[] args)
