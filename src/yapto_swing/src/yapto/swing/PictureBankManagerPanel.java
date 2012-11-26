@@ -29,12 +29,33 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import common.config.InvalidConfigurationException;
 
-public final class PictureBankManagerPanel extends JPanel
+public final class PictureBankManagerPanel extends JPanel implements
+		ActionListener
 {
 	/**
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 5033785594456871399L;
+
+	/**
+	 * Action command for the "add {@link IPictureBank}" action.
+	 */
+	private static final String ADD_ACTION_COMMAND = "a";
+
+	/**
+	 * Action command for the "remove {@link IPictureBank}" action.
+	 */
+	private static final String REMOVE_ACTION_COMMAND = "r";
+
+	/**
+	 * Action command for the "open {@link IPictureBank}s" action.
+	 */
+	private static final String OPEN_ACTION_COMMAND = "o";
+
+	/**
+	 * Action command for the "cancel" action.
+	 */
+	private static final String CANCEL_ACTION_COMMAND = "c";
 
 	/**
 	 * Panel displaying the list of {@link IPictureBank} to load.
@@ -68,9 +89,7 @@ public final class PictureBankManagerPanel extends JPanel
 		super(new BorderLayout(10, 10));
 		_pictureBankList = pictureBankList;
 		pictureBankList.register(this);
-
 		setBorder(new EmptyBorder(10, 10, 10, 10));
-
 		final JPanel panelBigChooser = new JPanel(new BorderLayout(5, 5));
 		panelBigChooser.setBorder(new CompoundBorder(BorderFactory
 				.createRaisedBevelBorder(), new EmptyBorder(10, 10, 10, 10)));
@@ -84,8 +103,16 @@ public final class PictureBankManagerPanel extends JPanel
 		panelBottomChooser.add(panelButtonsChooser);
 		panelBigChooser.add(scrollPaneChooser, BorderLayout.CENTER);
 		panelBigChooser.add(panelBottomChooser, BorderLayout.PAGE_END);
-		panelButtonsChooser.add(new JButton("Add"));
-		panelButtonsChooser.add(new JButton("Remove"));
+
+		final JButton buttonAdd = new JButton("Add");
+		buttonAdd.setActionCommand(ADD_ACTION_COMMAND);
+		buttonAdd.addActionListener(this);
+		panelButtonsChooser.add(buttonAdd);
+
+		final JButton buttonRemove = new JButton("Remove");
+		buttonRemove.setActionCommand(REMOVE_ACTION_COMMAND);
+		buttonRemove.addActionListener(this);
+		panelButtonsChooser.add(buttonRemove);
 
 		_checkBoxMulti.addActionListener(new ActionListener()
 		{
@@ -98,8 +125,15 @@ public final class PictureBankManagerPanel extends JPanel
 
 		final JPanel panelButtons = new JPanel(new GridLayout(1, 0, 10, 0));
 
-		panelButtons.add(new JButton("Open"));
-		panelButtons.add(new JButton("Cancel"));
+		final JButton buttonOpen = new JButton("Open");
+		buttonOpen.setActionCommand(OPEN_ACTION_COMMAND);
+		buttonOpen.addActionListener(this);
+		panelButtons.add(buttonOpen);
+
+		final JButton buttonCancel = new JButton("Cancel");
+		buttonCancel.setActionCommand(CANCEL_ACTION_COMMAND);
+		buttonCancel.addActionListener(this);
+		panelButtons.add(buttonCancel);
 
 		add(panelBigChooser, BorderLayout.CENTER);
 		add(panelButtons, BorderLayout.PAGE_END);
@@ -165,6 +199,14 @@ public final class PictureBankManagerPanel extends JPanel
 			@SuppressWarnings("unused") final PictureBankListChangedEvent ev)
 	{
 		reload();
+	}
+
+	@Override
+	public void actionPerformed(final ActionEvent ae)
+	{
+		System.out.println(ae.getActionCommand());
+		// TODO Auto-generated method stub
+
 	}
 
 	public static void main(final String[] args)
