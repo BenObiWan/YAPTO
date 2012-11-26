@@ -3,6 +3,7 @@ package yapto.picturebank.sqlfile.config;
 import javax.management.MBeanServer;
 
 import yapto.picturebank.IPictureBank;
+import yapto.picturebank.config.IPictureBankConfiguration;
 import yapto.picturebank.sqlfile.IBufferedImageCacheLoaderConfiguration;
 
 import common.config.AbstractConfigurationBranch;
@@ -471,5 +472,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		{
 			return _leafThumbnailsDirectory.getCurrentValue();
 		}
+	}
+
+	@Override
+	public int compareTo(final IPictureBankConfiguration o)
+	{
+		return getPictureBankId() - o.getPictureBankId();
 	}
 }

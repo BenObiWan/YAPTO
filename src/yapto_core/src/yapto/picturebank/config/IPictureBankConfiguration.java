@@ -10,7 +10,8 @@ import common.config.IConfigurationBranch;
  * @author benobiwan
  * 
  */
-public interface IPictureBankConfiguration extends IConfigurationBranch
+public interface IPictureBankConfiguration extends IConfigurationBranch,
+		Comparable<IPictureBankConfiguration>
 {
 	/**
 	 * Tag for the {@link IPictureBank} id.
