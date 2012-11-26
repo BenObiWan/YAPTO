@@ -205,7 +205,7 @@ public final class PictureBankList
 	 *            {@link IPictureBank} to load.
 	 * @return the loaded {@link IPictureBank}.
 	 * @throws ClassNotFoundException
-	 *             TODO
+	 *             TODO Javadoc for thrown exceptions
 	 * @throws SQLException
 	 * @throws IOException
 	 */

@@ -1,9 +1,10 @@
 package yapto.picturebank.sqlfile.config;
 
 import yapto.picturebank.process.IdentifyTask;
+import yapto.picturebank.sqlfile.SQLFilePictureBank;
 
 /**
- * TODO
+ * Configuration common to every {@link SQLFilePictureBank}.
  * 
  * @author benobiwan
  * 

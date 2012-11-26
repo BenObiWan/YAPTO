@@ -202,13 +202,13 @@ public final class PictureDisplayComponent extends JScrollPane
 					setPreferredSize(PictureDisplayComponent.this.getSize());
 					break;
 				case PICTURE_PERCENTAGE:
-					// TODO
+					// TODO PICTURE_PERCENTAGE size implementation
 					break;
 				case SPECIFIC_SIZE:
 					setPreferredSize(_zoomDimension);
 					break;
 				case WINDOW_PERCENTAGE:
-					// TODO
+					// TODO WINDOW_PERCENTAGE size implementation
 					break;
 				default:
 					break;
@@ -252,7 +252,7 @@ public final class PictureDisplayComponent extends JScrollPane
 				g2.drawImage(_img, _transform, null);
 				break;
 			case WINDOW_PERCENTAGE:
-				// TODO
+				// TODO : WINDOW_PERCENTAGE size implementation
 				break;
 			default:
 				break;

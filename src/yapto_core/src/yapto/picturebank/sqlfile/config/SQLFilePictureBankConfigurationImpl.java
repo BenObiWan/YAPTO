@@ -430,8 +430,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		@Override
 		public String getDescription()
 		{
-			// TODO
-			return "";
+			return "Configuration for the picture loader.";
 		}
 
 		@Override
@@ -463,8 +462,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		@Override
 		public String getDescription()
 		{
-			// TODO
-			return "";
+			return "Configuration for the thumbnail loader.";
 		}
 
 		@Override

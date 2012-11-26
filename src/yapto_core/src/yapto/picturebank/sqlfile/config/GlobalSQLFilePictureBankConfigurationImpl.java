@@ -3,6 +3,7 @@ package yapto.picturebank.sqlfile.config;
 import javax.management.MBeanServer;
 
 import yapto.picturebank.process.IdentifyTask;
+import yapto.picturebank.sqlfile.SQLFilePictureBank;
 
 import common.config.AbstractConfigurationBranch;
 import common.config.IConfiguration;
@@ -11,7 +12,7 @@ import common.config.display.IntegerDisplayType;
 import common.config.leaf.ConfigurationInteger;
 
 /**
- * TODO
+ * Configuration common to every {@link SQLFilePictureBank}.
  * 
  * @author benobiwan
  * 
@@ -84,7 +85,8 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	private final static String WAIT_BEFORE_WRITE_INVALID_MESSAGE = "Invalid waited before writing.";
 
 	/**
-	 * TODO
+	 * Creates a new GlobalSQLFilePictureBankConfigurationImpl using default
+	 * values.
 	 * 
 	 * @param parent
 	 *            the parent configuration.
@@ -116,7 +118,8 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	}
 
 	/**
-	 * TODO
+	 * Creates a new GlobalSQLFilePictureBankConfigurationImpl with values
+	 * specified on the command line.
 	 * 
 	 * @param parent
 	 *            the parent configuration.
@@ -168,7 +171,8 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	}
 
 	/**
-	 * TODO
+	 * Creates a new GlobalSQLFilePictureBankConfigurationImpl with values
+	 * specified on the command line and in a configuration file.
 	 * 
 	 * @param parent
 	 *            the parent configuration.
@@ -239,7 +243,6 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	@Override
 	public String getDescription()
 	{
-		// TODO
-		return "";
+		return "Configuration common to every SQLFilePictureBank.";
 	}
 }
