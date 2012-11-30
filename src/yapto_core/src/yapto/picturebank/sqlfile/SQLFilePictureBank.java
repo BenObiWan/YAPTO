@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
@@ -129,6 +130,11 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 * Time to wait before writing picture information to the database.
 	 */
 	private final long _lWaitBeforeWrite;
+
+	/**
+	 * Random number generator.
+	 */
+	private final Random _rand = new Random(System.currentTimeMillis());
 
 	/**
 	 * Creates a new SQLFilePictureBank.
@@ -480,6 +486,38 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	{
 		final List<String> list = _indexer.searchPicture(query, iLimit);
 		return new PictureIterator(query, list);
+	}
+
+	@Override
+	public IPictureBrowser<FsPicture> getRandomPictureList(final int iNbrPicture)
+			throws ExecutionException
+	{
+		List<String> strIdList;
+		if (iNbrPicture < _pictureIdList.size())
+		{
+			strIdList = _pictureIdList;
+		}
+		else
+		{
+			strIdList = new Vector<>(iNbrPicture);
+			int iLeftToPick = iNbrPicture;
+			int iNbPicked = 0;
+			int i = 0;
+			int iLeftToLook = _pictureIdList.size();
+			while (iLeftToPick > 0)
+			{
+				final int rand = _rand.nextInt(iLeftToLook);
+				if (rand < iLeftToPick)
+				{
+					strIdList.set(iNbPicked, _pictureIdList.get(i));
+					iNbPicked++;
+					iLeftToPick--;
+				}
+				iLeftToLook--;
+				i++;
+			}
+		}
+		return new PictureIterator(null, strIdList);
 	}
 
 	/**

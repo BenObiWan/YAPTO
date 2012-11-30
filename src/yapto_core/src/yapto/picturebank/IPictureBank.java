@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.lucene.search.Query;
 
+import yapto.picturebank.sqlfile.FsPicture;
 import yapto.picturebank.tag.IWritableTagRepository;
 
 /**
@@ -93,4 +94,18 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	 */
 	IPictureBrowser<PICTURE> filterPictures(Query query, int iLimit)
 			throws IOException, ExecutionException;
+
+	/**
+	 * Get an {@link IPictureBrowser} browsing a random number of pictures from
+	 * this {@link IPictureBank}.
+	 * 
+	 * @param iNbrPicture
+	 *            number of pictures to select.
+	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
+	 */
+	IPictureBrowser<FsPicture> getRandomPictureList(final int iNbrPicture)
+			throws ExecutionException;
 }
