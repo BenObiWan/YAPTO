@@ -493,7 +493,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			throws ExecutionException
 	{
 		List<String> strIdList;
-		if (iNbrPicture < _pictureIdList.size())
+		if (iNbrPicture > _pictureIdList.size())
 		{
 			strIdList = _pictureIdList;
 		}
@@ -501,7 +501,6 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		{
 			strIdList = new Vector<>(iNbrPicture);
 			int iLeftToPick = iNbrPicture;
-			int iNbPicked = 0;
 			int i = 0;
 			int iLeftToLook = _pictureIdList.size();
 			while (iLeftToPick > 0)
@@ -509,8 +508,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				final int rand = _rand.nextInt(iLeftToLook);
 				if (rand < iLeftToPick)
 				{
-					strIdList.set(iNbPicked, _pictureIdList.get(i));
-					iNbPicked++;
+					strIdList.add(_pictureIdList.get(i));
 					iLeftToPick--;
 				}
 				iLeftToLook--;

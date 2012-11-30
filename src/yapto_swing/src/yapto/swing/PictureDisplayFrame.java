@@ -154,7 +154,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		try
 		{
 			contentPane = new MainPictureDisplayPanel(this,
-					_pictureBank.getAllPictures());
+					_pictureBank.getRandomPictureList(40));
 		}
 		catch (final ExecutionException e1)
 		{
