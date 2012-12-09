@@ -2,14 +2,17 @@ package yapto.picturebank;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutionException;
 
+import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,7 @@ import yapto.picturebank.config.IPictureBankConfiguration;
 import yapto.picturebank.sqlfile.SQLFilePictureBankLoader;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import common.config.InvalidConfigurationException;
@@ -28,7 +32,7 @@ import common.config.InvalidConfigurationException;
  * @author benobiwan
  * 
  */
-public final class PictureBankList
+public final class PictureBankList implements IPictureBrowserCreator
 {
 	/**
 	 * Logger object.
@@ -39,18 +43,28 @@ public final class PictureBankList
 	/**
 	 * Set of all {@link IPictureBankConfiguration}.
 	 */
-	private final SortedSet<IPictureBankConfiguration> _allPictureBankConfSet = new TreeSet<>();
+	private final SortedSet<IPictureBankConfiguration> _allPictureBankConfSet = new ConcurrentSkipListSet<>();
 
 	/**
 	 * Map of {@link IPictureBankConfiguration} by id.
 	 */
-	private final Map<Integer, IPictureBankConfiguration> _configurationByIdMap = new HashMap<>();
+	private final Map<Integer, IPictureBankConfiguration> _configurationByIdMap = new ConcurrentHashMap<>();
 
 	/**
 	 * Map with selected {@link IPictureBankConfiguration} and the corresponding
 	 * {@link IPictureBank} object as value.
 	 */
-	private final Map<IPictureBankConfiguration, IPictureBank<?>> _selectedPictureBankMap = new HashMap<>();
+	private final Map<IPictureBankConfiguration, IPictureBank<?>> _selectedPictureBankMap = new ConcurrentHashMap<>();
+
+	/**
+	 * Lock protecting access to the {@link IPictureBrowser}.
+	 */
+	private final Object _lock = new Object();
+
+	/**
+	 * The {@link IPictureBrowser} corresponding to the last selected picture.
+	 */
+	private IPictureBrowser<?> _pictureBrowser = null;
 
 	/**
 	 * {@link EventBus} used to signal registered objects of changes in this
@@ -59,7 +73,8 @@ public final class PictureBankList
 	private final EventBus _bus;
 
 	/**
-	 * The {@link IPictureBankLoader}.
+	 * The {@link IPictureBankLoader} corresponding to the last selection of
+	 * {@link IPicture}.
 	 */
 	private final SQLFilePictureBankLoader _loader;
 
@@ -70,6 +85,7 @@ public final class PictureBankList
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link PictureBankList}.
 	 * @throws InvalidConfigurationException
+	 *             TODO
 	 */
 	public PictureBankList(final EventBus bus)
 			throws InvalidConfigurationException
@@ -225,10 +241,9 @@ public final class PictureBankList
 	 * 
 	 * @return the selected {@link IPictureBank}s.
 	 */
-	public Set<IPictureBank<?>> getSelectedPictureBank()
+	public SortedSet<IPictureBank<?>> getSelectedPictureBank()
 	{
-		return Collections.unmodifiableSet(Sets
-				.newHashSet(_selectedPictureBankMap.values()));
+		return ImmutableSortedSet.copyOf(_selectedPictureBankMap.values());
 	}
 
 	/**
@@ -251,5 +266,101 @@ public final class PictureBankList
 	public void register(final Object object)
 	{
 		_bus.register(object);
+	}
+
+	/**
+	 * Unselect all {@link IPictureBank} and closes them.
+	 */
+	public void unselectAll()
+	{
+		for (final IPictureBankConfiguration bankToClose : _selectedPictureBankMap
+				.keySet())
+		{
+			final IPictureBank<?> bank = _selectedPictureBankMap
+					.remove(bankToClose);
+			if (bank != null)
+			{
+				bank.close();
+			}
+		}
+	}
+
+	/**
+	 * Get the {@link IPictureBankLoader} corresponding to the last selection of
+	 * {@link IPicture}.
+	 * 
+	 * @return the {@link IPictureBankLoader} corresponding to the last
+	 *         selection of {@link IPicture}.
+	 */
+	public IPictureBrowser<?> getLastSelectPictureBrowser()
+	{
+		synchronized (_lock)
+		{
+			return _pictureBrowser;
+		}
+	}
+
+	@Override
+	public IPictureBrowser<?> getAllPictures() throws ExecutionException
+	{
+		final Collection<IPictureBank<?>> selected = _selectedPictureBankMap
+				.values();
+		synchronized (_lock)
+		{
+			if (selected.isEmpty())
+			{
+				_pictureBrowser = null;
+			}
+			else
+			{
+				_pictureBrowser = selected.iterator().next().getAllPictures();
+			}
+			_bus.post(new PictureBrowserChangedEvent());
+			return _pictureBrowser;
+		}
+	}
+
+	@Override
+	public IPictureBrowser<?> filterPictures(final Query query, final int iLimit)
+			throws IOException, ExecutionException
+	{
+		final Collection<IPictureBank<?>> selected = _selectedPictureBankMap
+				.values();
+		synchronized (_lock)
+		{
+			if (selected.isEmpty())
+			{
+				_pictureBrowser = null;
+			}
+			else
+			{
+				_pictureBrowser = selected.iterator().next()
+						.filterPictures(query, iLimit);
+			}
+			_bus.post(new PictureBrowserChangedEvent());
+			return _pictureBrowser;
+		}
+	}
+
+	@Override
+	public IPictureBrowser<?> getRandomPictureList(final int iNbrPicture)
+			throws ExecutionException
+	{
+		final Collection<IPictureBank<?>> selected = _selectedPictureBankMap
+				.values();
+		synchronized (_lock)
+		{
+			if (selected.isEmpty())
+			{
+				_pictureBrowser = null;
+			}
+			else
+			{
+				_pictureBrowser = selected.iterator().next()
+						.getRandomPictureList(iNbrPicture);
+			}
+			_bus.post(new PictureBrowserChangedEvent());
+			return _pictureBrowser;
+		}
 	}
 }

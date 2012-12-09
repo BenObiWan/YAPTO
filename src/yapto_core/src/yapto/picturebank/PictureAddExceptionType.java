@@ -67,7 +67,12 @@ public enum PictureAddExceptionType
 	/**
 	 * The specified file isn't a directory.
 	 */
-	NOT_A_DIRECTORY("The specified file isn't a directory.");
+	NOT_A_DIRECTORY("The specified file isn't a directory."),
+
+	/**
+	 * There are no open PictureBank.
+	 */
+	NO_OPEN_PICTUREBANK("There are no open PictureBank.");
 
 	/**
 	 * Message for this exception type.

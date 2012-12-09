@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -12,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.PictureBankList;
 
 /**
  * Panel displaying an {@link IPicture} and its information.
@@ -58,18 +61,28 @@ public final class MainPictureDisplayPanel extends JPanel
 	private final IPictureBrowser<?> _pictureBrowser;
 
 	/**
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
+	 */
+	protected final PictureBankList _bankList;
+
+	/**
 	 * Create a new MainPictureDisplayPanel.
 	 * 
 	 * @param parent
 	 *            parent {@link Frame}.
-	 * @param pictureBrowser
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
+	 * @throws ExecutionException
+	 *             TODO
 	 */
 	public MainPictureDisplayPanel(final Frame parent,
-			final IPictureBrowser<?> pictureBrowser)
+			final PictureBankList bankList) throws ExecutionException
 	{
 		super(new BorderLayout());
-		_pictureBrowser = pictureBrowser;
+		_bankList = bankList;
+		_pictureBrowser = _bankList.getRandomPictureList(40);
 		_pictureComponent = new PictureDisplayComponent(_pictureBrowser);
 		_pictureBrowser.register(_pictureComponent);
 		_pictureInfoPanel = new PictureInformationPanel(parent, _pictureBrowser);

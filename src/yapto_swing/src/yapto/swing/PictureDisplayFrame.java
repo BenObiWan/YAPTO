@@ -6,9 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.sql.SQLException;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -28,11 +26,8 @@ import org.slf4j.LoggerFactory;
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureAddException;
-import yapto.picturebank.sqlfile.SQLFilePictureBank;
-import yapto.picturebank.sqlfile.config.GlobalSQLFilePictureBankConfigurationImpl;
-import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
-import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
-import yapto.picturebank.sqlfile.config.SQLFilePictureBankConfigurationImpl;
+import yapto.picturebank.PictureAddExceptionType;
+import yapto.picturebank.PictureBankList;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -84,21 +79,22 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private final JFileChooser _directoryChooser = new JFileChooser();
 
 	/**
-	 * {@link IPictureBank} used to load the pictures.
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
 	 */
-	protected final IPictureBank<?> _pictureBank;
+	protected final PictureBankList _bankList;
 
 	/**
 	 * Creates a new PictureDisplayFrame.
 	 * 
-	 * @param pictureBank
-	 *            the {@link IPictureBank} used as source for the
-	 *            {@link IPicture}.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public PictureDisplayFrame(final IPictureBank<?> pictureBank)
+	public PictureDisplayFrame(final PictureBankList bankList)
 	{
 		super("yapto");
-		_pictureBank = pictureBank;
+		_bankList = bankList;
 
 		_directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -115,7 +111,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			@Override
 			public void windowClosed(final WindowEvent e)
 			{
-				_pictureBank.close();
+				_bankList.unselectAll();
 				System.exit(0);
 			}
 
@@ -153,8 +149,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		MainPictureDisplayPanel contentPane = null;
 		try
 		{
-			contentPane = new MainPictureDisplayPanel(this,
-					_pictureBank.getRandomPictureList(40));
+			contentPane = new MainPictureDisplayPanel(this, _bankList);
 		}
 		catch (final ExecutionException e1)
 		{
@@ -234,7 +229,19 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				try
 				{
-					_pictureBank.addPicture(file.toPath());
+					// TODO choose to which IPictureBank the picture is added
+					// when more than one is opened.
+					final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
+							.getSelectedPictureBank();
+					if (selectedBankSet != null && !selectedBankSet.isEmpty())
+					{
+						selectedBankSet.first().addPicture(file.toPath());
+					}
+					else
+					{
+						throw new PictureAddException(
+								PictureAddExceptionType.NO_OPEN_PICTUREBANK);
+					}
 				}
 				catch (final PictureAddException e)
 				{
@@ -268,8 +275,20 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				}
 				try
 				{
-					_pictureBank.addDirectory(file.toPath());
-					// TODO handle return object
+					// TODO choose to which IPictureBank the pictures are added
+					// when more than one is opened.
+					final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
+							.getSelectedPictureBank();
+					if (selectedBankSet != null && !selectedBankSet.isEmpty())
+					{
+						selectedBankSet.first().addDirectory(file.toPath());
+						// TODO handle return object
+					}
+					else
+					{
+						throw new PictureAddException(
+								PictureAddExceptionType.NO_OPEN_PICTUREBANK);
+					}
 				}
 				catch (final PictureAddException e)
 				{
@@ -317,33 +336,21 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 * 
 	 * @param args
 	 *            command line parameters.
-	 * @throws IOException
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
 	 * @throws InvalidConfigurationException
+	 *             TODO
 	 */
-	public static void main(final String[] args) throws ClassNotFoundException,
-			SQLException, IOException, InvalidConfigurationException
+	public static void main(final String[] args)
+			throws InvalidConfigurationException
 	{
 		BasicConfigurator.configure();
 
-		final IGlobalSQLFilePictureBankConfiguration globalConf = new GlobalSQLFilePictureBankConfigurationImpl(
-				null, ManagementFactory.getPlatformMBeanServer(),
-				Integer.valueOf(4), Integer.valueOf(4), Integer.valueOf(3));
-
-		final ISQLFilePictureBankConfiguration conf = new SQLFilePictureBankConfigurationImpl(
-				null, ManagementFactory.getPlatformMBeanServer(),
-				Integer.valueOf(1), "local",
-				"/home/benobiwan/images/photoDB/photoDB.sqlite",
-				"/home/benobiwan/images/photoDB/photos/",
-				"/home/benobiwan/images/photoDB/thumbnails/",
-				"/home/benobiwan/images/photoDB/index/");
-
 		final EventBus bus = new AsyncEventBus(Executors.newFixedThreadPool(10));
-		final SQLFilePictureBank pictureBank = new SQLFilePictureBank(
-				globalConf, conf, bus);
+		final PictureBankList bankList = new PictureBankList(bus);
 
-		final PictureDisplayFrame main = new PictureDisplayFrame(pictureBank);
+		// TODO to remove
+		bankList.selectPictureBankById(1);
+
+		final PictureDisplayFrame main = new PictureDisplayFrame(bankList);
 		main.pack();
 		main.setVisible(true);
 	}
