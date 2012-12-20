@@ -86,8 +86,7 @@ public final class MainPictureDisplayPanel extends JPanel
 		_pictureComponent = new PictureDisplayComponent(_bankList);
 		_pictureInfoPanel = new PictureInformationPanel(parent, _pictureBrowser);
 		_pictureBrowser.register(_pictureInfoPanel);
-		_pictureBrowserPanel = new PictureBrowserPanel(_pictureBrowser);
-		_pictureBrowser.register(_pictureBrowserPanel);
+		_pictureBrowserPanel = new PictureBrowserPanel(_bankList);
 
 		_pictureComponent.setPreferredSize(new Dimension(400, 300));
 

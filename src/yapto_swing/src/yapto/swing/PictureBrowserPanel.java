@@ -8,7 +8,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
@@ -27,10 +30,21 @@ public final class PictureBrowserPanel extends JPanel
 	private static final long serialVersionUID = 8383818741917881197L;
 
 	/**
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
+	 */
+	private final PictureBankList _bankList;
+
+	/**
 	 * The {@link IPictureBrowser} which is controlled by this
 	 * {@link PictureBrowserPanel}.
 	 */
-	protected final IPictureBrowser<? extends IPicture> _pictureIterator;
+	protected IPictureBrowser<? extends IPicture> _pictureBrowser;
+
+	/**
+	 * Lock protecting access to the {@link IPictureBrowser}.
+	 */
+	protected final Object _lockBrowser = new Object();
 
 	/**
 	 * {@link JButton} used to select the previous picture.
@@ -45,21 +59,26 @@ public final class PictureBrowserPanel extends JPanel
 	/**
 	 * Creates a new PictureBrowserPanel.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public PictureBrowserPanel(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public PictureBrowserPanel(final PictureBankList bankList)
 	{
 		super(new GridLayout(1, 0, 10, 10));
-		_pictureIterator = pictureIterator;
+		_bankList = bankList;
+		changePictureBrowser();
+		_bankList.register(this);
 		_jbPrevious = new JButton("<");
 		_jbPrevious.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(final ActionEvent arg0)
 			{
-				_pictureIterator.previous();
+				synchronized (_lockBrowser)
+				{
+					_pictureBrowser.previous();
+				}
 			}
 		});
 		add(_jbPrevious);
@@ -70,7 +89,7 @@ public final class PictureBrowserPanel extends JPanel
 			@Override
 			public void actionPerformed(final ActionEvent arg0)
 			{
-				_pictureIterator.next();
+				_pictureBrowser.next();
 			}
 		});
 		add(_jbNext);
@@ -83,8 +102,11 @@ public final class PictureBrowserPanel extends JPanel
 	 */
 	private void updateButtonEnableState()
 	{
-		_jbPrevious.setEnabled(_pictureIterator.hasPrevious());
-		_jbNext.setEnabled(_pictureIterator.hasNext());
+		synchronized (_lockBrowser)
+		{
+			_jbPrevious.setEnabled(_pictureBrowser.hasPrevious());
+			_jbNext.setEnabled(_pictureBrowser.hasNext());
+		}
 	}
 
 	/**
@@ -98,5 +120,38 @@ public final class PictureBrowserPanel extends JPanel
 			@SuppressWarnings("unused") final PictureChangedEvent e)
 	{
 		updateButtonEnableState();
+	}
+
+	/**
+	 * Handle a {@link PictureBrowserChangedEvent} by changing the current
+	 * {@link IPictureBrowser}.
+	 * 
+	 * @param ev
+	 *            the event to handle.
+	 */
+	@Subscribe
+	public void handlePictureBrowserChangedEvent(
+			@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
+	{
+		changePictureBrowser();
+	}
+
+	/**
+	 * Change the {@link IPictureBrowser}.
+	 */
+	public void changePictureBrowser()
+	{
+		synchronized (_lockBrowser)
+		{
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.unRegister(this);
+			}
+			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.register(this);
+			}
+		}
 	}
 }
