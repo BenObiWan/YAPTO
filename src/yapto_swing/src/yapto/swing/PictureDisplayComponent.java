@@ -402,12 +402,12 @@ public final class PictureDisplayComponent extends JScrollPane
 			{
 				if (_pictureBrowser != null)
 				{
-					_pictureBrowser.unRegister(this);
+					_pictureBrowser.unRegister(PictureDisplayComponent.this);
 				}
 				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
 				if (_pictureBrowser != null)
 				{
-					_pictureBrowser.register(this);
+					_pictureBrowser.register(PictureDisplayComponent.this);
 				}
 			}
 		}
