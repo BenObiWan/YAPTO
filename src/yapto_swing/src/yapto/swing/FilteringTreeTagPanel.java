@@ -8,9 +8,6 @@ import javax.swing.tree.TreePath;
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBrowser;
 import yapto.picturebank.tag.ITag;
-import yapto.picturebank.tag.TagRepositoryChangedEvent;
-
-import com.google.common.eventbus.Subscribe;
 
 /**
  * Implementation of {@link AbstractTreeTagPanel} where multiple {@link ITag}s
@@ -47,14 +44,6 @@ public class FilteringTreeTagPanel extends AbstractTreeTagPanel
 	public void unsetSelectedTags()
 	{
 		_tagTree.clearChecking();
-	}
-
-	@Override
-	@Subscribe
-	public void handleTagRepositoryChangedEvent(
-			final TagRepositoryChangedEvent ev)
-	{
-		super.handleTagRepositoryChangedEvent(ev);
 	}
 
 	/**
