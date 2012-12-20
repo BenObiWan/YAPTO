@@ -83,7 +83,7 @@ public final class MainPictureDisplayPanel extends JPanel
 		super(new BorderLayout());
 		_bankList = bankList;
 		_pictureBrowser = _bankList.getRandomPictureList(40);
-		_pictureComponent = new PictureDisplayComponent(_pictureBrowser);
+		_pictureComponent = new PictureDisplayComponent(_bankList);
 		_pictureBrowser.register(_pictureComponent);
 		_pictureInfoPanel = new PictureInformationPanel(parent, _pictureBrowser);
 		_pictureBrowser.register(_pictureInfoPanel);

@@ -15,7 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
@@ -47,14 +50,14 @@ public final class PictureDisplayComponent extends JScrollPane
 	/**
 	 * Creates a new {@link PictureDisplayComponent}.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public PictureDisplayComponent(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public PictureDisplayComponent(final PictureBankList bankList)
 	{
 		super();
-		_displayPane = new DisplayPane(pictureIterator);
+		_displayPane = new DisplayPane(bankList);
 		setViewportView(_displayPane);
 	}
 
@@ -144,10 +147,21 @@ public final class PictureDisplayComponent extends JScrollPane
 		private Dimension _zoomDimension;
 
 		/**
+		 * The {@link PictureBankList} used to load the {@link IPictureBank}
+		 * used as source for the {@link IPicture}.
+		 */
+		private final PictureBankList _bankList;
+
+		/**
 		 * The {@link IPictureBrowser} used to display picture on this
 		 * {@link PictureDisplayComponent}.
 		 */
-		private final IPictureBrowser<? extends IPicture> _pictureIterator;
+		private IPictureBrowser<? extends IPicture> _pictureBrowser;
+
+		/**
+		 * Lock protecting access to the {@link IPictureBrowser}.
+		 */
+		private final Object _lockBrowser = new Object();
 
 		/**
 		 * Memory of the last size used to scale the image.
@@ -167,13 +181,19 @@ public final class PictureDisplayComponent extends JScrollPane
 		/**
 		 * Creates a new {@link DisplayPane}.
 		 * 
-		 * @param pictureIterator
-		 *            the {@link IPictureBrowser} to use.
+		 * @param bankList
+		 *            the {@link PictureBankList} used to load the
+		 *            {@link IPictureBank} used as source for the
+		 *            {@link IPicture}.
 		 */
-		public DisplayPane(
-				final IPictureBrowser<? extends IPicture> pictureIterator)
+		public DisplayPane(final PictureBankList bankList)
 		{
-			_pictureIterator = pictureIterator;
+			_bankList = bankList;
+			synchronized (_lockBrowser)
+			{
+				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			}
+			_bankList.register(this);
 		}
 
 		/**
@@ -184,7 +204,11 @@ public final class PictureDisplayComponent extends JScrollPane
 		 */
 		public void loadPicture() throws IOException
 		{
-			final IPicture pic = _pictureIterator.getCurrentPicture();
+			IPicture pic;
+			synchronized (_lockBrowser)
+			{
+				pic = _pictureBrowser.getCurrentPicture();
+			}
 			if (pic != null)
 			{
 				_img = pic.getImageData();
@@ -356,6 +380,23 @@ public final class PictureDisplayComponent extends JScrollPane
 				break;
 			}
 			_zoomType = zoomType;
+		}
+
+		/**
+		 * Handle a {@link PictureBrowserChangedEvent} by changing the current
+		 * {@link IPictureBrowser}.
+		 * 
+		 * @param ev
+		 *            the event to handle.
+		 */
+		@Subscribe
+		public void handlePictureBrowserChangedEvent(
+				@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
+		{
+			synchronized (_lockBrowser)
+			{
+				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			}
 		}
 	}
 }
