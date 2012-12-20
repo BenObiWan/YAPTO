@@ -189,10 +189,7 @@ public final class PictureDisplayComponent extends JScrollPane
 		public DisplayPane(final PictureBankList bankList)
 		{
 			_bankList = bankList;
-			synchronized (_lockBrowser)
-			{
-				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
-			}
+			changePictureBrowser();
 			_bankList.register(this);
 		}
 
@@ -393,9 +390,25 @@ public final class PictureDisplayComponent extends JScrollPane
 		public void handlePictureBrowserChangedEvent(
 				@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
 		{
+			changePictureBrowser();
+		}
+
+		/**
+		 * Change the {@link IPictureBrowser}.
+		 */
+		public void changePictureBrowser()
+		{
 			synchronized (_lockBrowser)
 			{
+				if (_pictureBrowser != null)
+				{
+					_pictureBrowser.unRegister(this);
+				}
 				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+				if (_pictureBrowser != null)
+				{
+					_pictureBrowser.register(this);
+				}
 			}
 		}
 	}
