@@ -26,7 +26,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	/**
 	 * Panel used to display the {@link CheckboxTree}.
 	 */
-	private final SelectingTreeTagPanel _panelTreeTag;
+	private final AssociatingTreeTagPanel _panelTreeTag;
 
 	/**
 	 * Creates a new TagEditorPanel.
@@ -40,7 +40,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(parent, pictureIterator);
-		_panelTreeTag = new SelectingTreeTagPanel(pictureIterator);
+		_panelTreeTag = new AssociatingTreeTagPanel(pictureIterator);
 		pictureIterator.register(_panelTreeTag);
 		add(_panelTreeTag, BorderLayout.CENTER);
 		changePicture();

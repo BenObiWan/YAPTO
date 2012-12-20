@@ -27,7 +27,7 @@ import com.google.common.eventbus.Subscribe;
  * @author benobiwan
  * 
  */
-public class SelectingTreeTagPanel extends AbstractTreeTagPanel implements
+public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 		ActionListener
 {
 	/**
@@ -66,7 +66,7 @@ public class SelectingTreeTagPanel extends AbstractTreeTagPanel implements
 	 * @param pictureIterator
 	 *            the {@link IPictureBrowser} to use.
 	 */
-	public SelectingTreeTagPanel(
+	public AssociatingTreeTagPanel(
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(pictureIterator);
