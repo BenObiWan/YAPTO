@@ -39,53 +39,58 @@ public final class PictureIndexer
 	/**
 	 * Name of the field used to index the name of the picture.
 	 */
-	public static final String ID_INDEX_FIELD = "picture_id";
+	public static final String ID_INDEX_FIELD = "id";
 
 	/**
 	 * Name of the field used to index the grade of the picture.
 	 */
-	public static final String GRADE_INDEX_FIELD = "picture_grade";
+	public static final String GRADE_INDEX_FIELD = "grade";
 
 	/**
 	 * Name of the field used to index the orientation of the picture.
 	 */
-	public static final String ORIENTATION_INDEX_FIELD = "picture_orientation";
+	public static final String ORIENTATION_INDEX_FIELD = "orientation";
 
 	/**
 	 * Name of the field used to index the exif 'make' of the picture.
 	 */
-	public static final String MAKE_INDEX_FIELD = "picture_make";
+	public static final String MAKE_INDEX_FIELD = "make";
 
 	/**
 	 * Name of the field used to index the exif 'model' of the picture.
 	 */
-	public static final String MODEL_INDEX_FIELD = "picture_model";
+	public static final String MODEL_INDEX_FIELD = "model";
 
 	/**
 	 * Name of the field used to index the height of the picture.
 	 */
-	public static final String HEIGHT_INDEX_FIELD = "picture_height";
+	public static final String HEIGHT_INDEX_FIELD = "height";
 
 	/**
 	 * Name of the field used to index the width of the picture.
 	 */
-	public static final String WIDTH_INDEX_FIELD = "picture_width";
+	public static final String WIDTH_INDEX_FIELD = "width";
 
 	/**
 	 * Name of the field used to index the exif 'exposure' of the picture.
 	 */
-	public static final String PICTURE_EXPOSURE_INDEX_FIELD = "picture_exposure";
+	public static final String PICTURE_EXPOSURE_INDEX_FIELD = "exposure";
 
 	/**
 	 * Name of the field used to index the exif 'relative aperture' of the
 	 * picture.
 	 */
-	public static final String MODEL_RELATIVE_APERTURE_FIELD = "picture_relative_aperture";
+	public static final String MODEL_RELATIVE_APERTURE_FIELD = "relative_aperture";
 
 	/**
 	 * Name of the field used to index the exif 'focal length' of the picture.
 	 */
-	public static final String FOCAL_LENGTH_INDEX_FIELD = "picture_focal_length";
+	public static final String FOCAL_LENGTH_INDEX_FIELD = "focal_length";
+
+	/**
+	 * Name of the field used to index the tags of the picture.
+	 */
+	public static final String TAG_INDEX_FIELD = "tag";
 
 	/**
 	 * The configuration.
@@ -190,7 +195,7 @@ public final class PictureIndexer
 		// tags
 		for (final ITag t : picture.getTagSet())
 		{
-			doc.add(new StringField(t.getTagIdAsString(), t.getTagIdAsString(),
+			doc.add(new StringField(TAG_INDEX_FIELD, t.getTagIdAsString(),
 					Field.Store.NO));
 		}
 		// informations
