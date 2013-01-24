@@ -8,7 +8,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
@@ -27,21 +30,27 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 	private static final long serialVersionUID = -5296012830383518783L;
 
 	/**
-	 * The {@link IPictureBrowser} used to display picture on this
-	 * {@link PictureGradePanel}.
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
 	 */
-	private final IPictureBrowser<?> _pictureIterator;
-
-	/**
-	 * The {@link IPicture} with which to associate the grade.
-	 */
-	private IPicture _picture;
+	private final PictureBankList _bankList;
 
 	/**
 	 * Lock protecting access to the {@link IPictureBrowser} and the
 	 * {@link IPicture}.
 	 */
 	private final Object _lock = new Object();
+
+	/**
+	 * The {@link IPictureBrowser} used to display picture on this
+	 * {@link PictureGradePanel}.
+	 */
+	private IPictureBrowser<?> _pictureBrowser;
+
+	/**
+	 * The {@link IPicture} with which to associate the grade.
+	 */
+	private IPicture _picture;
 
 	/**
 	 * Slider used to change the grade of the {@link IPicture}.
@@ -51,13 +60,16 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 	/**
 	 * Creates a new PictureGradePanel.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public PictureGradePanel(final IPictureBrowser<?> pictureIterator)
+	public PictureGradePanel(final PictureBankList bankList)
 	{
 		super(new BorderLayout());
-		_pictureIterator = pictureIterator;
+		_bankList = bankList;
+		changePictureBrowser();
+		_bankList.register(this);
 		_gradeSlider.addChangeListener(this);
 		add(_gradeSlider, BorderLayout.CENTER);
 		_gradeSlider.setMajorTickSpacing(1);
@@ -86,9 +98,9 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 	{
 		synchronized (_lock)
 		{
-			if (_picture != _pictureIterator.getCurrentPicture())
+			if (_picture != _pictureBrowser.getCurrentPicture())
 			{
-				_picture = _pictureIterator.getCurrentPicture();
+				_picture = _pictureBrowser.getCurrentPicture();
 				if (_picture != null)
 				{
 					_gradeSlider.setValue(_picture.getPictureGrade());
@@ -110,6 +122,39 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 					&& _picture.getPictureGrade() != _gradeSlider.getValue())
 			{
 				_picture.setPictureGrade(_gradeSlider.getValue());
+			}
+		}
+	}
+
+	/**
+	 * Handle a {@link PictureBrowserChangedEvent} by changing the current
+	 * {@link IPictureBrowser}.
+	 * 
+	 * @param ev
+	 *            the event to handle.
+	 */
+	@Subscribe
+	public void handlePictureBrowserChangedEvent(
+			@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
+	{
+		changePictureBrowser();
+	}
+
+	/**
+	 * Change the {@link IPictureBrowser}.
+	 */
+	public void changePictureBrowser()
+	{
+		synchronized (_lock)
+		{
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.unRegister(this);
+			}
+			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.register(this);
 			}
 		}
 	}

@@ -17,7 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.EditableTag;
 import yapto.picturebank.tag.ITag;
 import yapto.picturebank.tag.TagAddException;
@@ -92,9 +93,10 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	private final JDialog _parent;
 
 	/**
-	 * The {@link IPictureBrowser} where to create tags.
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
 	 */
-	private final IPictureBrowser<?> _pictureBrowser;
+	private final PictureBankList _bankList;
 
 	/**
 	 * {@link JButton} used to create or edit the {@link ITag}.
@@ -111,19 +113,17 @@ public final class AddTagPanel extends JPanel implements ActionListener
 	 * 
 	 * @param parent
 	 *            parent {@link JDialog} of this Panel.
-	 * @param pictureBrowser
-	 *            the {@link IPictureBrowser} where to create tags.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public AddTagPanel(final JDialog parent,
-			final IPictureBrowser<? extends IPicture> pictureBrowser)
+	public AddTagPanel(final JDialog parent, final PictureBankList bankList)
 	{
 		super(new BorderLayout(5, 5));
 		setBorder(new EmptyBorder(10, 10, 10, 10));
-
 		_parent = parent;
-		_pictureBrowser = pictureBrowser;
-		_tagParent = new ParentingTreeTagPanel(pictureBrowser);
-		pictureBrowser.register(_tagParent);
+		_bankList = bankList;
+		_tagParent = new ParentingTreeTagPanel(_bankList);
 
 		final JPanel panelHeadField = new JPanel(new GridLayout(3, 2, 5, 5));
 		panelHeadField.add(new JLabel("Name "));
@@ -166,8 +166,12 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
-				_pictureBrowser.getPictureBank().addTag(iParentTagId, strName,
-						strDescription, bSelectable);
+				// TODO handle multiple picture bank
+				_bankList
+						.getSelectedPictureBank()
+						.first()
+						.addTag(iParentTagId, strName, strDescription,
+								bSelectable);
 				_parent.setVisible(false);
 			}
 			catch (final TagAddException ex)
@@ -185,8 +189,12 @@ public final class AddTagPanel extends JPanel implements ActionListener
 			final int iParentTagId = _tagParent.getSelectedTagId();
 			try
 			{
-				_pictureBrowser.getPictureBank().editTag(_iIdOfTagToEdit,
-						iParentTagId, strName, strDescription, bSelectable);
+				// TODO handle multiple picture bank
+				_bankList
+						.getSelectedPictureBank()
+						.first()
+						.editTag(_iIdOfTagToEdit, iParentTagId, strName,
+								strDescription, bSelectable);
 				_parent.setVisible(false);
 			}
 			catch (final TagAddException ex)

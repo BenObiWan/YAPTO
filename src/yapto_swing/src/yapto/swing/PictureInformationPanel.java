@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.PictureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
@@ -34,10 +35,10 @@ public final class PictureInformationPanel extends JPanel
 			.getLogger(PictureInformationPanel.class);
 
 	/**
-	 * The {@link IPictureBrowser} used to display picture on this
-	 * {@link PictureInformationPanel}.
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
 	 */
-	private final IPictureBrowser<?> _pictureIterator;
+	private final PictureBankList _bankList;
 
 	/**
 	 * Object used to control the access on the displayed picture.
@@ -61,18 +62,17 @@ public final class PictureInformationPanel extends JPanel
 	 * 
 	 * @param parent
 	 *            parent {@link Frame}.
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
 	public PictureInformationPanel(final Frame parent,
-			final IPictureBrowser<?> pictureIterator)
+			final PictureBankList bankList)
 	{
 		super(new BorderLayout());
-		_pictureIterator = pictureIterator;
-		_tagPanel = new TreeTagEditorPanel(parent, pictureIterator);
-		_gradePanel = new PictureGradePanel(pictureIterator);
-		_pictureIterator.register(_tagPanel);
-		_pictureIterator.register(_gradePanel);
+		_bankList = bankList;
+		_tagPanel = new TreeTagEditorPanel(parent, _bankList);
+		_gradePanel = new PictureGradePanel(_bankList);
 		add(_tagPanel, BorderLayout.CENTER);
 		add(_gradePanel, BorderLayout.PAGE_END);
 	}

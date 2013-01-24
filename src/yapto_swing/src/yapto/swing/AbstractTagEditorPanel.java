@@ -11,8 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
 import yapto.picturebank.IPictureList;
+import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.PictureChangedEvent;
 import yapto.picturebank.tag.ITag;
 
@@ -34,6 +37,12 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	private static final long serialVersionUID = -5913543215027452909L;
 
 	/**
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
+	 */
+	private final PictureBankList _bankList;
+
+	/**
 	 * The {@link IPicture} with which to associate the tags.
 	 */
 	protected IPicture _picture;
@@ -48,7 +57,7 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	 * The {@link IPictureBrowser} used to display picture on this
 	 * {@link AbstractTagEditorPanel}.
 	 */
-	protected IPictureBrowser<? extends IPicture> _pictureIterator;
+	protected IPictureBrowser<? extends IPicture> _pictureBrowser;
 
 	/**
 	 * Dialog for tag creation.
@@ -65,23 +74,24 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	 * 
 	 * @param parent
 	 *            parent {@link Frame}.
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
 	public AbstractTagEditorPanel(final Frame parent,
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+			final PictureBankList bankList)
 	{
 		super(new BorderLayout());
-		_pictureIterator = pictureIterator;
+		_bankList = bankList;
+		_bankList.register(this);
 		final JButton buttonAddTag = new JButton("Add tag");
 		buttonAddTag.addActionListener(this);
 		final JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		buttonPanel.add(buttonAddTag, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.PAGE_END);
-
 		_dialogCreateTag = new JDialog(parent, "Create tag", true);
-		_addTagPanel = new AddTagPanel(_dialogCreateTag, pictureIterator);
+		_addTagPanel = new AddTagPanel(_dialogCreateTag, _bankList);
 		_dialogCreateTag.setContentPane(_addTagPanel);
 	}
 
@@ -109,30 +119,10 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	{
 		synchronized (_lock)
 		{
-			if (_picture != _pictureIterator.getCurrentPicture())
+			if (_picture != _pictureBrowser.getCurrentPicture())
 			{
-				_picture = _pictureIterator.getCurrentPicture();
+				_picture = _pictureBrowser.getCurrentPicture();
 				selectAppropriateTags();
-			}
-		}
-	}
-
-	/**
-	 * Update the list of available {@link ITag}s according the {@link ITag}s of
-	 * the specified {@link IPictureList}.
-	 * 
-	 * @param pictureIterator
-	 *            the new {@link IPictureBrowser}.
-	 */
-	public final void changePictureList(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
-	{
-		synchronized (_lock)
-		{
-			if (_pictureIterator != pictureIterator)
-			{
-				_pictureIterator = pictureIterator;
-				updateAvailableTags();
 			}
 		}
 	}
@@ -156,5 +146,39 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 		_addTagPanel.initialize(false, null);
 		_dialogCreateTag.pack();
 		_dialogCreateTag.setVisible(true);
+	}
+
+	/**
+	 * Handle a {@link PictureBrowserChangedEvent} by changing the current
+	 * {@link IPictureBrowser}.
+	 * 
+	 * @param ev
+	 *            the event to handle.
+	 */
+	@Subscribe
+	public void handlePictureBrowserChangedEvent(
+			@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
+	{
+		changePictureBrowser();
+	}
+
+	/**
+	 * Change the {@link IPictureBrowser}.
+	 */
+	public void changePictureBrowser()
+	{
+		synchronized (_lock)
+		{
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.unRegister(this);
+			}
+			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.register(this);
+				updateAvailableTags();
+			}
+		}
 	}
 }

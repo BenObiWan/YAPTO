@@ -6,7 +6,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.ITag;
 
 /**
@@ -28,13 +29,13 @@ public final class ParentingTreeTagPanel extends AbstractTreeTagPanel
 	/**
 	 * Creates a new ParentingTreeTagPanel.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public ParentingTreeTagPanel(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public ParentingTreeTagPanel(final PictureBankList bankList)
 	{
-		super(pictureIterator);
+		super(bankList);
 		_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SINGLE);
 	}
 

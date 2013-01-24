@@ -15,7 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.ITag;
 
 /**
@@ -59,19 +60,19 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	 * 
 	 * @param parent
 	 *            parent {@link Frame}.
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public ListTagEditorPanel(final Frame parent,
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public ListTagEditorPanel(final Frame parent, final PictureBankList bankList)
 	{
-		super(parent, pictureIterator);
+		super(parent, bankList);
 		_tagList = new JList<>();
 		_tagList.setLayoutOrientation(JList.VERTICAL);
 		_tagList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final JScrollPane scrollPane = new JScrollPane(_tagList);
 		add(scrollPane, BorderLayout.CENTER);
-		updateAvailableTags();
+		changePictureBrowser();
 		changePicture();
 		_tagList.addListSelectionListener(new ListSelectionListener()
 		{
@@ -89,7 +90,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 		_bDoNotSaveTags = true;
 		synchronized (_lock)
 		{
-			if (_pictureIterator != null)
+			if (_pictureBrowser != null)
 			{
 				_tagList.clearSelection();
 				if (_picture != null)
@@ -114,10 +115,10 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureIterator != null)
+			if (_pictureBrowser != null)
 			{
 				_vTags.clear();
-				for (final ITag t : _pictureIterator.getTagSet())
+				for (final ITag t : _pictureBrowser.getTagSet())
 				{
 					if (t.isSelectable())
 					{
@@ -136,7 +137,7 @@ public final class ListTagEditorPanel extends AbstractTagEditorPanel
 		{
 			synchronized (_lock)
 			{
-				if (_pictureIterator != null)
+				if (_pictureBrowser != null)
 				{
 					if (_picture != null)
 					{

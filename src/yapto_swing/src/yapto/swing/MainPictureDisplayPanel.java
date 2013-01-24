@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -55,12 +54,6 @@ public final class MainPictureDisplayPanel extends JPanel
 	private final PictureBrowserPanel _pictureBrowserPanel;
 
 	/**
-	 * The {@link IPictureBrowser} used to display picture on this
-	 * {@link MainPictureDisplayPanel}.
-	 */
-	private final IPictureBrowser<?> _pictureBrowser;
-
-	/**
 	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
 	 * source for the {@link IPicture}.
 	 */
@@ -74,18 +67,14 @@ public final class MainPictureDisplayPanel extends JPanel
 	 * @param bankList
 	 *            the {@link PictureBankList} used to load the
 	 *            {@link IPictureBank} used as source for the {@link IPicture}.
-	 * @throws ExecutionException
-	 *             TODO
 	 */
 	public MainPictureDisplayPanel(final Frame parent,
-			final PictureBankList bankList) throws ExecutionException
+			final PictureBankList bankList)
 	{
 		super(new BorderLayout());
 		_bankList = bankList;
-		_pictureBrowser = _bankList.getRandomPictureList(40);
 		_pictureComponent = new PictureDisplayComponent(_bankList);
-		_pictureInfoPanel = new PictureInformationPanel(parent, _pictureBrowser);
-		_pictureBrowser.register(_pictureInfoPanel);
+		_pictureInfoPanel = new PictureInformationPanel(parent, _bankList);
 		_pictureBrowserPanel = new PictureBrowserPanel(_bankList);
 
 		_pictureComponent.setPreferredSize(new Dimension(400, 300));

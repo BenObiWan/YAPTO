@@ -16,8 +16,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
 import yapto.picturebank.IPictureList;
+import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.tag.ITag;
 import yapto.picturebank.tag.TagRepositoryChangedEvent;
 
@@ -52,6 +55,12 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	private DefaultTreeModel _treeModel;
 
 	/**
+	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
+	 * source for the {@link IPicture}.
+	 */
+	private final PictureBankList _bankList;
+
+	/**
 	 * Lock protecting access to the {@link IPictureBrowser} and the
 	 * {@link IPicture}.
 	 */
@@ -61,7 +70,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	 * The {@link IPictureBrowser} used to get the tag list and the current
 	 * {@link IPicture} on this {@link AbstractTreeTagPanel}.
 	 */
-	protected IPictureBrowser<? extends IPicture> _pictureIterator;
+	protected IPictureBrowser<? extends IPicture> _pictureBrowser;
 
 	/**
 	 * {@link HashMap} linking tag id and their {@link TreePath}.
@@ -71,18 +80,19 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	/**
 	 * Creates a new AbstractTreeTagPanel.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public AbstractTreeTagPanel(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public AbstractTreeTagPanel(final PictureBankList bankList)
 	{
 		super(new BorderLayout());
+		_bankList = bankList;
 		synchronized (_lock)
 		{
-			_pictureIterator = pictureIterator;
-			_rootNode = new DefaultMutableTreeNode(
-					_pictureIterator.getRootTag());
+			// TODO improve this
+			_rootNode = new DefaultMutableTreeNode(_bankList
+					.getSelectedPictureBank().first().getRootTag());
 		}
 		_tagTree = new CheckboxTree(_rootNode);
 		_tagTree.setCellRenderer(new ToolTipCheckboxTreeCellRenderer());
@@ -99,7 +109,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 		ToolTipManager.sharedInstance().registerComponent(_tagTree);
 		final JScrollPane scrollPane = new JScrollPane(_tagTree);
 		add(scrollPane, BorderLayout.CENTER);
-		updateAvailableTags();
+		changePictureBrowser();
 	}
 
 	/**
@@ -112,9 +122,9 @@ public abstract class AbstractTreeTagPanel extends JPanel
 		{
 			_rootNode.removeAllChildren();
 			_treePathMap.clear();
-			if (_pictureIterator != null)
+			if (_pictureBrowser != null)
 			{
-				final ITag rootTag = _pictureIterator.getRootTag();
+				final ITag rootTag = _pictureBrowser.getRootTag();
 				final TreePath rootTreePath = new TreePath(_rootNode);
 				_treePathMap.put(Integer.valueOf(0), rootTreePath);
 				populateChildren(rootTag, _rootNode, rootTreePath);
@@ -187,5 +197,39 @@ public abstract class AbstractTreeTagPanel extends JPanel
 			@SuppressWarnings("unused") final TagRepositoryChangedEvent ev)
 	{
 		updateAvailableTags();
+	}
+
+	/**
+	 * Handle a {@link PictureBrowserChangedEvent} by changing the current
+	 * {@link IPictureBrowser}.
+	 * 
+	 * @param ev
+	 *            the event to handle.
+	 */
+	@Subscribe
+	public void handlePictureBrowserChangedEvent(
+			@SuppressWarnings("unused") final PictureBrowserChangedEvent ev)
+	{
+		changePictureBrowser();
+	}
+
+	/**
+	 * Change the {@link IPictureBrowser}.
+	 */
+	public void changePictureBrowser()
+	{
+		synchronized (_lock)
+		{
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.unRegister(this);
+			}
+			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
+			if (_pictureBrowser != null)
+			{
+				_pictureBrowser.register(this);
+				updateAvailableTags();
+			}
+		}
 	}
 }

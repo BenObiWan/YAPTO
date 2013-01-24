@@ -147,14 +147,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		});
 
 		MainPictureDisplayPanel contentPane = null;
-		try
-		{
-			contentPane = new MainPictureDisplayPanel(this, _bankList);
-		}
-		catch (final ExecutionException e1)
-		{
-			logException(e1);
-		}
+		contentPane = new MainPictureDisplayPanel(this, _bankList);
 		setJMenuBar(createMenuBar());
 		setContentPane(contentPane);
 	}
@@ -338,9 +331,11 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 *            command line parameters.
 	 * @throws InvalidConfigurationException
 	 *             TODO
+	 * @throws ExecutionException
+	 *             TODO
 	 */
 	public static void main(final String[] args)
-			throws InvalidConfigurationException
+			throws InvalidConfigurationException, ExecutionException
 	{
 		BasicConfigurator.configure();
 
@@ -349,6 +344,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 
 		// TODO to remove
 		bankList.selectPictureBankById(1);
+		bankList.getRandomPictureList(40);
 
 		final PictureDisplayFrame main = new PictureDisplayFrame(bankList);
 		main.pack();

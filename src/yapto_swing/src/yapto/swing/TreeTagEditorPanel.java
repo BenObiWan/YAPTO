@@ -6,7 +6,8 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.ITag;
 
 /**
@@ -33,16 +34,16 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	 * 
 	 * @param parent
 	 *            parent {@link Frame}.
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public TreeTagEditorPanel(final Frame parent,
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public TreeTagEditorPanel(final Frame parent, final PictureBankList bankList)
 	{
-		super(parent, pictureIterator);
-		_panelTreeTag = new AssociatingTreeTagPanel(pictureIterator);
-		pictureIterator.register(_panelTreeTag);
+		super(parent, bankList);
+		_panelTreeTag = new AssociatingTreeTagPanel(bankList);
 		add(_panelTreeTag, BorderLayout.CENTER);
+		changePictureBrowser();
 		changePicture();
 	}
 
@@ -57,7 +58,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureIterator != null)
+			if (_pictureBrowser != null)
 			{
 				_panelTreeTag.unsetSelectedTags();
 				if (_picture != null)

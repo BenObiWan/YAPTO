@@ -12,7 +12,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import yapto.picturebank.IPicture;
-import yapto.picturebank.IPictureBrowser;
+import yapto.picturebank.IPictureBank;
+import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.ITag;
 import yapto.picturebank.tag.TagRepositoryChangedEvent;
 
@@ -63,13 +64,13 @@ public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 	/**
 	 * Creates a new SelectingTreeTagPanel.
 	 * 
-	 * @param pictureIterator
-	 *            the {@link IPictureBrowser} to use.
+	 * @param bankList
+	 *            the {@link PictureBankList} used to load the
+	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public AssociatingTreeTagPanel(
-			final IPictureBrowser<? extends IPicture> pictureIterator)
+	public AssociatingTreeTagPanel(final PictureBankList bankList)
 	{
-		super(pictureIterator);
+		super(bankList);
 		_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SIMPLE);
 		_tagTree.addTreeCheckingListener(new PictureTagUpdateTreeCheckingListener());
 
@@ -110,7 +111,7 @@ public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 		{
 			_bChangingPicture = true;
 		}
-		final IPicture pic = _pictureIterator.getCurrentPicture();
+		final IPicture pic = _pictureBrowser.getCurrentPicture();
 		if (pic != null)
 		{
 			for (final ITag tag : pic.getTagSet())
@@ -182,7 +183,7 @@ public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 					if (!_bChangingPicture)
 					{
 						final ITag tag = (ITag) userObject;
-						final IPicture pic = _pictureIterator
+						final IPicture pic = _pictureBrowser
 								.getCurrentPicture();
 						if (pic != null)
 						{
