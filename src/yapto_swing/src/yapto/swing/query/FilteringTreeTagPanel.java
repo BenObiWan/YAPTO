@@ -1,4 +1,4 @@
-package yapto.swing;
+package yapto.swing.query;
 
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
 
@@ -8,6 +8,7 @@ import javax.swing.tree.TreePath;
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBrowser;
 import yapto.picturebank.tag.ITag;
+import yapto.swing.AbstractTreeTagPanel;
 
 /**
  * Implementation of {@link AbstractTreeTagPanel} where multiple {@link ITag}s
