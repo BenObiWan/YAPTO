@@ -60,6 +60,8 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 		_pictureIterator = pictureIterator;
 		_gradeSlider.addChangeListener(this);
 		add(_gradeSlider, BorderLayout.CENTER);
+		_gradeSlider.setMajorTickSpacing(1);
+		_gradeSlider.setPaintLabels(true);
 		changePicture();
 	}
 
