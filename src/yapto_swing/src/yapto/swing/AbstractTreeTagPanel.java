@@ -58,8 +58,8 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	protected final Object _lock = new Object();
 
 	/**
-	 * The {@link IPictureBrowser} used to display picture on this
-	 * {@link AbstractTagEditorPanel}.
+	 * The {@link IPictureBrowser} used to get the tag list and the current
+	 * {@link IPicture} on this {@link AbstractTreeTagPanel}.
 	 */
 	protected IPictureBrowser<? extends IPicture> _pictureIterator;
 
@@ -78,8 +78,12 @@ public abstract class AbstractTreeTagPanel extends JPanel
 			final IPictureBrowser<? extends IPicture> pictureIterator)
 	{
 		super(new BorderLayout());
-		_pictureIterator = pictureIterator;
-		_rootNode = new DefaultMutableTreeNode(_pictureIterator.getRootTag());
+		synchronized (_lock)
+		{
+			_pictureIterator = pictureIterator;
+			_rootNode = new DefaultMutableTreeNode(
+					_pictureIterator.getRootTag());
+		}
 		_tagTree = new CheckboxTree(_rootNode);
 		_tagTree.setCellRenderer(new ToolTipCheckboxTreeCellRenderer());
 		final TreeModel model = _tagTree.getModel();
