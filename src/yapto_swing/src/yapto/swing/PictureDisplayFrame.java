@@ -220,6 +220,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				{
 					LOGGER.debug("Opening: " + file.getName() + ".");
 				}
+				//TODO choose a list of tags to add to the picture
 				try
 				{
 					// TODO choose to which IPictureBank the picture is added
@@ -266,6 +267,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				{
 					LOGGER.debug("Opening directory: " + file.getName() + ".");
 				}
+				//TODO choose a list of tags to add to all the pictures
 				try
 				{
 					// TODO choose to which IPictureBank the pictures are added
