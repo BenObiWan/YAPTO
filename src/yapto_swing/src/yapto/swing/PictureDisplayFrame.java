@@ -6,10 +6,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -28,6 +30,7 @@ import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureAddException;
 import yapto.picturebank.PictureAddExceptionType;
 import yapto.picturebank.PictureBankList;
+import yapto.picturebank.tag.ITag;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -79,6 +82,16 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private final JFileChooser _directoryChooser = new JFileChooser();
 
 	/**
+	 * Panel for choosing initial tags.
+	 */
+	private final InitialTagPanel _initialTagPanel;
+
+	/**
+	 * Dialog for choosing initial tags.
+	 */
+	private final JDialog _dialogInitTag;
+
+	/**
 	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
 	 * source for the {@link IPicture}.
 	 */
@@ -97,6 +110,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		_bankList = bankList;
 
 		_directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		_dialogInitTag = new JDialog(this, "Initial tags", true);
+		_initialTagPanel = new InitialTagPanel(_dialogInitTag, _bankList);
+		_dialogInitTag.setContentPane(_initialTagPanel);
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowListener()
@@ -220,41 +237,52 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				{
 					LOGGER.debug("Opening: " + file.getName() + ".");
 				}
-				//TODO choose a list of tags to add to the picture
-				try
+				// Select the list of tags to add to the picture.
+				_initialTagPanel.clearSelection();
+				_dialogInitTag.pack();
+				_dialogInitTag.setVisible(true);
+				final List<ITag> tagList = _initialTagPanel.getCheckedTags();
+				if (tagList != null)
 				{
-					// TODO choose to which IPictureBank the picture is added
-					// when more than one is opened.
-					final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
-							.getSelectedPictureBank();
-					if (selectedBankSet != null && !selectedBankSet.isEmpty())
+					try
 					{
-						selectedBankSet.first().addPicture(file.toPath());
-					}
-					else
-					{
-						throw new PictureAddException(
-								PictureAddExceptionType.NO_OPEN_PICTUREBANK);
-					}
-				}
-				catch (final PictureAddException e)
-				{
-					switch (e.getExceptionType())
-					{
-					case FILE_ALREADY_EXISTS:
-						final String strId = e.getPictureId();
-						if (strId != null)
+						// TODO choose to which IPictureBank the picture is
+						// added
+						// when more than one is opened.
+						final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
+								.getSelectedPictureBank();
+						if (selectedBankSet != null
+								&& !selectedBankSet.isEmpty())
 						{
-							// TODO add a dialog to compare the two pictures.
-							logException(e);
+							// TODO add the list of tags to the picture
+							selectedBankSet.first().addPicture(file.toPath());
 						}
 						else
 						{
+							throw new PictureAddException(
+									PictureAddExceptionType.NO_OPEN_PICTUREBANK);
+						}
+					}
+					catch (final PictureAddException e)
+					{
+						switch (e.getExceptionType())
+						{
+						case FILE_ALREADY_EXISTS:
+							final String strId = e.getPictureId();
+							if (strId != null)
+							{
+								// TODO add a dialog to compare the two
+								// pictures.
+								logException(e);
+							}
+							else
+							{
+								logException(e);
+							}
+							break;
+						default:
 							logException(e);
 						}
-						break;
-					default:
-						logException(e);
 					}
 				}
 			}
@@ -267,27 +295,37 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 				{
 					LOGGER.debug("Opening directory: " + file.getName() + ".");
 				}
-				//TODO choose a list of tags to add to all the pictures
-				try
+				// Select the list of tags to add to the picture.
+				_initialTagPanel.clearSelection();
+				_dialogInitTag.pack();
+				_dialogInitTag.setVisible(true);
+				final List<ITag> tagList = _initialTagPanel.getCheckedTags();
+				if (tagList != null)
 				{
-					// TODO choose to which IPictureBank the pictures are added
-					// when more than one is opened.
-					final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
-							.getSelectedPictureBank();
-					if (selectedBankSet != null && !selectedBankSet.isEmpty())
+					try
 					{
-						selectedBankSet.first().addDirectory(file.toPath());
-						// TODO handle return object
+						// TODO choose to which IPictureBank the pictures are
+						// added
+						// when more than one is opened.
+						final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
+								.getSelectedPictureBank();
+						if (selectedBankSet != null
+								&& !selectedBankSet.isEmpty())
+						{
+							// TODO add the list of tags to the picture
+							selectedBankSet.first().addDirectory(file.toPath());
+							// TODO handle return object
+						}
+						else
+						{
+							throw new PictureAddException(
+									PictureAddExceptionType.NO_OPEN_PICTUREBANK);
+						}
 					}
-					else
+					catch (final PictureAddException e)
 					{
-						throw new PictureAddException(
-								PictureAddExceptionType.NO_OPEN_PICTUREBANK);
+						logException(e);
 					}
-				}
-				catch (final PictureAddException e)
-				{
-					logException(e);
 				}
 			}
 			break;
