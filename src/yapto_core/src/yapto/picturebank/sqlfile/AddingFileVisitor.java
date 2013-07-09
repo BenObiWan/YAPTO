@@ -5,10 +5,12 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureAddException;
 import yapto.picturebank.PictureAddResult;
+import yapto.picturebank.tag.ITag;
 
 /**
  * {@link SimpleFileVisitor} which add picture files to the provided
@@ -30,14 +32,23 @@ public final class AddingFileVisitor extends SimpleFileVisitor<Path>
 	private final PictureAddResult _result;
 
 	/**
+	 * List of {@link ITag} to add to the pictures.
+	 */
+	private final List<ITag> _tagList;
+
+	/**
 	 * Creates a new AddingFileVisitor.
 	 * 
 	 * @param pictureBank
 	 *            the {@link IPictureBank} used for adding pictures.
+	 * @param tagList
+	 *            list of {@link ITag} to add to the pictures.
 	 */
-	public AddingFileVisitor(final IPictureBank<?> pictureBank)
+	public AddingFileVisitor(final IPictureBank<?> pictureBank,
+			final List<ITag> tagList)
 	{
 		_pictureBank = pictureBank;
+		_tagList = tagList;
 		_result = new PictureAddResult();
 	}
 
@@ -48,7 +59,7 @@ public final class AddingFileVisitor extends SimpleFileVisitor<Path>
 		FileVisitResult res;
 		try
 		{
-			_pictureBank.addPicture(file);
+			_pictureBank.addPicture(file, _tagList);
 			_result.addFileSuccess(file);
 			res = FileVisitResult.CONTINUE;
 		}

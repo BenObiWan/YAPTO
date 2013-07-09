@@ -1,7 +1,9 @@
 package yapto.picturebank;
 
 import java.nio.file.Path;
+import java.util.List;
 
+import yapto.picturebank.tag.ITag;
 import yapto.picturebank.tag.IWritableTagRepository;
 
 /**
@@ -21,23 +23,28 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	 * 
 	 * @param pictureFile
 	 *            the path to the {@link IPicture} to add.
+	 * @param tagList
+	 *            list of {@link ITag} to add to the picture.
 	 * @throws PictureAddException
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	void addPicture(Path pictureFile) throws PictureAddException;
+	void addPicture(Path pictureFile, List<ITag> tagList)
+			throws PictureAddException;
 
 	/**
 	 * Add all {@link IPicture}s from a directory to the {@link IPictureBank}.
 	 * 
 	 * @param pictureDirectory
 	 *            the path to the directory.
+	 * @param tagList
+	 *            list of {@link ITag} to add to the pictures.
 	 * @return object containing information about every added pictures.
 	 * @throws PictureAddException
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	PictureAddResult addDirectory(Path pictureDirectory)
+	PictureAddResult addDirectory(Path pictureDirectory, List<ITag> tagList)
 			throws PictureAddException;
 
 	/**

@@ -109,6 +109,7 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 			{
 				_bAdd = true;
 			}
+			_parent.setVisible(false);
 		}
 		else if (CANCEL_ACTION_COMMAND.equals(e.getActionCommand()))
 		{

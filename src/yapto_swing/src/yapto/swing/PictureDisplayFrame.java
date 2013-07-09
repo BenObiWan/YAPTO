@@ -254,8 +254,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 						if (selectedBankSet != null
 								&& !selectedBankSet.isEmpty())
 						{
-							// TODO add the list of tags to the picture
-							selectedBankSet.first().addPicture(file.toPath());
+							selectedBankSet.first().addPicture(file.toPath(),
+									tagList);
 						}
 						else
 						{
@@ -312,8 +312,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 						if (selectedBankSet != null
 								&& !selectedBankSet.isEmpty())
 						{
-							// TODO add the list of tags to the picture
-							selectedBankSet.first().addDirectory(file.toPath());
+							selectedBankSet.first().addDirectory(file.toPath(),
+									tagList);
 							// TODO handle return object
 						}
 						else

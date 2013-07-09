@@ -206,7 +206,8 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public void addPicture(final Path pictureFile) throws PictureAddException
+	public void addPicture(final Path pictureFile, final List<ITag> tagList)
+			throws PictureAddException
 	{
 		if (!Files.isReadable(pictureFile))
 		{
@@ -310,6 +311,10 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		// create object
 		final FsPicture picture = new FsPicture(_imageLoader, this,
 				strPictureId, lAddedTimestamp, lAddedTimestamp, info);
+		for (final ITag tag : tagList)
+		{
+			picture.addTag(tag);
+		}
 		// create thumbnail
 		createThumbnail(picture);
 		// insert to base and index
@@ -337,15 +342,15 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public PictureAddResult addDirectory(final Path pictureDirectory)
-			throws PictureAddException
+	public PictureAddResult addDirectory(final Path pictureDirectory,
+			final List<ITag> tagList) throws PictureAddException
 	{
 		if (!Files.isDirectory(pictureDirectory))
 		{
 			throw new PictureAddException(
 					PictureAddExceptionType.NOT_A_DIRECTORY);
 		}
-		final AddingFileVisitor visitor = new AddingFileVisitor(this);
+		final AddingFileVisitor visitor = new AddingFileVisitor(this, tagList);
 		try
 		{
 			Files.walkFileTree(pictureDirectory,
