@@ -39,6 +39,11 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 	private static final String CANCEL_ACTION_COMMAND = "ca";
 
 	/**
+	 * Action command for the select tag action.
+	 */
+	private static final String SELECT_TAG_ACTION_COMMAND = "se";
+
+	/**
 	 * Action command for the add tag action.
 	 */
 	private static final String ADD_TAG_ACTION_COMMAND = "ad";
@@ -61,14 +66,24 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 	private final PictureBankList _bankList;
 
 	/**
-	 * Lock protecting access to the _bAdd boolean.
+	 * Lock protecting access to the _bAddSelected boolean.
 	 */
 	private final Object _lock = new Object();
 
 	/**
 	 * Boolean telling whether the tag needs to be added or not.
 	 */
-	private boolean _bAdd = false;
+	private boolean _bAddSelected = false;
+
+	/**
+	 * Dialog for tag creation.
+	 */
+	private final JDialog _dialogCreateTag;
+
+	/**
+	 * Panel used for tag creation.
+	 */
+	private final AddTagPanel _addTagPanel;
 
 	/**
 	 * Creates a new InitialTagPanel.
@@ -86,34 +101,48 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 		_parent = parent;
 		_bankList = bankList;
 		_tagInit = new InitialTreeTagPanel(_bankList);
-		final JPanel panelButton = new JPanel(new GridLayout(1, 2, 10, 10));
-		final JButton buttonAddTag = new JButton("Add Tag");
+		// dialog for adding new tag
+		_dialogCreateTag = new JDialog(parent, "Create tag", true);
+		_addTagPanel = new AddTagPanel(_dialogCreateTag, _bankList);
+		_dialogCreateTag.setContentPane(_addTagPanel);
+		// panel holding the buttons
+		final JPanel panelButton = new JPanel(new GridLayout(1, 3, 10, 10));
+		final JButton buttonSelTag = new JButton("Select Tags");
+		buttonSelTag.setActionCommand(SELECT_TAG_ACTION_COMMAND);
+		buttonSelTag.addActionListener(this);
+		final JButton buttonAddTag = new JButton("Add new Tag");
 		buttonAddTag.setActionCommand(ADD_TAG_ACTION_COMMAND);
 		buttonAddTag.addActionListener(this);
 		final JButton buttonCancel = new JButton("Cancel");
 		buttonCancel.setActionCommand(CANCEL_ACTION_COMMAND);
 		buttonCancel.addActionListener(this);
+		panelButton.add(buttonSelTag);
 		panelButton.add(buttonAddTag);
 		panelButton.add(buttonCancel);
-
-		add(_tagInit, BorderLayout.PAGE_START);
+		add(_tagInit, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
 	}
 
 	@Override
 	public void actionPerformed(final ActionEvent e)
 	{
-		if (ADD_TAG_ACTION_COMMAND.equals(e.getActionCommand()))
+		if (SELECT_TAG_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
 			synchronized (_lock)
 			{
-				_bAdd = true;
+				_bAddSelected = true;
 			}
 			_parent.setVisible(false);
 		}
 		else if (CANCEL_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
 			_parent.setVisible(false);
+		}
+		else if (ADD_TAG_ACTION_COMMAND.equals(e.getActionCommand()))
+		{
+			_addTagPanel.initialize(false, null);
+			_dialogCreateTag.pack();
+			_dialogCreateTag.setVisible(true);
 		}
 	}
 
@@ -124,7 +153,7 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 	{
 		synchronized (_lock)
 		{
-			_bAdd = false;
+			_bAddSelected = false;
 		}
 		_tagInit.unsetSelectedTags();
 	}
@@ -138,7 +167,7 @@ public final class InitialTagPanel extends JPanel implements ActionListener
 	{
 		synchronized (_lock)
 		{
-			if (_bAdd)
+			if (_bAddSelected)
 			{
 				return _tagInit.getCheckedTags();
 			}

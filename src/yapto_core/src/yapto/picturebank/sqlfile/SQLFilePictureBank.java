@@ -288,7 +288,6 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			{
 				throw new PictureAddException(strPictureId,
 						PictureAddExceptionType.FILE_ALREADY_EXISTS_NO_OPEN, e);
-
 			}
 			throw new PictureAddException(strPictureId,
 					PictureAddExceptionType.FILE_ALREADY_EXISTS);
