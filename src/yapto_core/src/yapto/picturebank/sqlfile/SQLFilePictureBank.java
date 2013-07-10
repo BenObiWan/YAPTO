@@ -274,6 +274,22 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		// check if already present
 		if (_pictureIdList.contains(strPictureId))
 		{
+			// add the tag to the existing picture
+			try
+			{
+				final FsPicture existingPicture = _pictureCache
+						.get(strPictureId);
+				for (final ITag tag : tagList)
+				{
+					existingPicture.addTag(tag);
+				}
+			}
+			catch (final ExecutionException e)
+			{
+				throw new PictureAddException(strPictureId,
+						PictureAddExceptionType.FILE_ALREADY_EXISTS_NO_OPEN, e);
+
+			}
 			throw new PictureAddException(strPictureId,
 					PictureAddExceptionType.FILE_ALREADY_EXISTS);
 		}

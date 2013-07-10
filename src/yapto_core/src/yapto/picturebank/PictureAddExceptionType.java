@@ -33,6 +33,12 @@ public enum PictureAddExceptionType
 	FILE_ALREADY_EXISTS("Destination file already exists."),
 
 	/**
+	 * Destination file already exists but can't be opened.
+	 */
+	FILE_ALREADY_EXISTS_NO_OPEN(
+			"Destination file already exists but can't be opened."),
+
+	/**
 	 * IO error during the copy.
 	 */
 	COPY_ERROR("IO error during the copy."),
