@@ -35,6 +35,11 @@ public interface IGlobalSQLFilePictureBankConfiguration
 	String WAIT_BEFORE_WRITE_TAG = "WaitBeforeWrite";
 
 	/**
+	 * Tag for the number of images to preload.
+	 */
+	String PRELOAD_IMAGES_COUNT_TAG = "PreloadImageCount";
+
+	/**
 	 * Get the maximum number of {@link IdentifyTask} to run at the same time.
 	 * 
 	 * @return the maximum number of {@link IdentifyTask} to run at the same
@@ -59,4 +64,11 @@ public interface IGlobalSQLFilePictureBankConfiguration
 	 *         modification and saving to the database.
 	 */
 	int getWaitBeforeWrite();
+
+	/**
+	 * Get the number of images to preload.
+	 * 
+	 * @return the number of images to preload.
+	 */
+	int getPreloadImageCount();
 }

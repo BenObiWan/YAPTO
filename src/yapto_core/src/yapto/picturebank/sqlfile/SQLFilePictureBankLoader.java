@@ -41,7 +41,7 @@ public final class SQLFilePictureBankLoader
 	{
 		_globalConf = new GlobalSQLFilePictureBankConfigurationImpl(null,
 				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(4),
-				Integer.valueOf(4), Integer.valueOf(3));
+				Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(4));
 	}
 
 	@Override

@@ -40,6 +40,11 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	private final ConfigurationInteger _leafWaitBeforeWrite;
 
 	/**
+	 * Leaf configuring the minimum number of images to preload.
+	 */
+	private final ConfigurationInteger _leafNumberOfImagesToPreload;
+
+	/**
 	 * Short description for the maximum number of identify task.
 	 */
 	private final static String MAX_IDENTIFY_TASK_SHORT_DESC = "Maximum number of identify task.";
@@ -85,6 +90,21 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	private final static String WAIT_BEFORE_WRITE_INVALID_MESSAGE = "Invalid waited before writing.";
 
 	/**
+	 * Short description for the number of images to preload.
+	 */
+	private final static String PRELOAD_IMAGES_COUNT_SHORT_DESC = "Number of images to preload.";
+
+	/**
+	 * Long description for the number of images to preload.
+	 */
+	private final static String PRELOAD_IMAGES_COUNT_LONG_DESC = "Number of images to preload.";
+
+	/**
+	 * Invalid message for the number of images to preload.
+	 */
+	private final static String PRELOAD_IMAGES_COUNT_INVALID_MESSAGE = "Invalid number of images to preload.";
+
+	/**
 	 * Creates a new GlobalSQLFilePictureBankConfigurationImpl using default
 	 * values.
 	 * 
@@ -112,9 +132,16 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 				WAIT_BEFORE_WRITE_LONG_DESC, WAIT_BEFORE_WRITE_INVALID_MESSAGE,
 				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
+		_leafNumberOfImagesToPreload = new ConfigurationInteger(this,
+				PRELOAD_IMAGES_COUNT_TAG, PRELOAD_IMAGES_COUNT_SHORT_DESC,
+				PRELOAD_IMAGES_COUNT_LONG_DESC,
+				PRELOAD_IMAGES_COUNT_INVALID_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0));
 		addLeaf(_leafMaxIdentifyTask);
 		addLeaf(_leafMaxOtherTask);
 		addLeaf(_leafWaitBeforeWrite);
+		addLeaf(_leafNumberOfImagesToPreload);
 	}
 
 	/**
@@ -136,6 +163,9 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	 *            the value specified on the command line for the minimum number
 	 *            of seconds to wait between picture modification and saving to
 	 *            the database.
+	 * @param iCommandLineNumberOfImagesToPreload
+	 *            the value specified on the command line for the number of
+	 *            images to preload.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -143,7 +173,8 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 			final IConfiguration parent, final MBeanServer mBeanServer,
 			final Integer iCommandLineMaxIdentifyTask,
 			final Integer iCommandLineMaxOtherTask,
-			final Integer iCommandLineWaitBeforeWrite)
+			final Integer iCommandLineWaitBeforeWrite,
+			final Integer iCommandLineNumberOfImagesToPreload)
 			throws InvalidConfigurationException
 	{
 		super(parent, GLOBAL_SQLFILE_PICTUREBANK_CONFIGURATION_TAG, mBeanServer);
@@ -165,9 +196,17 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 				false, IntegerDisplayType.SPINNER, Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
 				iCommandLineWaitBeforeWrite);
+		_leafNumberOfImagesToPreload = new ConfigurationInteger(this,
+				PRELOAD_IMAGES_COUNT_TAG, PRELOAD_IMAGES_COUNT_SHORT_DESC,
+				PRELOAD_IMAGES_COUNT_LONG_DESC,
+				PRELOAD_IMAGES_COUNT_INVALID_MESSAGE, false,
+				IntegerDisplayType.SPINNER, Integer.valueOf(0),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(0),
+				iCommandLineNumberOfImagesToPreload);
 		addLeaf(_leafMaxIdentifyTask);
 		addLeaf(_leafMaxOtherTask);
 		addLeaf(_leafWaitBeforeWrite);
+		addLeaf(_leafNumberOfImagesToPreload);
 	}
 
 	/**
@@ -189,6 +228,9 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	 *            the value specified on the command line for the minimum number
 	 *            of seconds to wait between picture modification and saving to
 	 *            the database.
+	 * @param iCommandLineNumberOfImageToPreload
+	 *            the value specified on the command line for the number of
+	 *            images to preload.
 	 * @param iConfigurationMaxIdentifyTask
 	 *            the value specified in the configuration file for the maximum
 	 *            number of {@link IdentifyTask} to run at the same time.
@@ -200,6 +242,9 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	 *            the value specified in the configuration file for the minimum
 	 *            number of seconds to wait between picture modification and
 	 *            saving to the database.
+	 * @param iConfigurationNumberOfImageToPreload
+	 *            the value specified on the configuration file for the number
+	 *            of images to preload.
 	 * @throws InvalidConfigurationException
 	 *             one of the given value is invalid.
 	 */
@@ -208,18 +253,23 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 			final Integer iCommandLineMaxIdentifyTask,
 			final Integer iCommandLineMaxOtherTask,
 			final Integer iCommandLineWaitBeforeWrite,
+			final Integer iCommandLineNumberOfImageToPreload,
 			final Integer iConfigurationMaxIdentifyTask,
 			final Integer iConfigurationMaxOtherTask,
-			final Integer iConfigurationWaitBeforeWrite)
+			final Integer iConfigurationWaitBeforeWrite,
+			final Integer iConfigurationNumberOfImageToPreload)
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLineMaxIdentifyTask,
-				iCommandLineMaxOtherTask, iCommandLineWaitBeforeWrite);
+				iCommandLineMaxOtherTask, iCommandLineWaitBeforeWrite,
+				iCommandLineNumberOfImageToPreload);
 		_leafMaxIdentifyTask
 				.setConfigurationValue(iConfigurationMaxIdentifyTask);
 		_leafMaxOtherTask.setConfigurationValue(iConfigurationMaxOtherTask);
 		_leafWaitBeforeWrite
 				.setConfigurationValue(iConfigurationWaitBeforeWrite);
+		_leafNumberOfImagesToPreload
+				.setConfigurationValue(iConfigurationNumberOfImageToPreload);
 	}
 
 	@Override
@@ -238,6 +288,12 @@ public final class GlobalSQLFilePictureBankConfigurationImpl extends
 	public int getWaitBeforeWrite()
 	{
 		return _leafWaitBeforeWrite.getCurrentValue().intValue();
+	}
+
+	@Override
+	public int getPreloadImageCount()
+	{
+		return _leafNumberOfImagesToPreload.getCurrentValue().intValue();
 	}
 
 	@Override
