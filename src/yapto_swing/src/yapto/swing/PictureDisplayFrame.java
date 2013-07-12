@@ -247,8 +247,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 					try
 					{
 						// TODO choose to which IPictureBank the picture is
-						// added
-						// when more than one is opened.
+						// added when more than one is opened.
 						final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
 								.getSelectedPictureBank();
 						if (selectedBankSet != null
@@ -305,8 +304,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 					try
 					{
 						// TODO choose to which IPictureBank the pictures are
-						// added
-						// when more than one is opened.
+						// added when more than one is opened.
 						final SortedSet<IPictureBank<?>> selectedBankSet = _bankList
 								.getSelectedPictureBank();
 						if (selectedBankSet != null
@@ -370,9 +368,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 * @param args
 	 *            command line parameters.
 	 * @throws InvalidConfigurationException
-	 *             TODO
+	 *             the configuration of the {@link PictureBankList} is invalid.
 	 * @throws ExecutionException
-	 *             TODO
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
 	 */
 	public static void main(final String[] args)
 			throws InvalidConfigurationException, ExecutionException

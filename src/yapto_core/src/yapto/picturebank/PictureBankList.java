@@ -85,7 +85,7 @@ public final class PictureBankList implements IPictureBrowserCreator
 	 *            the {@link EventBus} used to signal registered objects of
 	 *            changes in this {@link PictureBankList}.
 	 * @throws InvalidConfigurationException
-	 *             TODO
+	 *             the configuration is invalid.
 	 */
 	public PictureBankList(final EventBus bus)
 			throws InvalidConfigurationException
