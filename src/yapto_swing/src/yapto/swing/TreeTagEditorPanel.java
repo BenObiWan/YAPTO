@@ -41,7 +41,7 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	public TreeTagEditorPanel(final Frame parent, final PictureBankList bankList)
 	{
 		super(parent, bankList);
-		_panelTreeTag = new AssociatingTreeTagPanel(bankList);
+		_panelTreeTag = new AssociatingTreeTagPanel(parent, bankList);
 		add(_panelTreeTag, BorderLayout.CENTER);
 		changePictureBrowser();
 		changePicture();

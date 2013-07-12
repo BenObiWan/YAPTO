@@ -58,7 +58,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	 * The {@link PictureBankList} used to load the {@link IPictureBank} used as
 	 * source for the {@link IPicture}.
 	 */
-	private final PictureBankList _bankList;
+	protected final PictureBankList _bankList;
 
 	/**
 	 * Lock protecting access to the {@link IPictureBrowser} and the

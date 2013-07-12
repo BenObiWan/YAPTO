@@ -4,9 +4,11 @@ import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingEvent;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingListener;
 import it.cnr.imaa.essi.lablib.gui.checkboxtree.TreeCheckingModel.CheckingMode;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -62,25 +64,48 @@ public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 	protected final Object _lockChangingPicture = new Object();
 
 	/**
+	 * Dialog for tag creation.
+	 */
+	private final JDialog _dialogCreateTag;
+
+	/**
+	 * Panel used for tag creation.
+	 */
+	private final AddTagPanel _addTagPanel;
+
+	/**
 	 * Creates a new SelectingTreeTagPanel.
 	 * 
+	 * @param parent
+	 *            parent {@link Frame}.
 	 * @param bankList
 	 *            the {@link PictureBankList} used to load the
 	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
-	public AssociatingTreeTagPanel(final PictureBankList bankList)
+	public AssociatingTreeTagPanel(final Frame parent,
+			final PictureBankList bankList)
 	{
 		super(bankList);
 		_tagTree.getCheckingModel().setCheckingMode(CheckingMode.SIMPLE);
 		_tagTree.addTreeCheckingListener(new PictureTagUpdateTreeCheckingListener());
 
+		_dialogCreateTag = new JDialog(parent, "Create tag", true);
+		_addTagPanel = new AddTagPanel(_dialogCreateTag, _bankList);
+		_dialogCreateTag.setContentPane(_addTagPanel);
+
 		// Contextual menu
 		final JPopupMenu popup = new JPopupMenu();
 		final JMenuItem addTagItem = new JMenuItem("Add tag");
+		addTagItem.addActionListener(this);
+		addTagItem.setActionCommand(ADD_ACTION_COMMAND);
 		popup.add(addTagItem);
 		final JMenuItem editTagItem = new JMenuItem("Edit tag");
+		editTagItem.addActionListener(this);
+		editTagItem.setActionCommand(EDIT_ACTION_COMMAND);
 		popup.add(editTagItem);
 		final JMenuItem deleteTagItem = new JMenuItem("Delete tag");
+		deleteTagItem.addActionListener(this);
+		deleteTagItem.setActionCommand(DELETE_ACTION_COMMAND);
 		popup.add(deleteTagItem);
 		_tagTree.setComponentPopupMenu(popup);
 	}
@@ -140,7 +165,9 @@ public class AssociatingTreeTagPanel extends AbstractTreeTagPanel implements
 	{
 		if (ADD_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
-			// TODO implement add tag.
+			_addTagPanel.initialize(false, null);
+			_dialogCreateTag.pack();
+			_dialogCreateTag.setVisible(true);
 		}
 		else if (EDIT_ACTION_COMMAND.equals(e.getActionCommand()))
 		{
