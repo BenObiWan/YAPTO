@@ -72,6 +72,11 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private static final String QUIT_ACTION_COMMAND = "quit";
 
 	/**
+	 * Action command for the new filter command.
+	 */
+	private static final String NEW_FILTER_ACTION_COMMAND = "newFilter";
+
+	/**
 	 * {@link JFileChooser} used to select an unique file to add.
 	 */
 	private final JFileChooser _individualPictureChooser = new JFileChooser();
@@ -200,6 +205,17 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		menuItem.addActionListener(this);
 		fileMenu.add(menuItem);
 
+		final JMenu filterMenu = new JMenu("Filter");
+		filterMenu.setMnemonic(KeyEvent.VK_I);
+		menuBar.add(filterMenu);
+
+		menuItem = new JMenuItem("new filter");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+				ActionEvent.CTRL_MASK));
+		menuItem.setActionCommand(NEW_FILTER_ACTION_COMMAND);
+		menuItem.addActionListener(this);
+		filterMenu.add(menuItem);
+
 		return menuBar;
 	}
 
@@ -326,6 +342,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 					}
 				}
 			}
+			break;
+		case NEW_FILTER_ACTION_COMMAND:
 			break;
 		case QUIT_ACTION_COMMAND:
 			stop();
