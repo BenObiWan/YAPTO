@@ -31,6 +31,7 @@ import yapto.picturebank.PictureAddException;
 import yapto.picturebank.PictureAddExceptionType;
 import yapto.picturebank.PictureBankList;
 import yapto.picturebank.tag.ITag;
+import yapto.swing.query.PictureQueryPanel;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -103,6 +104,11 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	protected final PictureBankList _bankList;
 
 	/**
+	 * {@link JDialog} used to filter the picture displayed.
+	 */
+	private final JDialog _queryDialog;
+
+	/**
 	 * Creates a new PictureDisplayFrame.
 	 * 
 	 * @param bankList
@@ -119,6 +125,10 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		_dialogInitTag = new JDialog(this, "Initial tags", true);
 		_initialTagPanel = new InitialTagPanel(_dialogInitTag, _bankList);
 		_dialogInitTag.setContentPane(_initialTagPanel);
+
+		_queryDialog = new JDialog(this, "Filter pictures", true);
+		_queryDialog.setContentPane(new PictureQueryPanel(_queryDialog,
+				_bankList));
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowListener()
@@ -344,6 +354,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			}
 			break;
 		case NEW_FILTER_ACTION_COMMAND:
+			_queryDialog.pack();
+			_queryDialog.setVisible(true);
 			break;
 		case QUIT_ACTION_COMMAND:
 			stop();
