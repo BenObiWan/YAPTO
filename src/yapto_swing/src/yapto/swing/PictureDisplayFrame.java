@@ -78,6 +78,16 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	private static final String NEW_FILTER_ACTION_COMMAND = "newFilter";
 
 	/**
+	 * Action command for the all pictures command.
+	 */
+	private static final String ALL_PICTURES_ACTION_COMMAND = "allPictures";
+
+	/**
+	 * Action command for the random pictures command.
+	 */
+	private static final String RANDOM_PICTURES_ACTION_COMMAND = "randomPictures";
+
+	/**
 	 * {@link JFileChooser} used to select an unique file to add.
 	 */
 	private final JFileChooser _individualPictureChooser = new JFileChooser();
@@ -219,6 +229,20 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		filterMenu.setMnemonic(KeyEvent.VK_I);
 		menuBar.add(filterMenu);
 
+		menuItem = new JMenuItem("all pictures");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+				ActionEvent.CTRL_MASK));
+		menuItem.setActionCommand(ALL_PICTURES_ACTION_COMMAND);
+		menuItem.addActionListener(this);
+		filterMenu.add(menuItem);
+
+		menuItem = new JMenuItem("random pictures");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				ActionEvent.CTRL_MASK));
+		menuItem.setActionCommand(RANDOM_PICTURES_ACTION_COMMAND);
+		menuItem.addActionListener(this);
+		filterMenu.add(menuItem);
+
 		menuItem = new JMenuItem("new filter");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
 				ActionEvent.CTRL_MASK));
@@ -357,6 +381,43 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 			_queryDialog.pack();
 			_queryDialog.setVisible(true);
 			break;
+		case ALL_PICTURES_ACTION_COMMAND:
+			if (JOptionPane
+					.showConfirmDialog(
+							this,
+							"Are you sure you want to clear existing filter and select all pictures?",
+							"all pictures", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
+			{
+				try
+				{
+					_bankList.getAllPictures();
+				}
+				catch (final ExecutionException e)
+				{
+					logException(e);
+				}
+			}
+			break;
+		case RANDOM_PICTURES_ACTION_COMMAND:
+			final String input = JOptionPane.showInputDialog(this,
+					"Enter number of pictures to select:", "random pictures",
+					JOptionPane.QUESTION_MESSAGE);
+			if (input != null)
+			{
+				try
+				{
+					_bankList.getRandomPictureList(Integer.parseInt(input));
+				}
+				catch (final NumberFormatException e)
+				{
+					logException("You must enter an integer.", e);
+				}
+				catch (final ExecutionException | IllegalArgumentException e)
+				{
+					logException(e);
+				}
+			}
+			break;
 		case QUIT_ACTION_COMMAND:
 			stop();
 			break;
@@ -390,6 +451,21 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
 				JOptionPane.ERROR_MESSAGE);
 		LOGGER.error(e.getMessage(), e);
+	}
+
+	/**
+	 * Method used to log an exception and display a custom message on a dialog.
+	 * 
+	 * @param strError
+	 *            error message to display.
+	 * @param e
+	 *            the exception to log.
+	 */
+	private void logException(final String strError, final Exception e)
+	{
+		JOptionPane.showMessageDialog(this, strError, "Error",
+				JOptionPane.ERROR_MESSAGE);
+		LOGGER.error(strError, e);
 	}
 
 	/**

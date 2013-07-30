@@ -76,6 +76,7 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 		switch (ae.getActionCommand())
 		{
 		case OK_ACTION_COMMAND:
+			// TODO change the filter there
 			_parent.setVisible(false);
 			break;
 		case CANCEL_ACTION_COMMAND:
