@@ -517,6 +517,11 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		{
 			strIdList = _pictureIdList;
 		}
+		else if (iNbrPicture <= 0)
+		{
+			throw new IllegalArgumentException(
+					"Error, can't select less than 1 picture.");
+		}
 		else
 		{
 			strIdList = new Vector<>(iNbrPicture);
