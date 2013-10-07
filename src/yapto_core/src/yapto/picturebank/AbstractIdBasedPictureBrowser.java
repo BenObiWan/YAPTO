@@ -36,9 +36,9 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	protected final List<String> _idList;
 
 	/**
-	 * Id of the picture currently selected.
+	 * Index of the picture currently selected.
 	 */
-	protected int _iCurrentId = 0;
+	protected int _iCurrentIndex = 0;
 
 	/**
 	 * Creates a new AbstractIdBasedPictureBrowser.
@@ -53,20 +53,42 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	 * @param idList
 	 *            {@link List} containing the ids of the picture contained in
 	 *            this AbstractIdBasedPictureBrowser.
+	 * @param iInitialIndex
+	 *            initial index of the {@link IPicture} to display.
 	 * @throws ExecutionException
 	 *             if an Exception was thrown during the loading of the first
 	 *             picture.
 	 */
 	public AbstractIdBasedPictureBrowser(
 			final IPictureBank<PICTURE> pictureBank, final Query query,
-			final EventBus bus, final List<String> idList)
-			throws ExecutionException
+			final EventBus bus, final List<String> idList,
+			final int iInitialIndex) throws ExecutionException
 	{
 		super(pictureBank, query, bus);
 		_idList = idList;
+		int iTrueInitialIndex;
+		if (iInitialIndex < 0 || iInitialIndex >= _idList.size())
+		{
+			iTrueInitialIndex = 0;
+		}
+		else
+		{
+			iTrueInitialIndex = iInitialIndex;
+		}
+
 		if (_idList.size() > 0)
 		{
-			_currentPicture = getPicture(_idList.get(0));
+			_currentPicture = getPicture(_idList.get(iTrueInitialIndex));
+		}
+		if (_currentPicture != null)
+		{
+			if (LOGGER.isDebugEnabled())
+			{
+				LOGGER.debug("Initial index: " + iInitialIndex
+						+ "; true initial index: " + iTrueInitialIndex
+						+ "; initial picture id: " + _currentPicture.getId());
+			}
+
 		}
 	}
 
@@ -75,7 +97,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId < _idList.size() - 1;
+			return _iCurrentIndex < _idList.size() - 1;
 		}
 	}
 
@@ -84,7 +106,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId > 0;
+			return _iCurrentIndex > 0;
 		}
 	}
 
@@ -103,12 +125,13 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 				}
 				if (hasNext())
 				{
-					_iCurrentId++;
-					_currentPicture = getPicture(_idList.get(_iCurrentId));
+					_iCurrentIndex++;
+					_currentPicture = getPicture(_idList.get(_iCurrentIndex));
 					_bus.post(new PictureChangedEvent());
 				}
 				if (LOGGER.isDebugEnabled())
 				{
+					LOGGER.debug("Diplayed picture: " + _currentPicture.getId());
 					LOGGER.debug("after next; has previous " + hasPrevious()
 							+ " previous id " + previousIndex() + "; has next "
 							+ hasNext() + " next id " + nextIndex());
@@ -139,12 +162,13 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 				}
 				if (hasPrevious())
 				{
-					_iCurrentId--;
-					_currentPicture = getPicture(_idList.get(_iCurrentId));
+					_iCurrentIndex--;
+					_currentPicture = getPicture(_idList.get(_iCurrentIndex));
 					_bus.post(new PictureChangedEvent());
 				}
 				if (LOGGER.isDebugEnabled())
 				{
+					LOGGER.debug("Diplayed picture: " + _currentPicture.getId());
 					LOGGER.debug("after previous; has previous "
 							+ hasPrevious() + " previous id " + previousIndex()
 							+ "; has next " + hasNext() + " next id "
@@ -165,7 +189,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId + 1;
+			return _iCurrentIndex + 1;
 		}
 	}
 
@@ -174,7 +198,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId - 1;
+			return _iCurrentIndex - 1;
 		}
 	}
 
@@ -183,7 +207,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		synchronized (_lock)
 		{
-			return _iCurrentId;
+			return _iCurrentIndex;
 		}
 	}
 
@@ -199,7 +223,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		int iFirstIndex;
 		synchronized (_lock)
 		{
-			iFirstIndex = _iCurrentId + 1;
+			iFirstIndex = _iCurrentIndex + 1;
 		}
 		return getPictures(iFirstIndex, iFirstIndex + iNbr);
 	}
@@ -211,7 +235,7 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 		int iFirstIndex;
 		synchronized (_lock)
 		{
-			iFirstIndex = _iCurrentId - 1;
+			iFirstIndex = _iCurrentIndex - 1;
 		}
 		return getPictures(iFirstIndex, iFirstIndex - iNbr);
 	}

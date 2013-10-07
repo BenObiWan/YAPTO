@@ -29,12 +29,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import yapto.picturebank.AbstractIdBasedPictureBrowser;
+import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
 import yapto.picturebank.PictureAddException;
 import yapto.picturebank.PictureAddExceptionType;
 import yapto.picturebank.PictureAddResult;
 import yapto.picturebank.PictureInformation;
+import yapto.picturebank.PictureListWithIndex;
 import yapto.picturebank.index.PictureIndexer;
 import yapto.picturebank.process.PictureProcessor;
 import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
@@ -494,28 +496,34 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> getAllPictures()
-			throws ExecutionException
+	public IPictureBrowser<FsPicture> getAllPictures(
+			final String strInitialPictureId) throws ExecutionException
 	{
-		return new PictureIterator(null, _pictureIdList);
+		return new PictureIterator(null, _pictureIdList,
+				_pictureIdList.indexOf(strInitialPictureId));
 	}
 
 	@Override
 	public IPictureBrowser<FsPicture> filterPictures(final Query query,
-			final int iLimit) throws IOException, ExecutionException
+			final int iLimit, final String strInitialPictureId)
+			throws IOException, ExecutionException
 	{
-		final List<String> list = _indexer.searchPicture(query, iLimit);
-		return new PictureIterator(query, list);
+		final PictureListWithIndex list = _indexer.searchPicture(query, iLimit,
+				strInitialPictureId);
+		return new PictureIterator(query, list.getPictureList(),
+				list.getIndex());
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> getRandomPictureList(final int iNbrPicture)
+	public IPictureBrowser<FsPicture> getRandomPictureList(
+			final int iNbrPicture, final String strInitialPictureId)
 			throws ExecutionException
 	{
-		List<String> strIdList;
+		int iInitialIndex = -1;
+		IPictureBrowser<FsPicture> pictureBrowser = null;
 		if (iNbrPicture > _pictureIdList.size())
 		{
-			strIdList = _pictureIdList;
+			pictureBrowser = getAllPictures(strInitialPictureId);
 		}
 		else if (iNbrPicture <= 0)
 		{
@@ -524,7 +532,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		}
 		else
 		{
-			strIdList = new Vector<>(iNbrPicture);
+			final List<String> idList = new Vector<>(iNbrPicture);
 			int iLeftToPick = iNbrPicture;
 			int i = 0;
 			int iLeftToLook = _pictureIdList.size();
@@ -533,14 +541,20 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				final int rand = _rand.nextInt(iLeftToLook);
 				if (rand < iLeftToPick)
 				{
-					strIdList.add(_pictureIdList.get(i));
+					final String strSelectedId = _pictureIdList.get(i);
+					if (strSelectedId.equals(strInitialPictureId))
+					{
+						iInitialIndex = idList.size();
+					}
+					idList.add(strSelectedId);
 					iLeftToPick--;
 				}
 				iLeftToLook--;
 				i++;
 			}
+			pictureBrowser = new PictureIterator(null, idList, iInitialIndex);
 		}
-		return new PictureIterator(null, strIdList);
+		return pictureBrowser;
 	}
 
 	/**
@@ -686,15 +700,17 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		 *            {@link PictureIterator}.
 		 * @param idList
 		 *            the list of ids of the {@link PictureIterator}.
+		 * @param iInitialIndex
+		 *            initial index of the {@link IPicture} to display.
 		 * @throws ExecutionException
 		 *             if an Exception was thrown during the loading of the
 		 *             picture.
 		 */
-		public PictureIterator(final Query query, final List<String> idList)
-				throws ExecutionException
+		public PictureIterator(final Query query, final List<String> idList,
+				final int iInitialIndex) throws ExecutionException
 		{
 			super(SQLFilePictureBank.this, query, SQLFilePictureBank.this._bus,
-					idList);
+					idList, iInitialIndex);
 		}
 
 		@Override
