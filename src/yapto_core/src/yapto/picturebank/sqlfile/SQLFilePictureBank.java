@@ -510,7 +510,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	{
 		final PictureListWithIndex list = _indexer.searchPicture(query, iLimit,
 				strInitialPictureId);
-		return new PictureIterator(query, list.getPictureList(),
+		return new PictureIterator(query, list.getPictureIdList(),
 				list.getIndex());
 	}
 
