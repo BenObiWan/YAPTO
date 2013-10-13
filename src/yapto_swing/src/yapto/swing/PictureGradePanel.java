@@ -157,5 +157,6 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 				_pictureBrowser.register(this);
 			}
 		}
+		changePicture();
 	}
 }

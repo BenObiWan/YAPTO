@@ -67,7 +67,6 @@ public final class PictureBrowserPanel extends JPanel
 	{
 		super(new GridLayout(1, 0, 10, 10));
 		_bankList = bankList;
-		changePictureBrowser();
 		_bankList.register(this);
 		_jbPrevious = new JButton("<");
 		_jbPrevious.addActionListener(new ActionListener()
@@ -93,7 +92,7 @@ public final class PictureBrowserPanel extends JPanel
 			}
 		});
 		add(_jbNext);
-		updateButtonEnableState();
+		changePictureBrowser();
 	}
 
 	/**
@@ -153,5 +152,6 @@ public final class PictureBrowserPanel extends JPanel
 				_pictureBrowser.register(this);
 			}
 		}
+		updateButtonEnableState();
 	}
 }
