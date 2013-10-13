@@ -32,7 +32,7 @@ import common.config.InvalidConfigurationException;
  * @author benobiwan
  * 
  */
-public final class PictureBankList implements IPictureBrowserCreator
+public final class PictureBankList
 {
 	/**
 	 * Logger object.
@@ -300,7 +300,15 @@ public final class PictureBankList implements IPictureBrowserCreator
 		}
 	}
 
-	@Override
+	/**
+	 * Get an {@link IPictureBrowser} browsing all the pictures of this
+	 * {@link PictureBankList}.
+	 * 
+	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the initial
+	 *             picture.
+	 */
 	public IPictureBrowser<?> getAllPictures() throws ExecutionException
 	{
 		final Collection<IPictureBank<?>> selected = _selectedPictureBankMap
@@ -313,14 +321,39 @@ public final class PictureBankList implements IPictureBrowserCreator
 			}
 			else
 			{
-				_pictureBrowser = selected.iterator().next().getAllPictures();
+				String strInitialPictureId = null;
+				if (_pictureBrowser != null)
+				{
+					strInitialPictureId = _pictureBrowser.getCurrentPicture()
+							.getId();
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Initial picture id: " + strInitialPictureId);
+				}
+				_pictureBrowser = selected.iterator().next()
+						.getAllPictures(strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
 			return _pictureBrowser;
 		}
 	}
 
-	@Override
+	/**
+	 * Get an {@link IPictureBrowser} browsing a selection of pictures from this
+	 * {@link PictureBankList}.
+	 * 
+	 * @param query
+	 *            the {@link Query} used to filter the pictures to select.
+	 * @param iLimit
+	 *            the maximal number of pictures to select.
+	 * @return an {@link IPictureBrowser}.
+	 * @throws IOException
+	 *             if an error occurs during the filtering.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
+	 */
 	public IPictureBrowser<?> filterPictures(final Query query, final int iLimit)
 			throws IOException, ExecutionException
 	{
@@ -334,15 +367,35 @@ public final class PictureBankList implements IPictureBrowserCreator
 			}
 			else
 			{
+				String strInitialPictureId = null;
+				if (_pictureBrowser != null)
+				{
+					strInitialPictureId = _pictureBrowser.getCurrentPicture()
+							.getId();
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Initial picture id: " + strInitialPictureId);
+				}
 				_pictureBrowser = selected.iterator().next()
-						.filterPictures(query, iLimit);
+						.filterPictures(query, iLimit, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
 			return _pictureBrowser;
 		}
 	}
 
-	@Override
+	/**
+	 * Get an {@link IPictureBrowser} browsing a random number of pictures from
+	 * this {@link PictureBankList}.
+	 * 
+	 * @param iNbrPicture
+	 *            number of pictures to select.
+	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
+	 */
 	public IPictureBrowser<?> getRandomPictureList(final int iNbrPicture)
 			throws ExecutionException
 	{
@@ -356,8 +409,18 @@ public final class PictureBankList implements IPictureBrowserCreator
 			}
 			else
 			{
+				String strInitialPictureId = null;
+				if (_pictureBrowser != null)
+				{
+					strInitialPictureId = _pictureBrowser.getCurrentPicture()
+							.getId();
+				}
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Initial picture id: " + strInitialPictureId);
+				}
 				_pictureBrowser = selected.iterator().next()
-						.getRandomPictureList(iNbrPicture);
+						.getRandomPictureList(iNbrPicture, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
 			return _pictureBrowser;
