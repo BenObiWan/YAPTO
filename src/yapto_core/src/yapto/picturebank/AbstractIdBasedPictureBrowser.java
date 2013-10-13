@@ -66,29 +66,31 @@ public abstract class AbstractIdBasedPictureBrowser<PICTURE extends IPicture>
 	{
 		super(pictureBank, query, bus);
 		_idList = idList;
-		int iTrueInitialIndex;
-		if (iInitialIndex < 0 || iInitialIndex >= _idList.size())
+		synchronized (_lock)
 		{
-			iTrueInitialIndex = 0;
-		}
-		else
-		{
-			iTrueInitialIndex = iInitialIndex;
-		}
-
-		if (_idList.size() > 0)
-		{
-			_currentPicture = getPicture(_idList.get(iTrueInitialIndex));
-		}
-		if (_currentPicture != null)
-		{
-			if (LOGGER.isDebugEnabled())
+			if (iInitialIndex < 0 || iInitialIndex >= _idList.size())
 			{
-				LOGGER.debug("Initial index: " + iInitialIndex
-						+ "; true initial index: " + iTrueInitialIndex
-						+ "; initial picture id: " + _currentPicture.getId());
+				_iCurrentIndex = 0;
+			}
+			else
+			{
+				_iCurrentIndex = iInitialIndex;
 			}
 
+			if (_idList.size() > 0)
+			{
+				_currentPicture = getPicture(_idList.get(_iCurrentIndex));
+			}
+			if (_currentPicture != null)
+			{
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Initial index: " + iInitialIndex
+							+ "; true initial index: " + _iCurrentIndex
+							+ "; initial picture id: "
+							+ _currentPicture.getId());
+				}
+			}
 		}
 	}
 
