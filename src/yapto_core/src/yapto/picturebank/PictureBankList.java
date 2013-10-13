@@ -300,6 +300,15 @@ public final class PictureBankList
 		}
 	}
 
+	/**
+	 * Get an {@link IPictureBrowser} browsing all the pictures of this
+	 * {@link PictureBankList}.
+	 * 
+	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the initial
+	 *             picture.
+	 */
 	public IPictureBrowser<?> getAllPictures() throws ExecutionException
 	{
 		final Collection<IPictureBank<?>> selected = _selectedPictureBankMap
@@ -330,6 +339,21 @@ public final class PictureBankList
 		}
 	}
 
+	/**
+	 * Get an {@link IPictureBrowser} browsing a selection of pictures from this
+	 * {@link PictureBankList}.
+	 * 
+	 * @param query
+	 *            the {@link Query} used to filter the pictures to select.
+	 * @param iLimit
+	 *            the maximal number of pictures to select.
+	 * @return an {@link IPictureBrowser}.
+	 * @throws IOException
+	 *             if an error occurs during the filtering.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
+	 */
 	public IPictureBrowser<?> filterPictures(final Query query, final int iLimit)
 			throws IOException, ExecutionException
 	{
@@ -361,6 +385,17 @@ public final class PictureBankList
 		}
 	}
 
+	/**
+	 * Get an {@link IPictureBrowser} browsing a random number of pictures from
+	 * this {@link PictureBankList}.
+	 * 
+	 * @param iNbrPicture
+	 *            number of pictures to select.
+	 * @return an {@link IPictureBrowser}.
+	 * @throws ExecutionException
+	 *             if an Exception was thrown during the loading of the first
+	 *             picture.
+	 */
 	public IPictureBrowser<?> getRandomPictureList(final int iNbrPicture)
 			throws ExecutionException
 	{
