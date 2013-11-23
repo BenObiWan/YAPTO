@@ -25,6 +25,11 @@ public final class ImageLoader
 	private final LoadingCache<String, BufferedImage> _mainImageCache;
 
 	/**
+	 * {@link LoadingCache} used to load the secondary {@link BufferedImage}.
+	 */
+	private final LoadingCache<String, BufferedImage> _secondaryImageCache;
+
+	/**
 	 * {@link LoadingCache} used to load the {@link BufferedImage}.
 	 */
 	private final LoadingCache<String, BufferedImage> _thumbnailCache;
@@ -37,10 +42,16 @@ public final class ImageLoader
 	 */
 	public ImageLoader(final ISQLFilePictureBankConfiguration conf)
 	{
-		// image cache
+		// main image cache
 		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
 				conf.getMainPictureLoaderConfiguration());
 		_mainImageCache = CacheBuilder.newBuilder().build(imageLoader);
+
+		// secondary image cache
+		final CacheLoader<String, BufferedImage> secondaryImageLoader = new BufferedImageCacheLoader(
+				conf.getSecondaryPictureLoaderConfiguration());
+		_secondaryImageCache = CacheBuilder.newBuilder().build(
+				secondaryImageLoader);
 
 		// thumbnail cache
 		final CacheLoader<String, BufferedImage> thumbnailLoader = new BufferedImageCacheLoader(
@@ -57,7 +68,7 @@ public final class ImageLoader
 	 * @throws IOException
 	 *             if an error occurs during reading.
 	 */
-	public BufferedImage getImageData(final String strId) throws IOException
+	public BufferedImage getMainImageData(final String strId) throws IOException
 	{
 		try
 		{

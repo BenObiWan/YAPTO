@@ -1,4 +1,4 @@
-package yapto.picturebank.process;
+package yapto.picturebank;
 
 /**
  * Supported types of image file.

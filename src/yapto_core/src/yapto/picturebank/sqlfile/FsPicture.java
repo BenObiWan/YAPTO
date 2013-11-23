@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
+import yapto.picturebank.ImageFormatType;
 import yapto.picturebank.PictureInformation;
 import yapto.picturebank.tag.ITag;
 
@@ -20,6 +21,11 @@ import yapto.picturebank.tag.ITag;
  */
 public final class FsPicture implements IPicture
 {
+	/**
+	 * Lock protecting access to this object attributes.
+	 */
+	private static final Object _lock = new Object();
+
 	/**
 	 * The id of the picture.
 	 */
@@ -63,6 +69,11 @@ public final class FsPicture implements IPicture
 	private boolean _bModified = false;
 
 	/**
+	 * The type of this image.
+	 */
+	private ImageFormatType _imageType;
+
+	/**
 	 * The {@link PictureInformation} of this picture.
 	 */
 	private PictureInformation _pictureInformation;
@@ -95,7 +106,7 @@ public final class FsPicture implements IPicture
 		_imageLoader = imageLoader;
 		_pictureBank = pictureBank;
 		_lAddingTimestamp = lAddingTimestamp;
-		synchronized (this)
+		synchronized (_lock)
 		{
 			_lModifiedTimestamp = lModifiedTimestamp;
 			_pictureInformation = pictureInformation;
@@ -135,7 +146,7 @@ public final class FsPicture implements IPicture
 		this(imageLoader, pictureBank, strId, lModifiedTimestamp,
 				lAddingTimestamp, pictureInformation);
 		_tagSet.addAll(tagList);
-		synchronized (this)
+		synchronized (_lock)
 		{
 			_iPictureGrade = iPictureGrade;
 		}
@@ -215,7 +226,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public BufferedImage getImageData() throws IOException
 	{
-		return _imageLoader.getImageData(_strId);
+		return _imageLoader.getMainImageData(_strId);
 	}
 
 	@Override
@@ -227,7 +238,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public long getModifiedTimestamp()
 	{
-		synchronized (this)
+		synchronized (_lock)
 		{
 			return _lModifiedTimestamp;
 		}
@@ -250,7 +261,7 @@ public final class FsPicture implements IPicture
 	{
 		if (!_tagSet.contains(newTag))
 		{
-			synchronized (this)
+			synchronized (_lock)
 			{
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
@@ -265,7 +276,7 @@ public final class FsPicture implements IPicture
 	{
 		if (_tagSet.contains(tag))
 		{
-			synchronized (this)
+			synchronized (_lock)
 			{
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
@@ -280,7 +291,7 @@ public final class FsPicture implements IPicture
 	{
 		if (_tagSet.retainAll(tags) | _tagSet.addAll(tags))
 		{
-			synchronized (this)
+			synchronized (_lock)
 			{
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
@@ -296,7 +307,7 @@ public final class FsPicture implements IPicture
 	 */
 	public boolean hasBeenModified()
 	{
-		synchronized (this)
+		synchronized (_lock)
 		{
 			return _bModified;
 		}
@@ -307,7 +318,7 @@ public final class FsPicture implements IPicture
 	 */
 	public void unsetModified()
 	{
-		synchronized (this)
+		synchronized (_lock)
 		{
 			_bModified = false;
 		}
@@ -316,7 +327,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public int getPictureGrade()
 	{
-		synchronized (this)
+		synchronized (_lock)
 		{
 			return _iPictureGrade;
 		}
@@ -325,7 +336,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public void setPictureGrade(final int iPictureGrade)
 	{
-		synchronized (this)
+		synchronized (_lock)
 		{
 			if (_iPictureGrade != iPictureGrade)
 			{
@@ -353,5 +364,23 @@ public final class FsPicture implements IPicture
 	public PictureInformation getPictureInformation()
 	{
 		return _pictureInformation;
+	}
+
+	@Override
+	public boolean isDiplayable()
+	{
+		synchronized (_lock)
+		{
+			return _imageType != null;
+		}
+	}
+
+	@Override
+	public ImageFormatType getImageType()
+	{
+		synchronized (_lock)
+		{
+			return _imageType;
+		}
 	}
 }

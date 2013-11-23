@@ -111,4 +111,20 @@ public interface IPicture extends Comparable<IPicture>
 	 * @return the {@link PictureInformation} of this picture.
 	 */
 	PictureInformation getPictureInformation();
+
+	// List<Dimension> getAvailableDimensions();
+
+	/**
+	 * Check whether this picture can be displayed or not.
+	 * 
+	 * @return true if this picture can be displayed right now.
+	 */
+	boolean isDiplayable();
+
+	/**
+	 * Get the {@link ImageFormatType} of this {@link IPicture}.
+	 * 
+	 * @return the {@link ImageFormatType} of this {@link IPicture}.
+	 */
+	ImageFormatType getImageType();
 }
