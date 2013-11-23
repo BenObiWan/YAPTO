@@ -322,7 +322,8 @@ public final class PictureBankList
 			else
 			{
 				String strInitialPictureId = null;
-				if (_pictureBrowser != null)
+				if (_pictureBrowser != null
+						&& _pictureBrowser.getCurrentPicture() != null)
 				{
 					strInitialPictureId = _pictureBrowser.getCurrentPicture()
 							.getId();
