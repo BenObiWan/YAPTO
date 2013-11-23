@@ -15,7 +15,12 @@ public enum ImageFormatType
 	/**
 	 * PNG image file.
 	 */
-	PNG("png");
+	PNG("png"),
+
+	/**
+	 * CR2 image file.
+	 */
+	CR2("cr2");
 
 	/**
 	 * Message for this exception type.
