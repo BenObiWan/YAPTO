@@ -53,6 +53,7 @@ public final class SQLFilePictureBankLoader
 				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(1),
 				"local", "/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/",
+				"/home/benobiwan/images/photoDB/secondary/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
 				"/home/benobiwan/images/photoDB/index/"));
 		return Collections.unmodifiableSet(confSet);

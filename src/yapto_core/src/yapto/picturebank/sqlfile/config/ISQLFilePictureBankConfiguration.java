@@ -31,6 +31,11 @@ public interface ISQLFilePictureBankConfiguration extends
 	String PICTURE_DIRECTORY_TAG = "PictureDirectory";
 
 	/**
+	 * Tag for the secondary picture directory.
+	 */
+	String SECONDARY_PICTURE_DIRECTORY_TAG = "SecondaryPictureDirectory";
+
+	/**
 	 * Tag for the thumbnail directory.
 	 */
 	String THUMBNAILS_DIRECTORY_TAG = "ThumbnailDirectory";
@@ -62,6 +67,15 @@ public interface ISQLFilePictureBankConfiguration extends
 	 *         picture {@link CacheLoader}.
 	 */
 	IBufferedImageCacheLoaderConfiguration getMainPictureLoaderConfiguration();
+
+	/**
+	 * Get the {@link IBufferedImageCacheLoaderConfiguration} for the secondary
+	 * picture {@link CacheLoader}.
+	 * 
+	 * @return the {@link IBufferedImageCacheLoaderConfiguration} for the
+	 *         secondary pictures {@link CacheLoader}.
+	 */
+	IBufferedImageCacheLoaderConfiguration getSecondaryPictureLoaderConfiguration();
 
 	/**
 	 * Get the {@link IBufferedImageCacheLoaderConfiguration} for the thumbnails

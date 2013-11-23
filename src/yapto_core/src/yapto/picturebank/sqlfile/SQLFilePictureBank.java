@@ -411,6 +411,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	private boolean checkAndCreateDirectories()
 	{
 		boolean bRes = true;
+		// create the base picture directory
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
 		final File fPictureBaseDirectory = new File(_conf
 				.getMainPictureLoaderConfiguration().getPictureDirectory());
@@ -428,6 +429,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 						strFileName));
 			}
 		}
+		// create the base thumbnail directory
 		final File fThumbnailBaseDirectory = new File(_conf
 				.getThumbnailPictureLoaderConfiguration().getPictureDirectory());
 		bRes &= checkDirectory(fThumbnailBaseDirectory);
@@ -441,6 +443,24 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 					strFileName = '0' + strFileName;
 				}
 				bRes &= checkDirectory(new File(fThumbnailBaseDirectory,
+						strFileName));
+			}
+		}
+		// create the base secondary picture directory
+		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
+		final File fSecondaryPictureBaseDirectory = new File(_conf
+				.getSecondaryPictureLoaderConfiguration().getPictureDirectory());
+		bRes &= checkDirectory(fSecondaryPictureBaseDirectory);
+		if (bRes)
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				String strFileName = Integer.toHexString(i).toUpperCase();
+				if (strFileName.length() == 1)
+				{
+					strFileName = '0' + strFileName;
+				}
+				bRes &= checkDirectory(new File(fSecondaryPictureBaseDirectory,
 						strFileName));
 			}
 		}

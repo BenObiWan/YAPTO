@@ -53,7 +53,7 @@ public final class ChangeFormatTask implements Callable<Boolean>
 	{
 		_fOriginalPicture = fOriginalPicture.toAbsolutePath();
 		String fileName = _fOriginalPicture.getFileName().toString();
-		int indexPoint = fileName.lastIndexOf('.');
+		final int indexPoint = fileName.lastIndexOf('.');
 		if (indexPoint != -1)
 		{
 			fileName = fileName.substring(0, indexPoint).concat(
