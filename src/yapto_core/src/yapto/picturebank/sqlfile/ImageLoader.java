@@ -68,7 +68,8 @@ public final class ImageLoader
 	 * @throws IOException
 	 *             if an error occurs during reading.
 	 */
-	public BufferedImage getMainImageData(final String strId) throws IOException
+	public BufferedImage getMainImageData(final String strId)
+			throws IOException
 	{
 		try
 		{

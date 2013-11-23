@@ -108,6 +108,8 @@ public final class FsPictureCacheLoader extends CacheLoader<String, FsPicture>
 								.getString(SQLFileListConnection.PICTURE_RELATIVE_APERTURE_COLUMN_NAME),
 						pictureRes
 								.getString(SQLFileListConnection.PICTURE_FOCAL_LENGTH_COLUMN_NAME),
+						pictureRes
+								.getString(SQLFileListConnection.PICTURE_FORMAT_COLUMN_NAME),
 						tagList);
 			}
 			return null;

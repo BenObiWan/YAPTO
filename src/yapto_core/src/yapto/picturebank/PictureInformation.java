@@ -56,6 +56,11 @@ public final class PictureInformation
 	private final String _strFocalLength;
 
 	/**
+	 * 'format' information of this picture.
+	 */
+	private final String _strFileType;
+
+	/**
 	 * Creates a new PictureInformation.
 	 * 
 	 * @param strOriginalFileName
@@ -78,12 +83,15 @@ public final class PictureInformation
 	 *            the 'relative aperture' exif information of this picture.
 	 * @param strFocalLength
 	 *            the 'focal length' exif information of this picture.
+	 * @param strFileType
+	 *            the 'format' information of this picture.
 	 */
 	public PictureInformation(final String strOriginalFileName,
 			final int iWidth, final int iHeight, final long lCreationTimestamp,
 			final int iOrientation, final String strMake,
 			final String strModel, final String strExposureTime,
-			final String strRelativeAperture, final String strFocalLength)
+			final String strRelativeAperture, final String strFocalLength,
+			final String strFileType)
 	{
 		super();
 		_strOriginalFileName = strOriginalFileName;
@@ -95,6 +103,7 @@ public final class PictureInformation
 		_strExposureTime = strExposureTime;
 		_strRelativeAperture = strRelativeAperture;
 		_strFocalLength = strFocalLength;
+		_strFileType = strFileType;
 	}
 
 	/**
@@ -207,30 +216,42 @@ public final class PictureInformation
 		return _strFocalLength;
 	}
 
+	/**
+	 * Get the 'format' information of this picture.
+	 * 
+	 * @return the 'format' information of this picture.
+	 */
+	public String getFormat()
+	{
+		return _strFileType;
+	}
+
 	@Override
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		sb.append("original file name : ");
+		sb.append("original file name: ");
 		sb.append(_strOriginalFileName);
-		sb.append("\ncreation timestamp : ");
+		sb.append("\ncreation timestamp: ");
 		sb.append(_lCreationTimestamp);
-		sb.append("\nWidth : ");
+		sb.append("\nWidth: ");
 		sb.append(getWidth());
-		sb.append("\nHeigth : ");
+		sb.append("\nHeigth: ");
 		sb.append(getHeight());
-		sb.append("\nOrientation : ");
+		sb.append("\nOrientation: ");
 		sb.append(_iOrientation);
-		sb.append("\nMake : ");
+		sb.append("\nMake: ");
 		sb.append(_strMake);
-		sb.append("\nModel : ");
+		sb.append("\nModel: ");
 		sb.append(_strModel);
-		sb.append("\nExposure time : ");
+		sb.append("\nExposure time: ");
 		sb.append(_strExposureTime);
-		sb.append("\nReltaive aperture : ");
+		sb.append("\nReltaive aperture: ");
 		sb.append(_strRelativeAperture);
-		sb.append("\nFocal length : ");
+		sb.append("\nFocal length: ");
 		sb.append(_strFocalLength);
+		sb.append("\nFormat: ");
+		sb.append(_strFileType);
 		return sb.toString();
 	}
 }

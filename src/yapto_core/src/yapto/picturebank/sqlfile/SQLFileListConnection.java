@@ -135,6 +135,11 @@ public final class SQLFileListConnection
 	 */
 	public static final String PICTURE_FOCAL_LENGTH_COLUMN_NAME = "focal_length";
 
+	/**
+	 * Name for the 'format' column of the 'picture' table.
+	 */
+	public static final String PICTURE_FORMAT_COLUMN_NAME = "format";
+
 	// picture_tag table
 	/**
 	 * Name for the 'picture_tag' table.
@@ -287,8 +292,9 @@ public final class SQLFileListConnection
 				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
 				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
 				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
-				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME
-				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
+				+ PICTURE_FORMAT_COLUMN_NAME
+				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
 				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
 						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
@@ -312,9 +318,9 @@ public final class SQLFileListConnection
 				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
 				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
 				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
-				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " FROM "
-				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
-				+ " =?");
+				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
+				+ PICTURE_FORMAT_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME
+				+ " WHERE " + PICTURE_ID_COLUMN_NAME + " =?");
 		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
 				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
 				+ PICTURE_TAG_TABLE_NAME + " WHERE "
@@ -491,7 +497,8 @@ public final class SQLFileListConnection
 					+ PICTURE_MODEL_COLUMN_NAME + " text, "
 					+ PICTURE_EXPOSURE_COLUMN_NAME + " text, "
 					+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + " text, "
-					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " text)");
+					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " text, "
+					+ PICTURE_FORMAT_COLUMN_NAME + " text)");
 			// picture_tag table
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TAG_TABLE_NAME + " ("
@@ -574,6 +581,7 @@ public final class SQLFileListConnection
 				_psInsertPicture.setString(12, info.getExposureTime());
 				_psInsertPicture.setString(13, info.getRelativeAperture());
 				_psInsertPicture.setString(14, info.getFocalLength());
+				_psInsertPicture.setString(15, info.getFormat());
 			}
 			else
 			{

@@ -56,22 +56,28 @@ public abstract class CommandOutputParser
 	 * Example expected line : 'exif:ExposureTime: 1/60'
 	 */
 	private static Pattern EXIF_EXPOSURE_TIME_PATTERN = Pattern
-			.compile("[\\s]*exif:ExposureTime: ([0-9]/[0-9]+)[\\s]*");
+			.compile("[\\s]*exif:ExposureTime: ([0-9]+/[0-9]+)[\\s]*");
 
 	/**
 	 * Pattern matching the exif relative aperture line of the identify command.
 	 * Example expected line : 'exif:FNumber: 4/1'
 	 */
 	private static Pattern EXIF_RELATIVE_APERTURE_PATTERN = Pattern
-			.compile("[\\s]*exif:FNumber: ([0-9]/[0-9]+)[\\s]*");
+			.compile("[\\s]*exif:FNumber: ([0-9]+/[0-9]+)[\\s]*");
 
 	/**
-	 * Pattern matching the exif FNumber line of the identify command. Example
-	 * expected line : 'exif:FocalLength: 58/1'
+	 * Pattern matching the exif focal length line of the identify command.
+	 * Example expected line : 'exif:FocalLength: 58/1'
 	 */
 	private static Pattern EXIF_FOCAL_LENGTH_PATTERN = Pattern
-			.compile("[\\s]*exif:FocalLength: ([0-9]/[0-9]+)[\\s]*");
+			.compile("[\\s]*exif:FocalLength: ([0-9]+/[0-9]+)[\\s]*");
 
+	/**
+	 * Pattern matching the format line of the identify. Example expected line:
+	 * 'Format: CR2 (Canon Digital Camera Raw Image Format)'
+	 */
+	private static Pattern FORMAT_PATTERN = Pattern
+			.compile("[\\s]*Format: (.*)[\\s]*");
 	// TODO other information to parse
 	// exif:Flash: 9
 
@@ -110,6 +116,7 @@ public abstract class CommandOutputParser
 		int iWidth = 0, iHeigth = 0, iOrientation = 0;
 		long lCreationTimestamp = 0;
 		String strMake = null, strModel = null, strExposureTime = null, strRelativeAperture = null, strFocalLength = null;
+		String strFileType = null;
 		Matcher matcher;
 
 		for (final String strInfo : informationList)
@@ -171,11 +178,19 @@ public abstract class CommandOutputParser
 				strFocalLength = matcher.group(1);
 				continue;
 			}
+
+			matcher = FORMAT_PATTERN.matcher(strInfo);
+			if (matcher.matches())
+			{
+				strFileType = matcher.group(1);
+				continue;
+			}
 		}
 
 		return new PictureInformation(strFileName, iWidth, iHeigth,
 				lCreationTimestamp, iOrientation, strMake, strModel,
-				strExposureTime, strRelativeAperture, strFocalLength);
+				strExposureTime, strRelativeAperture, strFocalLength,
+				strFileType);
 	}
 
 }
