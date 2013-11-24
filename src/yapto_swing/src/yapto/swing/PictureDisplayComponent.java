@@ -205,6 +205,17 @@ public final class PictureDisplayComponent extends JScrollPane
 			synchronized (_lockBrowser)
 			{
 				pic = _pictureBrowser.getCurrentPicture();
+				if (LOGGER.isDebugEnabled())
+				{
+					if (pic != null)
+					{
+						LOGGER.debug("Load picture " + pic.getId());
+					}
+					else
+					{
+						LOGGER.debug("Picture to load is null.");
+					}
+				}
 			}
 			if (pic != null)
 			{
@@ -288,7 +299,9 @@ public final class PictureDisplayComponent extends JScrollPane
 		 */
 		private void changeTransform(final Dimension size)
 		{
-			if (_img != null && (_size == null || _transform == null || !_size.equals(size)))
+			if (_img != null
+					&& (_size == null || _transform == null || !_size
+							.equals(size)))
 			{
 				_size = size;
 				final double dScaleFactor = Math.min(

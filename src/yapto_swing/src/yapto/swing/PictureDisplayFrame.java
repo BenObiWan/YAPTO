@@ -30,11 +30,13 @@ import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureAddException;
 import yapto.picturebank.PictureAddExceptionType;
 import yapto.picturebank.PictureBankList;
+import yapto.picturebank.PictureBrowserChangedEvent;
 import yapto.picturebank.tag.ITag;
 import yapto.swing.query.PictureQueryPanel;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+
 import common.config.InvalidConfigurationException;
 
 /**
