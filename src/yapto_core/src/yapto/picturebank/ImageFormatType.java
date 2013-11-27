@@ -55,7 +55,7 @@ public enum ImageFormatType
 	 *            format or not.
 	 */
 	private ImageFormatType(final String strExtension,
-			final String strImageMagickIdentify, boolean bKeepFormat)
+			final String strImageMagickIdentify, final boolean bKeepFormat)
 	{
 		_strExtension = strExtension;
 		_strImageMagickIdentify = strImageMagickIdentify;

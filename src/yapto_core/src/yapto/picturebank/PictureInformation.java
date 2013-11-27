@@ -61,6 +61,11 @@ public final class PictureInformation
 	private final String _strFileType;
 
 	/**
+	 * The file format of this picture.
+	 */
+	private final ImageFormatType _fileFormat;
+
+	/**
 	 * Creates a new PictureInformation.
 	 * 
 	 * @param strOriginalFileName
@@ -104,6 +109,29 @@ public final class PictureInformation
 		_strRelativeAperture = strRelativeAperture;
 		_strFocalLength = strFocalLength;
 		_strFileType = strFileType;
+		if (_strFileType == null)
+		{
+			_fileFormat = ImageFormatType.UNKNOWN;
+		}
+		else if (_strFileType.equals(ImageFormatType.JPG
+				.getImageMagickIdentify()))
+		{
+			_fileFormat = ImageFormatType.JPG;
+		}
+		else if (_strFileType.equals(ImageFormatType.PNG
+				.getImageMagickIdentify()))
+		{
+			_fileFormat = ImageFormatType.PNG;
+		}
+		else if (_strFileType.equals(ImageFormatType.CR2
+				.getImageMagickIdentify()))
+		{
+			_fileFormat = ImageFormatType.CR2;
+		}
+		else
+		{
+			_fileFormat = ImageFormatType.UNKNOWN;
+		}
 	}
 
 	/**
@@ -221,9 +249,41 @@ public final class PictureInformation
 	 * 
 	 * @return the 'format' information of this picture.
 	 */
-	public String getFormat()
+	public String getImageFormatString()
 	{
 		return _strFileType;
+	}
+
+	/**
+	 * The file format of this picture.
+	 * 
+	 * @return the file format of this picture.
+	 */
+	public ImageFormatType getImageFormat()
+	{
+		return _fileFormat;
+	}
+
+	/**
+	 * Get the extension of this main picture.
+	 * 
+	 * @return the extension of the main picture.
+	 */
+	public String getExtension()
+	{
+		return _fileFormat.getExtension();
+	}
+
+	/**
+	 * Get whether the picture format will be kept for the secondary images and
+	 * thumbnails.
+	 * 
+	 * @return true if the picture format will be kept for the secondary images
+	 *         and thumbnails.
+	 */
+	public boolean doesKeepFormat()
+	{
+		return _fileFormat.doesKeepFormat();
 	}
 
 	@Override

@@ -581,7 +581,7 @@ public final class SQLFileListConnection
 				_psInsertPicture.setString(12, info.getExposureTime());
 				_psInsertPicture.setString(13, info.getRelativeAperture());
 				_psInsertPicture.setString(14, info.getFocalLength());
-				_psInsertPicture.setString(15, info.getFormat());
+				_psInsertPicture.setString(15, info.getImageFormatString());
 			}
 			else
 			{
