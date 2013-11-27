@@ -62,18 +62,41 @@ public final class ImageLoader
 	/**
 	 * Get the data of the main image of the specified {@link IPicture}.
 	 * 
-	 * @param strId
-	 *            the id of the image to get.
+	 * @param strFileName
+	 *            the file name of the image to get.
 	 * @return the data of the main image of the specified {@link IPicture}.
 	 * @throws IOException
 	 *             if an error occurs during reading.
 	 */
-	public BufferedImage getMainImageData(final String strId)
+	public BufferedImage getMainImageData(final String strFileName)
 			throws IOException
 	{
 		try
 		{
-			return _mainImageCache.get(strId);
+			return _mainImageCache.get(strFileName);
+		}
+		catch (final ExecutionException e)
+		{
+			throw new IOException(e);
+		}
+	}
+
+	/**
+	 * Get the data of a secondary image of the specified {@link IPicture}.
+	 * 
+	 * @param strFileName
+	 *            the file name of the image to get.
+	 * @return the data of the secondary image of the specified {@link IPicture}
+	 *         .
+	 * @throws IOException
+	 *             if an error occurs during reading.
+	 */
+	public BufferedImage getSecondaryImageData(final String strFileName)
+			throws IOException
+	{
+		try
+		{
+			return _secondaryImageCache.get(strFileName);
 		}
 		catch (final ExecutionException e)
 		{
@@ -84,19 +107,19 @@ public final class ImageLoader
 	/**
 	 * Get the data of the thumbnail image of the specified {@link IPicture}.
 	 * 
-	 * @param strId
-	 *            the id of the image to get.
+	 * @param strFileName
+	 *            the file name of the image to get.
 	 * @return the data of the thumbnail image of the specified {@link IPicture}
 	 *         .
 	 * @throws IOException
 	 *             if an error occurs during reading.
 	 */
-	public BufferedImage getThumbnailData(final String strId)
+	public BufferedImage getThumbnailData(final String strFileName)
 			throws IOException
 	{
 		try
 		{
-			return _thumbnailCache.get(strId);
+			return _thumbnailCache.get(strFileName);
 		}
 		catch (final ExecutionException e)
 		{
