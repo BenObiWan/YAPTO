@@ -220,14 +220,9 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	{
 		synchronized (_lock)
 		{
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.unRegister(this);
-			}
 			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
 			if (_pictureBrowser != null)
 			{
-				_pictureBrowser.register(this);
 				updateAvailableTags();
 			}
 		}

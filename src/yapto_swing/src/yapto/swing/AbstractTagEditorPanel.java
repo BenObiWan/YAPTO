@@ -169,14 +169,9 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 	{
 		synchronized (_lock)
 		{
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.unRegister(this);
-			}
 			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
 			if (_pictureBrowser != null)
 			{
-				_pictureBrowser.register(this);
 				updateAvailableTags();
 			}
 		}

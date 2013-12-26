@@ -336,6 +336,7 @@ public final class PictureBankList
 						.getAllPictures(strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
+			_bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}
@@ -369,7 +370,9 @@ public final class PictureBankList
 			else
 			{
 				String strInitialPictureId = null;
-				if (_pictureBrowser != null)
+				if (_pictureBrowser != null
+						&& _pictureBrowser.getCurrentPicture() != null)
+
 				{
 					strInitialPictureId = _pictureBrowser.getCurrentPicture()
 							.getId();
@@ -382,6 +385,7 @@ public final class PictureBankList
 						.filterPictures(query, iLimit, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
+			_bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}
@@ -411,7 +415,8 @@ public final class PictureBankList
 			else
 			{
 				String strInitialPictureId = null;
-				if (_pictureBrowser != null)
+				if (_pictureBrowser != null
+						&& _pictureBrowser.getCurrentPicture() != null)
 				{
 					strInitialPictureId = _pictureBrowser.getCurrentPicture()
 							.getId();
@@ -424,6 +429,7 @@ public final class PictureBankList
 						.getRandomPictureList(iNbrPicture, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
+			_bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}

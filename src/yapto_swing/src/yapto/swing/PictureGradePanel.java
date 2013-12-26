@@ -147,15 +147,7 @@ public final class PictureGradePanel extends JPanel implements ChangeListener
 	{
 		synchronized (_lock)
 		{
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.unRegister(this);
-			}
 			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.register(this);
-			}
 		}
 		changePicture();
 	}

@@ -58,6 +58,7 @@ public final class PictureDisplayComponent extends JScrollPane
 	{
 		super();
 		_displayPane = new DisplayPane(bankList);
+		bankList.register(this);
 		setViewportView(_displayPane);
 	}
 
@@ -413,15 +414,7 @@ public final class PictureDisplayComponent extends JScrollPane
 		{
 			synchronized (_lockBrowser)
 			{
-				if (_pictureBrowser != null)
-				{
-					_pictureBrowser.unRegister(PictureDisplayComponent.this);
-				}
 				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
-				if (_pictureBrowser != null)
-				{
-					_pictureBrowser.register(PictureDisplayComponent.this);
-				}
 			}
 		}
 	}

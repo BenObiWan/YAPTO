@@ -142,15 +142,7 @@ public final class PictureBrowserPanel extends JPanel
 	{
 		synchronized (_lockBrowser)
 		{
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.unRegister(this);
-			}
 			_pictureBrowser = _bankList.getLastSelectPictureBrowser();
-			if (_pictureBrowser != null)
-			{
-				_pictureBrowser.register(this);
-			}
 		}
 		updateButtonEnableState();
 	}
