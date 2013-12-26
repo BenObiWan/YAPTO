@@ -166,12 +166,23 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_bus = bus;
 		_conf = conf;
 		_globalConfiguration = globalConfiguration;
-		_fileListConnection = new SQLFileListConnection(_conf);
 		_indexer = new PictureIndexer(_conf);
 		_lWaitBeforeWrite = _globalConfiguration.getWaitBeforeWrite() * 1000;
 		_processor = new PictureProcessor(
 				_globalConfiguration.getMaxConcurrentIdentifyTask(),
 				_globalConfiguration.getMaxConcurrentOtherTask());
+
+		// create directories
+		if (!checkAndCreateDirectories())
+		{
+			throw new IOException(
+					"Error creating the required picture directories : "
+							+ _conf.getMainPictureLoaderConfiguration()
+									.getPictureDirectory());
+		}
+
+		// database connection
+		_fileListConnection = new SQLFileListConnection(_conf);
 
 		// tag repository
 		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection,
@@ -186,13 +197,6 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_pictureCache = CacheBuilder.newBuilder()
 				.removalListener(pictureListener).build(pictureLoader);
 
-		if (!checkAndCreateDirectories())
-		{
-			throw new IOException(
-					"Error creating the required picture directories : "
-							+ _conf.getMainPictureLoaderConfiguration()
-									.getPictureDirectory());
-		}
 		_fileListConnection.createTables();
 
 		loadPictureIdList();
@@ -411,6 +415,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	private boolean checkAndCreateDirectories()
 	{
 		boolean bRes = true;
+		// bRes &= checkDirectory(new File(_conf.g));
 		// create the base picture directory
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
 		final File fPictureBaseDirectory = new File(_conf
