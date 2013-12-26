@@ -113,24 +113,6 @@ public interface IPictureBrowser<PICTURE extends IPicture> extends
 			throws ExecutionException;
 
 	/**
-	 * Register an object to the listen for change in this
-	 * {@link IPictureBrowser}.
-	 * 
-	 * @param object
-	 *            the object to register.
-	 */
-	void register(Object object);
-
-	/**
-	 * Unregister an object to the listen for change in this
-	 * {@link IPictureBrowser}.
-	 * 
-	 * @param object
-	 *            the object to unregister.
-	 */
-	void unRegister(Object object);
-
-	/**
 	 * Get the {@link IPictureBank} which created this {@link IPictureBrowser}.
 	 * 
 	 * @return the {@link IPictureBank} which created this

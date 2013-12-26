@@ -73,18 +73,6 @@ public abstract class AbstractPictureBrowser<PICTURE extends IPicture>
 	}
 
 	@Override
-	public void register(final Object object)
-	{
-		_bus.register(object);
-	}
-
-	@Override
-	public void unRegister(final Object object)
-	{
-		_bus.unregister(object);
-	}
-
-	@Override
 	public IPictureBank<PICTURE> getPictureBank()
 	{
 		return _pictureBank;
