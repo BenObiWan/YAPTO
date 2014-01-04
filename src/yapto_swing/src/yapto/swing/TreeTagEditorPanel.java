@@ -50,7 +50,10 @@ public final class TreeTagEditorPanel extends AbstractTagEditorPanel
 	@Override
 	protected void updateAvailableTags()
 	{
-		_panelTreeTag.updateAvailableTags();
+		synchronized (_lock)
+		{
+			_panelTreeTag.updateAvailableTags();
+		}
 	}
 
 	@Override
