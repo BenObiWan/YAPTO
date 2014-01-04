@@ -175,6 +175,6 @@ public abstract class AbstractTagEditorPanel extends JPanel implements
 				updateAvailableTags();
 			}
 		}
-		changePicture();
+		selectAppropriateTags();
 	}
 }
