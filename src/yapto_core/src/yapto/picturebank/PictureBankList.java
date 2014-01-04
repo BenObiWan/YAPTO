@@ -91,7 +91,7 @@ public final class PictureBankList
 			throws InvalidConfigurationException
 	{
 		_bus = bus;
-		_loader = new SQLFilePictureBankLoader();
+		_loader = new SQLFilePictureBankLoader(_bus);
 		// TODO add check for duplicate ids
 		for (final IPictureBankConfiguration conf : _loader
 				.getAllConfiguration())
@@ -336,7 +336,7 @@ public final class PictureBankList
 						.getAllPictures(strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
-			_bus.post(new PictureChangedEvent());
+			// _bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}
@@ -385,7 +385,7 @@ public final class PictureBankList
 						.filterPictures(query, iLimit, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
-			_bus.post(new PictureChangedEvent());
+			// _bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}
@@ -429,7 +429,7 @@ public final class PictureBankList
 						.getRandomPictureList(iNbrPicture, strInitialPictureId);
 			}
 			_bus.post(new PictureBrowserChangedEvent());
-			_bus.post(new PictureChangedEvent());
+			// _bus.post(new PictureChangedEvent());
 			return _pictureBrowser;
 		}
 	}

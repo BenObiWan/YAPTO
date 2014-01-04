@@ -32,13 +32,26 @@ public final class SQLFilePictureBankLoader
 	private final IGlobalSQLFilePictureBankConfiguration _globalConf;
 
 	/**
+	 * {@link EventBus} used to signal registered objects of changes in the
+	 * {@link SQLFilePictureBank} created by this
+	 * {@link SQLFilePictureBankLoader}.
+	 */
+	private final EventBus _bus;
+
+	/**
 	 * Creates a new {@link SQLFilePictureBankLoader}.
 	 * 
+	 * @param bus
+	 *            {@link EventBus} used to signal registered objects of changes
+	 *            in the {@link SQLFilePictureBank} created by this
+	 *            {@link SQLFilePictureBankLoader}.
 	 * @throws InvalidConfigurationException
 	 *             the {IGlobalSQLFilePictureBankConfiguration} is invalid.
 	 */
-	public SQLFilePictureBankLoader() throws InvalidConfigurationException
+	public SQLFilePictureBankLoader(final EventBus bus)
+			throws InvalidConfigurationException
 	{
+		_bus = bus;
 		_globalConf = new GlobalSQLFilePictureBankConfigurationImpl(null,
 				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(4),
 				Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(4));
@@ -64,7 +77,6 @@ public final class SQLFilePictureBankLoader
 			final ISQLFilePictureBankConfiguration conf)
 			throws ClassNotFoundException, SQLException, IOException
 	{
-		final EventBus bus = new EventBus();
-		return new SQLFilePictureBank(_globalConf, conf, bus);
+		return new SQLFilePictureBank(_globalConf, conf, _bus);
 	}
 }

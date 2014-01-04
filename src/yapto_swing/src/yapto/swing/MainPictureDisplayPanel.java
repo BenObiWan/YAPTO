@@ -3,9 +3,7 @@ package yapto.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.io.IOException;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -82,15 +80,7 @@ public final class MainPictureDisplayPanel extends JPanel
 		add(_pictureComponent, BorderLayout.CENTER);
 		add(_pictureInfoPanel, BorderLayout.LINE_END);
 		add(_pictureBrowserPanel, BorderLayout.PAGE_END);
-		try
-		{
-			_pictureComponent.loadPicture();
-		}
-		catch (final IOException e)
-		{
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			LOGGER.error(e.getMessage(), e);
-		}
+
+		_pictureComponent.changePicture();
 	}
 }

@@ -15,6 +15,9 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.IPictureBrowser;
@@ -38,6 +41,12 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	 * serialVersionUID for Serialization.
 	 */
 	private static final long serialVersionUID = 2501581601065249093L;
+
+	/**
+	 * Logger object.
+	 */
+	protected static transient final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractTreeTagPanel.class);
 
 	/**
 	 * {@link CheckboxTree} used to display all the {@link ITag}s.
@@ -88,6 +97,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	{
 		super(new BorderLayout());
 		_bankList = bankList;
+		_bankList.register(this);
 		synchronized (_lock)
 		{
 			// TODO improve this

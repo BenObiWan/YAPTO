@@ -64,13 +64,10 @@ public final class PictureDisplayComponent extends JScrollPane
 
 	/**
 	 * Load the picture to display.
-	 * 
-	 * @throws IOException
-	 *             if an error occurs during reading.
 	 */
-	public void loadPicture() throws IOException
+	public void changePicture()
 	{
-		_displayPane.loadPicture();
+		_displayPane.changePicture();
 	}
 
 	/**
@@ -101,16 +98,7 @@ public final class PictureDisplayComponent extends JScrollPane
 	public void handlePictureChanged(
 			@SuppressWarnings("unused") final PictureChangedEvent ev)
 	{
-		try
-		{
-			_displayPane.loadPicture();
-		}
-		catch (final IOException ex)
-		{
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			LOGGER.error(ex.getMessage(), ex);
-		}
+		_displayPane.changePicture();
 	}
 
 	/**
@@ -200,7 +188,7 @@ public final class PictureDisplayComponent extends JScrollPane
 		 * @throws IOException
 		 *             if an error occurs during reading.
 		 */
-		public void loadPicture() throws IOException
+		private void loadPicture() throws IOException
 		{
 			IPicture pic;
 			synchronized (_lockBrowser)
@@ -247,6 +235,20 @@ public final class PictureDisplayComponent extends JScrollPane
 					break;
 				}
 				repaint();
+			}
+		}
+
+		public void changePicture()
+		{
+			try
+			{
+				loadPicture();
+			}
+			catch (final IOException ex)
+			{
+				JOptionPane.showMessageDialog(PictureDisplayComponent.this,
+						ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				LOGGER.error(ex.getMessage(), ex);
 			}
 		}
 
@@ -416,6 +418,7 @@ public final class PictureDisplayComponent extends JScrollPane
 			{
 				_pictureBrowser = _bankList.getLastSelectPictureBrowser();
 			}
+			changePicture();
 		}
 	}
 }
