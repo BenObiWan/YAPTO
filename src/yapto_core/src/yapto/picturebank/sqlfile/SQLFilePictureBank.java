@@ -396,7 +396,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 								.getPictureDirectory(), subDir, picture.getId());
 		final Path thumbnailPath = FileSystems.getDefault().getPath(
 				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(), subDir, picture.getId());
+						.getPictureDirectory(), subDir, picture.getId() + ".png");
 		_processor.asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
 	}
 
