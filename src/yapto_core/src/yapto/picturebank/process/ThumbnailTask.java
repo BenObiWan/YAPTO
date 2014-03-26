@@ -51,7 +51,7 @@ public final class ThumbnailTask implements Callable<Boolean>
 		_fDestinationPicture = fDestinationPicture.toAbsolutePath();
 		final Integer iSize = Integer.valueOf(iWidth);
 		_operation.addImage();
-		_operation.resize(iSize, iSize);
+		_operation.thumbnail(iSize, iSize);
 		_operation.background("transparent");
 		_operation.gravity("center");
 		_operation.extent(iSize, iSize);
