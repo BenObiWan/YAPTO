@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -375,9 +373,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		final AddingFileVisitor visitor = new AddingFileVisitor(this, tagList);
 		try
 		{
-			Files.walkFileTree(pictureDirectory,
-					EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE,
-					visitor);
+			Files.walkFileTree(pictureDirectory, visitor);
 			return visitor.getResult();
 		}
 		catch (final IOException e)
