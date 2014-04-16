@@ -314,7 +314,8 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				.getPath(
 						_conf.getMainPictureLoaderConfiguration()
 								.getPictureDirectory(),
-						strPictureId.substring(0, 2), strPictureId);
+						strPictureId.substring(0, 2),
+						strPictureId + '.' + info.getExtension());
 		try
 		{
 			Files.copy(pictureFile, destPath);
@@ -389,14 +390,15 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	public void createThumbnail(final FsPicture picture)
 	{
 		final String subDir = picture.getId().substring(0, 2);
-		final Path picturePath = FileSystems
-				.getDefault()
+		final Path picturePath = FileSystems.getDefault()
 				.getPath(
 						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(), subDir, picture.getId());
+								.getPictureDirectory(), subDir,
+						picture.getIdWithExt());
 		final Path thumbnailPath = FileSystems.getDefault().getPath(
 				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(), subDir, picture.getId() + ".png");
+						.getPictureDirectory(), subDir,
+				picture.getId() + ".png");
 		_processor.asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
 	}
 

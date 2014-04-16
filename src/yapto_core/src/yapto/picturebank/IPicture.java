@@ -23,6 +23,13 @@ public interface IPicture extends Comparable<IPicture>
 	String getId();
 
 	/**
+	 * Get the id of this {@link IPicture} including the file extension.
+	 * 
+	 * @return the id of this {@link IPicture} including the file extension.
+	 */
+	String getIdWithExt();
+
+	/**
 	 * Get the list of {@link ITag}s associated with this {@link IPicture}.
 	 * 
 	 * @return the list of {@link ITag}s associated with this {@link IPicture}.

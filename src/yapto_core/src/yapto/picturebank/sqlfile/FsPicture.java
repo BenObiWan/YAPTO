@@ -32,6 +32,11 @@ public final class FsPicture implements IPicture
 	private final String _strId;
 
 	/**
+	 * The id of the picture with extension.
+	 */
+	private final String _strIdWithExt;
+
+	/**
 	 * Set containing all the {@link ITag}s associated with this
 	 * {@link FsPicture}.
 	 */
@@ -103,6 +108,7 @@ public final class FsPicture implements IPicture
 			final PictureInformation pictureInformation)
 	{
 		_strId = strId;
+		_strIdWithExt = _strId + '.' + pictureInformation.getExtension();
 		_imageLoader = imageLoader;
 		_pictureBank = pictureBank;
 		_lAddingTimestamp = lAddingTimestamp;
@@ -220,6 +226,12 @@ public final class FsPicture implements IPicture
 	}
 
 	@Override
+	public String getIdWithExt()
+	{
+		return _strIdWithExt;
+	}
+
+	@Override
 	public Set<ITag> getTagSet()
 	{
 		return Collections.unmodifiableSet(_tagSet);
@@ -228,7 +240,7 @@ public final class FsPicture implements IPicture
 	@Override
 	public BufferedImage getImageData() throws IOException
 	{
-		return _imageLoader.getMainImageData(_strId);
+		return _imageLoader.getMainImageData(_strIdWithExt);
 	}
 
 	@Override
