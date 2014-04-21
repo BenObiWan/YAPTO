@@ -29,7 +29,7 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	void addPicture(Path pictureFile, List<ITag> tagList)
+	void syncAddPicture(Path pictureFile, List<ITag> tagList)
 			throws PictureAddException;
 
 	/**
@@ -44,7 +44,7 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	 *             if an error occurs during the addition of the
 	 *             {@link IPicture}.
 	 */
-	PictureAddResult addDirectory(Path pictureDirectory, List<ITag> tagList)
+	PictureAddResult asyncAddPicture(Path pictureDirectory, List<ITag> tagList)
 			throws PictureAddException;
 
 	/**
@@ -66,5 +66,4 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	 * Close this {@link IPictureBank}.
 	 */
 	void close();
-
 }

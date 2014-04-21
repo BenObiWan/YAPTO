@@ -303,8 +303,9 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 						if (selectedBankSet != null
 								&& !selectedBankSet.isEmpty())
 						{
-							selectedBankSet.first().addPicture(file.toPath(),
-									tagList);
+							selectedBankSet.first().asyncAddPicture(
+									file.toPath(), tagList);
+							// TODO handle return object
 						}
 						else
 						{
@@ -314,24 +315,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 					}
 					catch (final PictureAddException e)
 					{
-						switch (e.getExceptionType())
-						{
-						case FILE_ALREADY_EXISTS:
-							final String strId = e.getPictureId();
-							if (strId != null)
-							{
-								// TODO add a dialog to compare the two
-								// pictures.
-								logException(e);
-							}
-							else
-							{
-								logException(e);
-							}
-							break;
-						default:
-							logException(e);
-						}
+						logException(e);
 					}
 				}
 			}
@@ -360,8 +344,8 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 						if (selectedBankSet != null
 								&& !selectedBankSet.isEmpty())
 						{
-							selectedBankSet.first().addDirectory(file.toPath(),
-									tagList);
+							selectedBankSet.first().asyncAddPicture(
+									file.toPath(), tagList);
 							// TODO handle return object
 						}
 						else

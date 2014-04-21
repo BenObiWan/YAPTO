@@ -112,6 +112,11 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	protected final BlockingQueue<FsPicture> _updateQueue = new LinkedBlockingQueue<>();
 
 	/**
+	 * Queue holding all the {@link FsPicture} to add.
+	 */
+	protected final BlockingQueue<FsPicture> _addQueue = new LinkedBlockingQueue<>();
+
+	/**
 	 * {@link Runnable} used to update modified {@link FsPicture}.
 	 */
 	private final PictureUpdater _updater;
@@ -119,7 +124,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	/**
 	 * {@link PictureProcessor} used to execute external commands on pictures.
 	 */
-	private final PictureProcessor _processor;
+	private final SQLFilePictureProcessor _processor;
 
 	/**
 	 * {@link IWritableTagRepository} used to load and save {@link ITag}s.
@@ -166,7 +171,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_globalConfiguration = globalConfiguration;
 		_indexer = new PictureIndexer(_conf);
 		_lWaitBeforeWrite = _globalConfiguration.getWaitBeforeWrite() * 1000;
-		_processor = new PictureProcessor(
+		_processor = new SQLFilePictureProcessor(conf,
 				_globalConfiguration.getMaxConcurrentIdentifyTask(),
 				_globalConfiguration.getMaxConcurrentOtherTask());
 
@@ -210,7 +215,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public void addPicture(final Path pictureFile, final List<ITag> tagList)
+	public void syncAddPicture(final Path pictureFile, final List<ITag> tagList)
 			throws PictureAddException
 	{
 		if (!Files.isReadable(pictureFile))
@@ -362,18 +367,13 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public PictureAddResult addDirectory(final Path pictureDirectory,
+	public PictureAddResult asyncAddPicture(final Path picturePath,
 			final List<ITag> tagList) throws PictureAddException
 	{
-		if (!Files.isDirectory(pictureDirectory))
-		{
-			throw new PictureAddException(
-					PictureAddExceptionType.NOT_A_DIRECTORY);
-		}
 		final AddingFileVisitor visitor = new AddingFileVisitor(this, tagList);
 		try
 		{
-			Files.walkFileTree(pictureDirectory, visitor);
+			Files.walkFileTree(picturePath, visitor);
 			return visitor.getResult();
 		}
 		catch (final IOException e)
@@ -385,17 +385,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	@Override
 	public void createThumbnail(final FsPicture picture)
 	{
-		final String subDir = picture.getId().substring(0, 2);
-		final Path picturePath = FileSystems.getDefault()
-				.getPath(
-						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(), subDir,
-						picture.getIdWithExt());
-		final Path thumbnailPath = FileSystems.getDefault().getPath(
-				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(), subDir,
-				picture.getId() + ".png");
-		_processor.asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
+		_processor.createThumbnail(picture);
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import yapto.picturebank.PictureInformation;
  * @author benobiwan
  * 
  */
-public final class PictureProcessor
+public class PictureProcessor
 {
 	/**
 	 * Logger object.

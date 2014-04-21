@@ -59,7 +59,7 @@ public final class AddingFileVisitor extends SimpleFileVisitor<Path>
 		FileVisitResult res;
 		try
 		{
-			_pictureBank.addPicture(file, _tagList);
+			_pictureBank.syncAddPicture(file, _tagList);
 			_result.addFileSuccess(file);
 			res = FileVisitResult.CONTINUE;
 		}
