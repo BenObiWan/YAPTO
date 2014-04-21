@@ -32,7 +32,10 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 						picture.getIdWithExt());
 		final Path thumbnailPath = FileSystems.getDefault().getPath(
 				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(), subDir, picture.getIdWithExt());
+						.getPictureDirectory(),
+				subDir,
+				picture.getIdWithExt() + '.'
+						+ ImageFormatType.PNG.getExtension());
 		asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
 	}
 
