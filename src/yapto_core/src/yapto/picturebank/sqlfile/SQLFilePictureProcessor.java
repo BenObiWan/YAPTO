@@ -58,10 +58,14 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 		}
 		else
 		{
+			StringBuilder sb = new StringBuilder(picture.getId());
+			sb.append('_');
+			sb.append(iWidth);
+			sb.append('.');
+			sb.append(ImageFormatType.JPG.getExtension());
 			secondaryPath = FileSystems.getDefault().getPath(
 					_conf.getSecondaryPictureLoaderConfiguration()
-							.getPictureDirectory(), subDir,
-					picture.getId() + '.' + ImageFormatType.JPG.getExtension());
+							.getPictureDirectory(), subDir, sb.toString());
 		}
 		asyncResizePicture(iWidth, picturePath, secondaryPath, false);
 	}
