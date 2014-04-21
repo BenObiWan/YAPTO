@@ -74,11 +74,6 @@ public final class FsPicture implements IPicture
 	private boolean _bModified = false;
 
 	/**
-	 * The type of this image.
-	 */
-	private ImageFormatType _imageType;
-
-	/**
 	 * The {@link PictureInformation} of this picture.
 	 */
 	private PictureInformation _pictureInformation;
@@ -385,7 +380,8 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			return _imageType != null;
+			return (_pictureInformation != null)
+					&& (_pictureInformation.getImageFormat() != ImageFormatType.UNKNOWN);
 		}
 	}
 
@@ -394,7 +390,7 @@ public final class FsPicture implements IPicture
 	{
 		synchronized (_lock)
 		{
-			return _imageType;
+			return _pictureInformation.getImageFormat();
 		}
 	}
 }
