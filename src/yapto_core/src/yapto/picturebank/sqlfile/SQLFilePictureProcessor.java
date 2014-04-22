@@ -32,11 +32,37 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 						picture.getIdWithExt());
 		final Path thumbnailPath = FileSystems.getDefault().getPath(
 				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(),
-				subDir,
-				picture.getIdWithExt() + '.'
-						+ ImageFormatType.PNG.getExtension());
+						.getPictureDirectory(), subDir,
+				picture.getId() + '.' + ImageFormatType.PNG.getExtension());
 		asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
+	}
+
+	public void createDisplayPicture(final FsPicture picture)
+	{
+		final String subDir = picture.getId().substring(0, 2);
+		final Path picturePath = FileSystems.getDefault()
+				.getPath(
+						_conf.getMainPictureLoaderConfiguration()
+								.getPictureDirectory(), subDir,
+						picture.getIdWithExt());
+		final Path secondaryPath;
+		final ImageFormatType type = picture.getImageType();
+		if (type.doesKeepFormat())
+		{
+			secondaryPath = FileSystems.getDefault().getPath(
+					_conf.getSecondaryPictureLoaderConfiguration()
+							.getPictureDirectory(), subDir,
+					picture.getIdWithExt());
+		}
+		else
+		{
+			secondaryPath = FileSystems.getDefault().getPath(
+					_conf.getSecondaryPictureLoaderConfiguration()
+							.getPictureDirectory(), subDir,
+					picture.getId() + '.' + ImageFormatType.JPG.getExtension());
+		}
+		asyncResizePicture(picture.getPictureInformation().getWidth(),
+				picturePath, secondaryPath, false);
 	}
 
 	public void createSizedPicture(final int iWidth, final FsPicture picture)
@@ -58,7 +84,7 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 		}
 		else
 		{
-			StringBuilder sb = new StringBuilder(picture.getId());
+			final StringBuilder sb = new StringBuilder(picture.getId());
 			sb.append('_');
 			sb.append(iWidth);
 			sb.append('.');

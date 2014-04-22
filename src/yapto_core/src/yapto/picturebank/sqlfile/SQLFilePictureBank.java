@@ -344,8 +344,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		createThumbnail(picture);
 		if (!picture.getImageType().doesKeepFormat())
 		{
-			_processor.createSizedPicture(picture.getPictureInformation()
-					.getWidth(), picture);
+			_processor.createDisplayPicture(picture);
 		}
 		// insert to base and index
 		try
