@@ -36,6 +36,8 @@ public final class FsPicture implements IPicture
 	 */
 	private final String _strIdWithExt;
 
+	private final String _strIdJPG;
+
 	/**
 	 * Set containing all the {@link ITag}s associated with this
 	 * {@link FsPicture}.
@@ -104,6 +106,7 @@ public final class FsPicture implements IPicture
 	{
 		_strId = strId;
 		_strIdWithExt = _strId + '.' + pictureInformation.getExtension();
+		_strIdJPG =  _strId + '.' + ImageFormatType.JPG.getExtension();
 		_imageLoader = imageLoader;
 		_pictureBank = pictureBank;
 		_lAddingTimestamp = lAddingTimestamp;
@@ -235,7 +238,11 @@ public final class FsPicture implements IPicture
 	@Override
 	public BufferedImage getImageData() throws IOException
 	{
-		return _imageLoader.getMainImageData(_strIdWithExt);
+		if (isDiplayable())
+		{
+			return _imageLoader.getMainImageData(_strIdWithExt);
+		}
+		return _imageLoader.getSecondaryImageData(_strIdJPG);
 	}
 
 	@Override
@@ -381,7 +388,7 @@ public final class FsPicture implements IPicture
 		synchronized (_lock)
 		{
 			return (_pictureInformation != null)
-					&& (_pictureInformation.getImageFormat() != ImageFormatType.UNKNOWN);
+					&& (_pictureInformation.getImageFormat().doesKeepFormat());
 		}
 	}
 

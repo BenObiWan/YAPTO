@@ -22,6 +22,12 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 		_conf = conf;
 	}
 
+	/**
+	 * Create thumbnail for the specified picture.
+	 * 
+	 * @param picture
+	 *            picture which thumbnail we want to create.
+	 */
 	public void createThumbnail(final FsPicture picture)
 	{
 		final String subDir = picture.getId().substring(0, 2);
