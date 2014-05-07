@@ -118,6 +118,8 @@ public final class PictureDisplayComponent extends JScrollPane
 		 */
 		private BufferedImage _img;
 
+		private int _orientation;
+
 		/**
 		 * The configured type of zoom used to display the picture.
 		 */
@@ -209,7 +211,14 @@ public final class PictureDisplayComponent extends JScrollPane
 			if (pic != null)
 			{
 				_img = pic.getImageData();
+				_orientation = pic.getPictureInformation().getOrientation();
 				_transform = null;
+
+				if (LOGGER.isDebugEnabled())
+				{
+					LOGGER.debug("Orientation: " + _orientation);
+				}
+
 				switch (_zoomType)
 				{
 				case REAL_SIZE:
@@ -262,7 +271,8 @@ public final class PictureDisplayComponent extends JScrollPane
 				g.drawImage(_img, 0, 0, null);
 				break;
 			case WINDOW_DIMENSION:
-				changeTransform(PictureDisplayComponent.this.getSize());
+				changeTransform(PictureDisplayComponent.this.getSize(),
+						_img.getWidth(), _img.getHeight());
 				g2.drawImage(_img, _transform, null);
 				break;
 			case SCALE_DOWN_TO_WINDOW:
@@ -270,7 +280,8 @@ public final class PictureDisplayComponent extends JScrollPane
 						|| _img.getHeight() > PictureDisplayComponent.this
 								.getHeight())
 				{
-					changeTransform(PictureDisplayComponent.this.getSize());
+					changeTransform(PictureDisplayComponent.this.getSize(),
+							_img.getWidth(), _img.getHeight());
 					g2.drawImage(_img, _transform, null);
 				}
 				else
@@ -279,11 +290,12 @@ public final class PictureDisplayComponent extends JScrollPane
 				}
 				break;
 			case PICTURE_PERCENTAGE:
-				changeTransform(_zoomScale);
+				changeTransform(_zoomScale, _img.getWidth(), _img.getHeight());
 				g2.drawImage(_img, _transform, null);
 				break;
 			case SPECIFIC_SIZE:
-				changeTransform(_zoomDimension);
+				changeTransform(_zoomDimension, _img.getWidth(),
+						_img.getHeight());
 				g2.drawImage(_img, _transform, null);
 				break;
 			case WINDOW_PERCENTAGE:
@@ -297,20 +309,33 @@ public final class PictureDisplayComponent extends JScrollPane
 		/**
 		 * Change the AffineTransform to fit the specified size.
 		 * 
-		 * @param size
+		 * @param scaleSize
 		 *            the size to match.
 		 */
-		private void changeTransform(final Dimension size)
+		private void changeTransform(final Dimension scaleSize,
+				final int pictureWidth, final int pictureHeight)
 		{
 			if (_img != null
 					&& (_size == null || _transform == null || !_size
-							.equals(size)))
+							.equals(scaleSize)))
 			{
-				_size = size;
-				final double dScaleFactor = Math.min(
-						size.getWidth() / _img.getWidth(), size.getHeight()
-								/ _img.getHeight());
-				changeTransform(dScaleFactor);
+				_size = scaleSize;
+				// TODO take orientation into account
+				final double dScaleFactor;
+				if (_orientation == 6 || _orientation == 8)
+				{
+					dScaleFactor = Math.min(
+							scaleSize.getWidth() / _img.getHeight(),
+							scaleSize.getHeight() / _img.getWidth());
+				}
+				else
+				{
+					dScaleFactor = Math.min(
+							scaleSize.getWidth() / _img.getWidth(),
+							scaleSize.getHeight() / _img.getHeight());
+				}
+
+				changeTransform(dScaleFactor, pictureWidth, pictureHeight);
 			}
 		}
 
@@ -320,14 +345,32 @@ public final class PictureDisplayComponent extends JScrollPane
 		 * @param dScaleFactor
 		 *            the scale factor to match.
 		 */
-		private void changeTransform(final double dScaleFactor)
+		private void changeTransform(final double dScaleFactor,
+				final int pictureWidth, final int pictureHeight)
 		{
 			if (dScaleFactor != _dScaleFactor || _transform == null
 					&& dScaleFactor > 0)
 			{
 				_dScaleFactor = dScaleFactor;
-				_transform = AffineTransform.getScaleInstance(_dScaleFactor,
-						_dScaleFactor);
+				// TODO take orientation into account
+				AffineTransform tmpTrans = AffineTransform.getScaleInstance(
+						_dScaleFactor, _dScaleFactor);
+				if (_orientation != 1)
+				{
+					final double centerX = pictureWidth / 2.0;
+					final double centerY = pictureHeight / 2.0;
+					tmpTrans.translate(centerX, centerY);
+					if (_orientation == 6)
+					{
+						tmpTrans.quadrantRotate(1);
+					}
+					if (_orientation == 8)
+					{
+						tmpTrans.quadrantRotate(3);
+					}
+					tmpTrans.translate(-centerX, -centerY);
+				}
+				_transform = tmpTrans;
 			}
 		}
 
