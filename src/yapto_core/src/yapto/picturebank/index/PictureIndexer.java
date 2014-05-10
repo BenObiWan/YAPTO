@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
@@ -87,6 +88,18 @@ public final class PictureIndexer
 	 * Name of the field used to index the exif 'focal length' of the picture.
 	 */
 	public static final String FOCAL_LENGTH_INDEX_FIELD = "focal_length";
+
+	/**
+	 * Name of the field used to index the timestamp of the last modification of
+	 * the picture.
+	 */
+	public static final String MODIFIED_TIMESTAMP_INDEX_FIELD = "modified_timestamp";
+
+	/**
+	 * Name of the field used to index the timestamp of the creation of the
+	 * picture.
+	 */
+	public static final String CREATION_TIMESTAMP_INDEX_FIELD = "creation_timestamp";
 
 	/**
 	 * Name of the field used to index the tags of the picture.
@@ -193,6 +206,10 @@ public final class PictureIndexer
 		// grade
 		doc.add(new IntField(GRADE_INDEX_FIELD, picture.getPictureGrade(),
 				Field.Store.YES));
+		// modified timestamp
+		doc.add(new LongField(MODIFIED_TIMESTAMP_INDEX_FIELD, picture
+				.getModifiedTimestamp(), Field.Store.NO));
+
 		// tags
 		for (final ITag t : picture.getTagSet())
 		{
@@ -206,6 +223,8 @@ public final class PictureIndexer
 		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(),
 				Field.Store.NO));
 		doc.add(new IntField(WIDTH_INDEX_FIELD, info.getWidth(), Field.Store.NO));
+		doc.add(new LongField(CREATION_TIMESTAMP_INDEX_FIELD, info
+				.getCreationTimestamp(), Field.Store.NO));
 		if (info.getMake() != null)
 		{
 			doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
@@ -261,6 +280,8 @@ public final class PictureIndexer
 	 *            the query.
 	 * @param iLimit
 	 *            maximum number of result.
+	 * @param strInitId
+	 *            index of the currently displayed picture.
 	 * @return a {@link List} of the matching picture id.
 	 * @throws IOException
 	 *             if an error occurs during the search.
