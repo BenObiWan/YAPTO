@@ -141,7 +141,7 @@ public final class PictureIndexer
 
 		// index writer configuration
 		final IndexWriterConfig iwConf = new IndexWriterConfig(
-				Version.LUCENE_40, null);
+				Version.LUCENE_48, null);
 		iwConf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 
 		_indexWriter = new IndexWriter(dir, iwConf);

@@ -265,23 +265,34 @@ public final class PictureDisplayComponent extends JScrollPane
 		public void paint(final Graphics g)
 		{
 			final Graphics2D g2 = (Graphics2D) g;
+			final int iWidth;
+			final int iHeight;
+			if (_img != null)
+			{
+				iWidth = _img.getWidth();
+				iHeight = _img.getHeight();
+			}
+			else
+			{
+				iWidth = 0;
+				iHeight = 0;
+			}
 			switch (_zoomType)
 			{
 			case REAL_SIZE:
 				g.drawImage(_img, 0, 0, null);
 				break;
 			case WINDOW_DIMENSION:
-				changeTransform(PictureDisplayComponent.this.getSize(),
-						_img.getWidth(), _img.getHeight());
+				changeTransform(PictureDisplayComponent.this.getSize(), iWidth,
+						iHeight);
 				g2.drawImage(_img, _transform, null);
 				break;
 			case SCALE_DOWN_TO_WINDOW:
-				if (_img.getWidth() > PictureDisplayComponent.this.getWidth()
-						|| _img.getHeight() > PictureDisplayComponent.this
-								.getHeight())
+				if (iWidth > PictureDisplayComponent.this.getWidth()
+						|| iHeight > PictureDisplayComponent.this.getHeight())
 				{
 					changeTransform(PictureDisplayComponent.this.getSize(),
-							_img.getWidth(), _img.getHeight());
+							iWidth, iHeight);
 					g2.drawImage(_img, _transform, null);
 				}
 				else
@@ -290,12 +301,11 @@ public final class PictureDisplayComponent extends JScrollPane
 				}
 				break;
 			case PICTURE_PERCENTAGE:
-				changeTransform(_zoomScale, _img.getWidth(), _img.getHeight());
+				changeTransform(_zoomScale, iWidth, iHeight);
 				g2.drawImage(_img, _transform, null);
 				break;
 			case SPECIFIC_SIZE:
-				changeTransform(_zoomDimension, _img.getWidth(),
-						_img.getHeight());
+				changeTransform(_zoomDimension, iWidth, iHeight);
 				g2.drawImage(_img, _transform, null);
 				break;
 			case WINDOW_PERCENTAGE:
@@ -353,8 +363,8 @@ public final class PictureDisplayComponent extends JScrollPane
 			{
 				_dScaleFactor = dScaleFactor;
 				// TODO take orientation into account
-				AffineTransform tmpTrans = AffineTransform.getScaleInstance(
-						_dScaleFactor, _dScaleFactor);
+				final AffineTransform tmpTrans = AffineTransform
+						.getScaleInstance(_dScaleFactor, _dScaleFactor);
 				if (_orientation != 1)
 				{
 					final double centerX = pictureWidth / 2.0;

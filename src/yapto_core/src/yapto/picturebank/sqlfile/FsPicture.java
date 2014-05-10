@@ -106,7 +106,7 @@ public final class FsPicture implements IPicture
 	{
 		_strId = strId;
 		_strIdWithExt = _strId + '.' + pictureInformation.getExtension();
-		_strIdJPG =  _strId + '.' + ImageFormatType.JPG.getExtension();
+		_strIdJPG = _strId + '.' + ImageFormatType.JPG.getExtension();
 		_imageLoader = imageLoader;
 		_pictureBank = pictureBank;
 		_lAddingTimestamp = lAddingTimestamp;
