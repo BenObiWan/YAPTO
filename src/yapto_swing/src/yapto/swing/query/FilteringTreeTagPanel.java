@@ -20,7 +20,7 @@ import yapto.swing.AbstractTreeTagPanel;
  * @author benobiwan
  * 
  */
-public class FilteringTreeTagPanel extends AbstractTreeTagPanel
+public final class FilteringTreeTagPanel extends AbstractTreeTagPanel
 {
 	/**
 	 * serialVersionUID for Serialization.

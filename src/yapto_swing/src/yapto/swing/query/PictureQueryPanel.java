@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
@@ -14,6 +15,12 @@ import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureBankList;
 
+/**
+ * Panel for creating a query to select which pictures are displayed.
+ * 
+ * @author benobiwan
+ * 
+ */
 public final class PictureQueryPanel extends JPanel implements ActionListener
 {
 	/**
@@ -42,10 +49,34 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	 */
 	private final JDialog _parent;
 
+	/**
+	 * Checkbox to enable or disable the grade panel.
+	 */
+	private final JCheckBox _cbGrade = new JCheckBox();
+
+	/**
+	 * Panel for selecting the grade part of the query.
+	 */
 	private final GradeQueryPanel _gradeQueryPanel = new GradeQueryPanel();
 
+	/**
+	 * Checkbox to enable or disable the date panel.
+	 */
+	private final JCheckBox _cbDate = new JCheckBox();
+
+	/**
+	 * Panel for selecting the date part of the query.
+	 */
 	private final DateQueryPanel _dateQueryPanel = new DateQueryPanel();
 
+	/**
+	 * Checkbox to enable or disable the tag panel.
+	 */
+	private final JCheckBox _cbTag = new JCheckBox();
+
+	/**
+	 * Panel for selecting the tag part of the query.
+	 */
 	private final FilteringTreeTagPanel _TagQueryPanel;
 
 	/**
@@ -76,17 +107,35 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 		panelButton.add(buttonCancel);
 
 		final JPanel panelTopSearch = new JPanel(new GridLayout(0, 1));
-		panelTopSearch.add(_gradeQueryPanel);
-		panelTopSearch.add(_dateQueryPanel);
+
+		final JPanel panelGrade = new JPanel(new BorderLayout());
+		final JPanel panelGradeCb = new JPanel(new BorderLayout());
+		panelGradeCb.add(_cbGrade, BorderLayout.PAGE_START);
+		panelGrade.add(panelGradeCb, BorderLayout.LINE_START);
+		panelGrade.add(_gradeQueryPanel, BorderLayout.CENTER);
+		panelTopSearch.add(panelGrade);
+
+		final JPanel panelDate = new JPanel(new BorderLayout());
+		final JPanel panelDateCb = new JPanel(new BorderLayout());
+		panelDateCb.add(_cbDate, BorderLayout.PAGE_START);
+		panelDate.add(panelDateCb, BorderLayout.LINE_START);
+		panelDate.add(_dateQueryPanel, BorderLayout.CENTER);
+		panelTopSearch.add(panelDate);
 
 		_gradeQueryPanel.setBorder(BorderFactory.createTitledBorder("Grade"));
 		_dateQueryPanel.setBorder(BorderFactory
 				.createTitledBorder("Picture Date"));
 
 		_TagQueryPanel = new FilteringTreeTagPanel(_bankList);
+		final JPanel panelTag = new JPanel(new BorderLayout());
+		final JPanel panelTagCb = new JPanel(new BorderLayout());
+		panelTagCb.add(_cbTag, BorderLayout.PAGE_START);
+		panelTag.add(panelTagCb, BorderLayout.LINE_START);
+		panelTag.add(_TagQueryPanel, BorderLayout.CENTER);
+		panelTopSearch.add(panelTag);
 
 		add(panelTopSearch, BorderLayout.PAGE_START);
-		add(_TagQueryPanel, BorderLayout.CENTER);
+		add(panelTag, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
 	}
 

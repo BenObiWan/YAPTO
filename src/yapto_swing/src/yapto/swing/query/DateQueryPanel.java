@@ -9,7 +9,13 @@ import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXDatePicker;
 
-public class DateQueryPanel extends JPanel
+/**
+ * Panel to select the date as part of creating a query.
+ * 
+ * @author benobiwan
+ * 
+ */
+public final class DateQueryPanel extends JPanel
 {
 	/**
 	 * serialVersionUID for Serialization.
@@ -34,6 +40,9 @@ public class DateQueryPanel extends JPanel
 	 */
 	private final JXDatePicker _endDatePicker = new JXDatePicker();
 
+	/**
+	 * Creates a new DateQueryPanel.
+	 */
 	public DateQueryPanel()
 	{
 		super(new BorderLayout(5, 5));
