@@ -1,6 +1,6 @@
 package yapto.swing.query;
 
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -36,9 +36,11 @@ public final class GradeQueryPanel extends JPanel
 	 */
 	public GradeQueryPanel()
 	{
-		super(new GridLayout(2, 1));
-		add(_gradeFilteringTypeComboBox);
-		add(_gradeSlider);
+		super(new BorderLayout(5, 5));
+		add(_gradeFilteringTypeComboBox, BorderLayout.LINE_START);
+		add(_gradeSlider, BorderLayout.CENTER);
+		_gradeFilteringTypeComboBox
+				.setSelectedItem(GradeFilteringType.GREATER_OR_EQUAL);
 		_gradeSlider.setMajorTickSpacing(1);
 		_gradeSlider.setPaintLabels(true);
 	}

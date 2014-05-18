@@ -1,7 +1,13 @@
 package yapto.swing.query;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.jdesktop.swingx.JXDatePicker;
 
 public class DateQueryPanel extends JPanel
 {
@@ -18,9 +24,33 @@ public class DateQueryPanel extends JPanel
 					DateFilteringType.INTERVAL,
 					DateFilteringType.LOWER_OR_EQUAL });
 
+	/**
+	 * Date picker to choose the start date.
+	 */
+	private final JXDatePicker _startDatePicker = new JXDatePicker();
+
+	/**
+	 * Date picker to choose the end date.
+	 */
+	private final JXDatePicker _endDatePicker = new JXDatePicker();
+
 	public DateQueryPanel()
 	{
-		// TODO Auto-generated constructor stub
+		super(new BorderLayout(5, 5));
+		_dateFilteringTypeComboBox.setSelectedItem(DateFilteringType.INTERVAL);
+		final JPanel startPanel = new JPanel(new BorderLayout(5, 5));
+		startPanel.add(new JLabel("Start"), BorderLayout.LINE_START);
+		startPanel.add(_startDatePicker, BorderLayout.CENTER);
+		final JPanel endPanel = new JPanel(new BorderLayout(5, 5));
+		endPanel.add(new JLabel("End"), BorderLayout.LINE_START);
+		endPanel.add(_endDatePicker, BorderLayout.CENTER);
+		final JPanel datePanel = new JPanel(new GridLayout(1, 2, 5, 5));
+		datePanel.add(startPanel);
+		datePanel.add(endPanel);
+
+		add(_dateFilteringTypeComboBox, BorderLayout.LINE_START);
+		add(datePanel, BorderLayout.CENTER);
+
 	}
 
 	/**
@@ -33,13 +63,23 @@ public class DateQueryPanel extends JPanel
 		return (DateFilteringType) _dateFilteringTypeComboBox.getSelectedItem();
 	}
 
-	// long getStartingDate()
-	// {
-	//
-	// }
-	//
-	// long getEndingDate()
-	// {
-	//
-	// }
+	/**
+	 * Get the start date.
+	 * 
+	 * @return the start date.
+	 */
+	long getStartingDate()
+	{
+		return _startDatePicker.getDate().getTime();
+	}
+
+	/**
+	 * Get the end date.
+	 * 
+	 * @return the end date.
+	 */
+	long getEndingDate()
+	{
+		return _endDatePicker.getDate().getTime();
+	}
 }

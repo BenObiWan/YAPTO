@@ -42,6 +42,12 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	 */
 	private final JDialog _parent;
 
+	private final GradeQueryPanel _gradeQueryPanel = new GradeQueryPanel();
+
+	private final DateQueryPanel _dateQueryPanel = new DateQueryPanel();
+
+	private final FilteringTreeTagPanel _TagQueryPanel;
+
 	/**
 	 * Creates a new PictureQueryPanel.
 	 * 
@@ -54,7 +60,9 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	public PictureQueryPanel(final JDialog parent,
 			final PictureBankList bankList)
 	{
-		super(new BorderLayout());
+		super(new BorderLayout(5, 5));
+		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
 		_bankList = bankList;
 		_parent = parent;
 		final JPanel panelButton = new JPanel(new GridLayout(1, 0, 10, 10));
@@ -66,7 +74,19 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 		buttonCancel.addActionListener(this);
 		panelButton.add(buttonOk);
 		panelButton.add(buttonCancel);
-		panelButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+		final JPanel panelTopSearch = new JPanel(new GridLayout(0, 1));
+		panelTopSearch.add(_gradeQueryPanel);
+		panelTopSearch.add(_dateQueryPanel);
+
+		_gradeQueryPanel.setBorder(BorderFactory.createTitledBorder("Grade"));
+		_dateQueryPanel.setBorder(BorderFactory
+				.createTitledBorder("Picture Date"));
+
+		_TagQueryPanel = new FilteringTreeTagPanel(_bankList);
+
+		add(panelTopSearch, BorderLayout.PAGE_START);
+		add(_TagQueryPanel, BorderLayout.CENTER);
 		add(panelButton, BorderLayout.PAGE_END);
 	}
 
