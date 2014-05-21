@@ -6,6 +6,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import yapto.picturebank.index.GradeFilteringType;
+
 /**
  * Panel used to select grade for filtering pictures.
  * 

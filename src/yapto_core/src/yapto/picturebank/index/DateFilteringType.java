@@ -1,7 +1,7 @@
-package yapto.swing.query;
+package yapto.picturebank.index;
 
 /**
- * Type of date filtering for use in {@link DateQueryPanel}.
+ * Type of date filtering for use in {@link QueryBuilder}.
  * 
  * @author benobiwan
  * 

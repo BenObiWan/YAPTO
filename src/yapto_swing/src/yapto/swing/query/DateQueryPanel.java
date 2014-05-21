@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXDatePicker;
 
+import yapto.picturebank.index.DateFilteringType;
+
 /**
  * Panel to select the date as part of creating a query.
  * 

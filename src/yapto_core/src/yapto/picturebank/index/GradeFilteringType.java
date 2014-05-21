@@ -1,7 +1,7 @@
-package yapto.swing.query;
+package yapto.picturebank.index;
 
 /**
- * Type of grade filtering for use in {@link GradeQueryPanel}.
+ * Type of grade filtering for use in {@link QueryBuilder}.
  * 
  * @author benobiwan
  * 

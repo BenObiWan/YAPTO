@@ -146,6 +146,22 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 		{
 		case OK_ACTION_COMMAND:
 			// TODO change the filter there
+
+			if (_cbGrade.isEnabled())
+			{
+				_gradeQueryPanel.getSelectedGrade();
+				_gradeQueryPanel.getGradeFilteringType();
+			}
+			if (_cbDate.isEnabled())
+			{
+				_dateQueryPanel.getGradeFilteringType();
+				_dateQueryPanel.getStartingDate();
+				_dateQueryPanel.getEndingDate();
+			}
+			if (_cbTag.isEnabled())
+			{
+				_TagQueryPanel.getSelectedTagIds();
+			}
 			_parent.setVisible(false);
 			break;
 		case CANCEL_ACTION_COMMAND:
