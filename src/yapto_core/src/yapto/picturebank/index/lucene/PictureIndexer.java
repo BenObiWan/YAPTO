@@ -1,4 +1,4 @@
-package yapto.picturebank.index;
+package yapto.picturebank.index.lucene;
 
 import java.io.File;
 import java.io.IOException;
