@@ -27,6 +27,7 @@ import org.apache.lucene.util.Version;
 import yapto.picturebank.IPicture;
 import yapto.picturebank.PictureInformation;
 import yapto.picturebank.PictureListWithIndex;
+import yapto.picturebank.index.query.PictureQueryBuilder;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 import yapto.picturebank.tag.ITag;
 
@@ -299,15 +300,15 @@ public final class PictureIndexer
 				_indexSearcher = new IndexSearcher(_indexReader);
 				_bReaderNeedsUpdate = false;
 			}
-			final ScoreDoc[] searchResult = _indexSearcher
-					.search(query, iLimit).scoreDocs;
+			final ScoreDoc[] searchResult = _indexSearcher.search(query,
+					iLimit, PictureQueryBuilder._dateSort).scoreDocs;
 			final ArrayList<String> result = new ArrayList<>();
 			result.ensureCapacity(searchResult.length);
 			for (final ScoreDoc scoreDoc : searchResult)
 			{
 				final String strPictureId = _indexReader.document(scoreDoc.doc)
-						.get("picture_id");
-				if (strPictureId.equals(strInitId))
+						.get(ID_INDEX_FIELD);
+				if (strInitId.equals(strPictureId))
 				{
 					iInitIndex = result.size();
 				}

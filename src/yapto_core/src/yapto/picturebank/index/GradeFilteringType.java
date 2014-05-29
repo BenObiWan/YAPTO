@@ -1,7 +1,9 @@
 package yapto.picturebank.index;
 
+import yapto.picturebank.index.query.PictureQueryBuilder;
+
 /**
- * Type of grade filtering for use in {@link QueryBuilder}.
+ * Type of grade filtering for use in {@link PictureQueryBuilder}.
  * 
  * @author benobiwan
  * 

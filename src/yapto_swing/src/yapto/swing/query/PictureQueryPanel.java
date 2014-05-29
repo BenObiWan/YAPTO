@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -11,9 +13,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureBankList;
+import yapto.picturebank.index.query.PictureQueryBuilder;
+import yapto.swing.PictureDisplayFrame;
 
 /**
  * Panel for creating a query to select which pictures are displayed.
@@ -48,6 +55,11 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	 * Parent {@link JDialog}.
 	 */
 	private final JDialog _parent;
+
+	/**
+	 * 'Grand' parent {@link PictureDisplayFrame}.
+	 */
+	private final PictureDisplayFrame _grandParent;
 
 	/**
 	 * Checkbox to enable or disable the grade panel.
@@ -89,6 +101,7 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	 *            {@link IPictureBank} used as source for the {@link IPicture}.
 	 */
 	public PictureQueryPanel(final JDialog parent,
+			final PictureDisplayFrame grandParent,
 			final PictureBankList bankList)
 	{
 		super(new BorderLayout(5, 5));
@@ -96,6 +109,7 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 
 		_bankList = bankList;
 		_parent = parent;
+		_grandParent = grandParent;
 		final JPanel panelButton = new JPanel(new GridLayout(1, 0, 10, 10));
 		final JButton buttonOk = new JButton("ok");
 		buttonOk.setActionCommand(OK_ACTION_COMMAND);
@@ -145,24 +159,35 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 		switch (ae.getActionCommand())
 		{
 		case OK_ACTION_COMMAND:
-			// TODO change the filter there
+			final BooleanQuery query = new BooleanQuery();
+			if (_cbGrade.isSelected())
+			{
+				query.add(PictureQueryBuilder.createGradeFilter(
+						_gradeQueryPanel.getGradeFilteringType(),
+						_gradeQueryPanel.getSelectedGrade()), Occur.MUST);
 
-			if (_cbGrade.isEnabled())
-			{
-				_gradeQueryPanel.getSelectedGrade();
-				_gradeQueryPanel.getGradeFilteringType();
 			}
-			if (_cbDate.isEnabled())
+			if (_cbDate.isSelected())
 			{
-				_dateQueryPanel.getGradeFilteringType();
-				_dateQueryPanel.getStartingDate();
-				_dateQueryPanel.getEndingDate();
+				query.add(PictureQueryBuilder.createDateFilter(
+						_dateQueryPanel.getDateFilteringType(),
+						_dateQueryPanel.getStartingDate(),
+						_dateQueryPanel.getEndingDate()), Occur.MUST);
 			}
-			if (_cbTag.isEnabled())
+			if (_cbTag.isSelected())
 			{
-				_TagQueryPanel.getSelectedTagIds();
+				query.add(PictureQueryBuilder.createTagFilter(_TagQueryPanel
+						.getSelectedTagIds()), Occur.MUST);
 			}
 			_parent.setVisible(false);
+			try
+			{
+				_bankList.filterPictures(query, 500);
+			}
+			catch (IOException | ExecutionException e)
+			{
+				_grandParent.logException(e);
+			}
 			break;
 		case CANCEL_ACTION_COMMAND:
 		default:
@@ -170,5 +195,4 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 			break;
 		}
 	}
-
 }

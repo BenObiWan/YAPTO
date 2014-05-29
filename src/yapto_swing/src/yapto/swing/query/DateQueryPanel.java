@@ -69,7 +69,7 @@ public final class DateQueryPanel extends JPanel
 	 * 
 	 * @return the selected filtering types.
 	 */
-	public DateFilteringType getGradeFilteringType()
+	public DateFilteringType getDateFilteringType()
 	{
 		return (DateFilteringType) _dateFilteringTypeComboBox.getSelectedItem();
 	}

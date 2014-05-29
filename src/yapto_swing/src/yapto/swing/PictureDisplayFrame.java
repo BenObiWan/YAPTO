@@ -137,7 +137,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 		_dialogInitTag.setContentPane(_initialTagPanel);
 
 		_queryDialog = new JDialog(this, "Filter pictures", true);
-		_queryDialog.setContentPane(new PictureQueryPanel(_queryDialog,
+		_queryDialog.setContentPane(new PictureQueryPanel(_queryDialog, this,
 				_bankList));
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -430,7 +430,7 @@ public final class PictureDisplayFrame extends JFrame implements ActionListener
 	 * @param e
 	 *            the exception to log.
 	 */
-	private void logException(final Exception e)
+	public void logException(final Exception e)
 	{
 		JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
 				JOptionPane.ERROR_MESSAGE);

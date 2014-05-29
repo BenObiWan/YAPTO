@@ -1,7 +1,9 @@
 package yapto.picturebank.index;
 
+import yapto.picturebank.index.query.PictureQueryBuilder;
+
 /**
- * Type of date filtering for use in {@link QueryBuilder}.
+ * Type of date filtering for use in {@link PictureQueryBuilder}.
  * 
  * @author benobiwan
  * 
