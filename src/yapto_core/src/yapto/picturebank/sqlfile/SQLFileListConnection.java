@@ -503,7 +503,7 @@ public final class SQLFileListConnection
 			statement.executeUpdate("create table if not exists "
 					+ PICTURE_TAG_TABLE_NAME + " ("
 					+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " integer, "
-					+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " integer)");
+					+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " text)");
 		}
 		finally
 		{
