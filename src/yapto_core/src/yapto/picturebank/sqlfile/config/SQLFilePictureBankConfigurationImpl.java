@@ -501,6 +501,13 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		{
 			return _leafPictureDirectory.getCurrentValue();
 		}
+
+		@Override
+		public long getCacheSize()
+		{
+			// TODO to change
+			return 10;
+		}
 	}
 
 	/**
@@ -533,6 +540,13 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		{
 			return _leafSecondaryPictureDirectory.getCurrentValue();
 		}
+
+		@Override
+		public long getCacheSize()
+		{
+			// TODO to change
+			return 10;
+		}
 	}
 
 	/**
@@ -564,6 +578,13 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		public String getPictureDirectory()
 		{
 			return _leafThumbnailsDirectory.getCurrentValue();
+		}
+
+		@Override
+		public long getCacheSize()
+		{
+			// TODO to change
+			return 50;
 		}
 	}
 

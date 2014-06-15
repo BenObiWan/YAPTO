@@ -43,20 +43,31 @@ public final class ImageLoader
 	public ImageLoader(final ISQLFilePictureBankConfiguration conf)
 	{
 		// main image cache
+		final IBufferedImageCacheLoaderConfiguration mainImageCacheConf = conf
+				.getMainPictureLoaderConfiguration();
 		final CacheLoader<String, BufferedImage> imageLoader = new BufferedImageCacheLoader(
-				conf.getMainPictureLoaderConfiguration());
-		_mainImageCache = CacheBuilder.newBuilder().build(imageLoader);
+				mainImageCacheConf);
+		_mainImageCache = CacheBuilder.newBuilder()
+				.maximumSize(mainImageCacheConf.getCacheSize())
+				.build(imageLoader);
 
 		// secondary image cache
+		final IBufferedImageCacheLoaderConfiguration secondaryImageCacheConf = conf
+				.getSecondaryPictureLoaderConfiguration();
 		final CacheLoader<String, BufferedImage> secondaryImageLoader = new BufferedImageCacheLoader(
-				conf.getSecondaryPictureLoaderConfiguration());
-		_secondaryImageCache = CacheBuilder.newBuilder().build(
-				secondaryImageLoader);
+				secondaryImageCacheConf);
+		_secondaryImageCache = CacheBuilder.newBuilder()
+				.maximumSize(secondaryImageCacheConf.getCacheSize())
+				.build(secondaryImageLoader);
 
 		// thumbnail cache
+		final IBufferedImageCacheLoaderConfiguration thumbnailImageCacheConf = conf
+				.getThumbnailPictureLoaderConfiguration();
 		final CacheLoader<String, BufferedImage> thumbnailLoader = new BufferedImageCacheLoader(
-				conf.getThumbnailPictureLoaderConfiguration());
-		_thumbnailCache = CacheBuilder.newBuilder().build(thumbnailLoader);
+				thumbnailImageCacheConf);
+		_thumbnailCache = CacheBuilder.newBuilder()
+				.maximumSize(thumbnailImageCacheConf.getCacheSize())
+				.build(thumbnailLoader);
 	}
 
 	/**

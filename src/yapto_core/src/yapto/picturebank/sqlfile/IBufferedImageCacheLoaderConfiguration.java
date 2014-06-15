@@ -18,4 +18,11 @@ public interface IBufferedImageCacheLoaderConfiguration extends
 	 * @return the path for the picture directory.
 	 */
 	String getPictureDirectory();
+
+	/**
+	 * Size of the picture cache.
+	 * 
+	 * @return the size of the picture cache.
+	 */
+	long getCacheSize();
 }
