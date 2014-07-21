@@ -118,6 +118,9 @@ public final class PictureDisplayComponent extends JScrollPane
 		 */
 		private BufferedImage _img;
 
+		/**
+		 * The orientation of the picture. TODO see EXIF format for values.
+		 */
 		private int _orientation;
 
 		/**
@@ -247,6 +250,9 @@ public final class PictureDisplayComponent extends JScrollPane
 			}
 		}
 
+		/**
+		 * Change the displayed picture.
+		 */
 		public void changePicture()
 		{
 			try
@@ -321,6 +327,10 @@ public final class PictureDisplayComponent extends JScrollPane
 		 * 
 		 * @param scaleSize
 		 *            the size to match.
+		 * @param pictureWidth
+		 *            the width of the picture.
+		 * @param pictureHeight
+		 *            the height of the picture.
 		 */
 		private void changeTransform(final Dimension scaleSize,
 				final int pictureWidth, final int pictureHeight)
@@ -354,6 +364,10 @@ public final class PictureDisplayComponent extends JScrollPane
 		 * 
 		 * @param dScaleFactor
 		 *            the scale factor to match.
+		 * @param pictureWidth
+		 *            the width of the picture.
+		 * @param pictureHeight
+		 *            the height of the picture.
 		 */
 		private void changeTransform(final double dScaleFactor,
 				final int pictureWidth, final int pictureHeight)

@@ -36,6 +36,9 @@ public final class FsPicture implements IPicture
 	 */
 	private final String _strIdWithExt;
 
+	/**
+	 * The id of the picture with a JPG extension (used for display picture).
+	 */
 	private final String _strIdJPG;
 
 	/**

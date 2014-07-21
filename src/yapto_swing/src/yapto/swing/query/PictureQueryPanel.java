@@ -96,6 +96,8 @@ public final class PictureQueryPanel extends JPanel implements ActionListener
 	 * 
 	 * @param parent
 	 *            parent {@link JDialog}.
+	 * @param grandParent
+	 *            grand parent {@link PictureDisplayFrame}.
 	 * @param bankList
 	 *            the {@link PictureBankList} used to load the
 	 *            {@link IPictureBank} used as source for the {@link IPicture}.

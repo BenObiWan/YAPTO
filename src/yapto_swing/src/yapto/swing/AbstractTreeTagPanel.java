@@ -186,6 +186,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 	/**
 	 * Expand all nodes of the {@link JTree}.
 	 */
+	@SuppressWarnings("unused")
 	private void expandAll()
 	{
 		int row = 0;
