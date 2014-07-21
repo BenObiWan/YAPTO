@@ -1,6 +1,8 @@
 package yapto.picturebank.sqlfile;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import yapto.picturebank.ImageFormatType;
@@ -30,75 +32,104 @@ public final class SQLFilePictureProcessor extends PictureProcessor
 	 */
 	public void createThumbnail(final FsPicture picture)
 	{
-		final String subDir = picture.getId().substring(0, 2);
-		final Path picturePath = FileSystems.getDefault()
-				.getPath(
-						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(), subDir,
-						picture.getIdWithExt());
-		final Path thumbnailPath = FileSystems.getDefault().getPath(
-				_conf.getThumbnailPictureLoaderConfiguration()
-						.getPictureDirectory(), subDir,
-				picture.getId() + '.' + ImageFormatType.PNG.getExtension());
+		final Path picturePath = createPicturePath(picture);
+		final Path thumbnailPath = createThumbnailPath(picture);
 		asyncCreatePictureThumbnail(128, picturePath, thumbnailPath);
+	}
+	
+	public void deleteThumbnail(final FsPicture picture) throws IOException
+	{
+		Files.delete(createThumbnailPath(picture));
 	}
 
 	public void createDisplayPicture(final FsPicture picture)
 	{
-		final String subDir = picture.getId().substring(0, 2);
-		final Path picturePath = FileSystems.getDefault()
-				.getPath(
-						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(), subDir,
-						picture.getIdWithExt());
-		final Path secondaryPath;
-		final ImageFormatType type = picture.getImageType();
-		if (type.doesKeepFormat())
-		{
-			secondaryPath = FileSystems.getDefault().getPath(
-					_conf.getSecondaryPictureLoaderConfiguration()
-							.getPictureDirectory(), subDir,
-					picture.getIdWithExt());
-		}
-		else
-		{
-			secondaryPath = FileSystems.getDefault().getPath(
-					_conf.getSecondaryPictureLoaderConfiguration()
-							.getPictureDirectory(), subDir,
-					picture.getId() + '.' + ImageFormatType.JPG.getExtension());
-		}
+		final Path picturePath = createPicturePath(picture);
+		final Path secondaryPath = createDisplayPath(picture);
 		asyncResizePicture(picture.getPictureInformation().getWidth(),
 				picturePath, secondaryPath, false);
 	}
+	
+	public void deleteDisplayPicture(final FsPicture picture) throws IOException
+	{
+		Files.delete(createDisplayPath(picture));
+	}	
 
 	public void createSizedPicture(final int iWidth, final FsPicture picture)
 	{
-		final String subDir = picture.getId().substring(0, 2);
-		final Path picturePath = FileSystems.getDefault()
+		final Path picturePath = createPicturePath(picture);
+		final Path secondaryPath = createSizedPath(iWidth, picture);
+		asyncResizePicture(iWidth, picturePath, secondaryPath, false);
+	}
+
+	public boolean hasThumbnail(final FsPicture picture)
+	{
+		return Files.exists(createThumbnailPath(picture));
+	}
+
+	public boolean hasDisplayPicture(final FsPicture picture)
+	{
+		return Files.exists(createDisplayPath(picture));
+	}
+	
+	public void deleteMainPicture(final FsPicture picture) throws IOException
+	{
+		Files.delete(createPicturePath(picture));
+	}	
+	
+	private Path createPicturePath(final FsPicture picture)
+	{
+		return FileSystems
+				.getDefault()
 				.getPath(
 						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(), subDir,
-						picture.getIdWithExt());
-		final Path secondaryPath;
+								.getPictureDirectory(),
+						picture.getId().substring(0, 2), picture.getIdWithExt());
+	}
+
+	private Path createThumbnailPath(final FsPicture picture)
+	{
+		return FileSystems.getDefault().getPath(
+				_conf.getThumbnailPictureLoaderConfiguration()
+						.getPictureDirectory(),
+				picture.getId().substring(0, 2),
+				picture.getId() + '.' + ImageFormatType.PNG.getExtension());
+	}
+
+	private Path createDisplayPath(final FsPicture picture)
+	{
+		if (picture.getImageType().doesKeepFormat())
+		{
+			return FileSystems.getDefault().getPath(
+					_conf.getSecondaryPictureLoaderConfiguration()
+							.getPictureDirectory(),
+					picture.getId().substring(0, 2), picture.getIdWithExt());
+		}
+		return FileSystems.getDefault().getPath(
+				_conf.getSecondaryPictureLoaderConfiguration()
+						.getPictureDirectory(),
+				picture.getId().substring(0, 2),
+				picture.getId() + '.' + ImageFormatType.JPG.getExtension());
+	}
+
+	private Path createSizedPath(final int iWidth, final FsPicture picture)
+	{
 		final ImageFormatType type = picture.getImageType();
+		final StringBuilder sb = new StringBuilder(picture.getId());
+		sb.append('_');
+		sb.append(iWidth);
+		sb.append('.');
 		if (type.doesKeepFormat())
 		{
-			secondaryPath = FileSystems.getDefault().getPath(
-					_conf.getSecondaryPictureLoaderConfiguration()
-							.getPictureDirectory(), subDir,
-					picture.getIdWithExt());
+			sb.append(type.getExtension());
 		}
 		else
 		{
-			final StringBuilder sb = new StringBuilder(picture.getId());
-			sb.append('_');
-			sb.append(iWidth);
-			sb.append('.');
 			sb.append(ImageFormatType.JPG.getExtension());
-			secondaryPath = FileSystems.getDefault().getPath(
-					_conf.getSecondaryPictureLoaderConfiguration()
-							.getPictureDirectory(), subDir, sb.toString());
 		}
-		asyncResizePicture(iWidth, picturePath, secondaryPath, false);
+		return FileSystems.getDefault().getPath(
+				_conf.getSecondaryPictureLoaderConfiguration()
+						.getPictureDirectory(),
+				picture.getId().substring(0, 2), sb.toString());
 	}
 }

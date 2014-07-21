@@ -344,7 +344,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		createThumbnail(picture);
 		if (!picture.getImageType().doesKeepFormat())
 		{
-			_processor.createDisplayPicture(picture);
+			createDisplayPicture(picture);
 		}
 		// insert to base and index
 		try
@@ -390,6 +390,20 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	public void createThumbnail(final FsPicture picture)
 	{
 		_processor.createThumbnail(picture);
+	}
+
+	/**
+	 * Create secondary image for picture types that can't be displayed.
+	 * 
+	 * @param picture
+	 *            the picture for which a secondary picture has to be created.
+	 */
+	public void createDisplayPicture(final FsPicture picture)
+	{
+		if (!picture.getImageType().doesKeepFormat())
+		{
+			_processor.createDisplayPicture(picture);
+		}
 	}
 
 	@Override
@@ -698,6 +712,98 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		{
 			reIndexPicture(strPicId);
 		}
+	}
+
+	/**
+	 * Check if the specified picture has its thumbnail and secondary picture
+	 * created correctly and also force its re-indexation.
+	 * 
+	 * @param strPicId
+	 *            the id of the {@link IPicture} to check.
+	 * @throws CorruptIndexException
+	 *             if the index is corrupted.
+	 * @throws IOException
+	 *             if there is an error while writing the index.
+	 */
+	public void checkPicture(final String strPicId)
+			throws CorruptIndexException, IOException
+	{
+		try
+		{
+			reIndexPicture(strPicId);
+			final FsPicture picture = _pictureCache.get(strPicId);
+			if (!_processor.hasThumbnail(picture))
+			{
+				_processor.createThumbnail(picture);
+			}
+			if (!picture.getImageType().doesKeepFormat()
+					&& !_processor.hasDisplayPicture(picture))
+			{
+				_processor.createDisplayPicture(picture);
+			}
+		}
+		catch (final ExecutionException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Check that all pictures have their thumbnails and secondary pictures
+	 * created correctly and also force re-indexation.
+	 * 
+	 * @throws CorruptIndexException
+	 *             if the index is corrupted.
+	 * @throws IOException
+	 *             if there is an error while writing the index.
+	 */
+	public void checkAllPictures() throws CorruptIndexException, IOException
+	{
+		for (final String strPicId : _pictureIdList)
+		{
+			checkPicture(strPicId);
+		}
+	}
+
+	/**
+	 * Delete the specified {@link IPicture}.
+	 * 
+	 * @param strPicId
+	 *            the id of the {@link IPicture}.
+	 * @throws ExecutionException
+	 *             if an error occurs while trying to load the {@link IPicture}
+	 *             from cache.
+	 * @throws SQLException
+	 *             if an SQL error occurs while remove the {@link IPicture} from
+	 *             the database.
+	 * @throws IOException
+	 *             if an error occurs while deleting one of the files or
+	 *             deleting the {@link IPicture} from the index.
+	 */
+	public void deletePicture(final String strPicId) throws ExecutionException,
+			SQLException, IOException
+	{
+		final FsPicture picture = _pictureCache.get(strPicId);
+		// delete from index
+		synchronized (picture)
+		{
+			_indexer.unindexPicture(picture);
+		}
+		// delete display picture
+		if (!picture.getImageType().doesKeepFormat()
+				&& _processor.hasDisplayPicture(picture))
+		{
+			_processor.deleteDisplayPicture(picture);
+		}
+		// delete thumbnail
+		if (_processor.hasThumbnail(picture))
+		{
+			_processor.deleteThumbnail(picture);
+		}
+		// delete main picture
+		_processor.deleteMainPicture(picture);
+		// delete from BDD
+		_fileListConnection.removePicture(strPicId);
 	}
 
 	/**

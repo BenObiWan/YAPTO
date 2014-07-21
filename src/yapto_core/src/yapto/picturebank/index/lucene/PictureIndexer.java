@@ -258,6 +258,21 @@ public final class PictureIndexer
 	}
 
 	/**
+	 * Remove an {@link IPicture} from the index
+	 * 
+	 * @param picture
+	 *            the {@link IPicture} to remove.
+	 * @throws IOException
+	 *             if an error occurs while deleting the {@link IPicture} from
+	 *             the index.
+	 */
+	public void unindexPicture(final IPicture picture) throws IOException
+	{
+		final Term currDoc = new Term(ID_INDEX_FIELD, picture.getId());
+		_indexWriter.deleteDocuments(currDoc);
+	}
+
+	/**
 	 * Closes the {@link IndexWriter}.
 	 * 
 	 * @throws CorruptIndexException

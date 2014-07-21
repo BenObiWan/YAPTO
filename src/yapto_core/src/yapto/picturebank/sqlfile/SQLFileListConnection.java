@@ -235,9 +235,19 @@ public final class SQLFileListConnection
 	private final PreparedStatement _psRemoveTag;
 
 	/**
-	 * Statement to remove a {@link ITag} from all the pictures.
+	 * Statement to remove a {@link ITag} from all the {@link IPicture}s.
 	 */
 	private final PreparedStatement _psRemoveTagFromAllPictures;
+
+	/**
+	 * Statement to remove all {@link ITag} associated to an {@link IPicture}.
+	 */
+	private final PreparedStatement _psRemoveAllTagsForPicture;
+
+	/**
+	 * Statement to remove a {@link IPicture}.
+	 */
+	private final PreparedStatement _psRemovePicture;
 
 	/**
 	 * creates a new SQLFileListConnection.
@@ -338,6 +348,12 @@ public final class SQLFileListConnection
 		_psRemoveTagFromAllPictures = _connection
 				.prepareStatement("DELETE FROM " + PICTURE_TAG_TABLE_NAME
 						+ " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_psRemoveAllTagsForPicture = _connection
+				.prepareStatement("DELETE FROM " + PICTURE_TAG_TABLE_NAME
+						+ " WHERE " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
+		_psRemovePicture = _connection.prepareStatement("DELETE FROM "
+				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
+				+ "=?");
 	}
 
 	/**
@@ -403,6 +419,14 @@ public final class SQLFileListConnection
 		if (_psListPicture != null)
 		{
 			_psListPicture.close();
+		}
+		if (_psRemoveAllTagsForPicture != null)
+		{
+			_psRemoveAllTagsForPicture.close();
+		}
+		if (_psRemovePicture != null)
+		{
+			_psRemovePicture.close();
 		}
 		if (_connection != null)
 		{
@@ -860,15 +884,40 @@ public final class SQLFileListConnection
 	{
 		synchronized (_psRemoveTagFromAllPictures)
 		{
+			_psRemoveTagFromAllPictures.clearParameters();
+			_psRemoveTagFromAllPictures.setInt(1, iTagId);
+			_psRemoveTagFromAllPictures.execute();
+		}
+		synchronized (_psRemoveTag)
+		{
 			_psRemoveTag.clearParameters();
 			_psRemoveTag.setInt(1, iTagId);
 			_psRemoveTag.execute();
 		}
-		synchronized (_psRemoveTagFromAllPictures)
+	}
+
+	/**
+	 * Remove the specified {@link IPicture} from the database.
+	 * 
+	 * @param strPictureId
+	 *            the id of the {@link IPicture} to remove.
+	 * @throws SQLException
+	 *             if an SQL error occurred during the interrogation of the
+	 *             database.
+	 */
+	public void removePicture(final String strPictureId) throws SQLException
+	{
+		synchronized (_psRemoveAllTagsForPicture)
 		{
-			_psRemoveTagFromAllPictures.clearParameters();
-			_psRemoveTagFromAllPictures.setInt(1, iTagId);
-			_psRemoveTagFromAllPictures.execute();
+			_psRemoveAllTagsForPicture.clearParameters();
+			_psRemoveAllTagsForPicture.setString(1, strPictureId);
+			_psRemoveAllTagsForPicture.execute();
+		}
+		synchronized (_psRemovePicture)
+		{
+			_psRemovePicture.clearParameters();
+			_psRemovePicture.setString(1, strPictureId);
+			_psRemovePicture.execute();
 		}
 	}
 }
