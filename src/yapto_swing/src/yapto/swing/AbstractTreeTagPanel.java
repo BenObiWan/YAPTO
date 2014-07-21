@@ -139,7 +139,7 @@ public abstract class AbstractTreeTagPanel extends JPanel
 				_treePathMap.put(Integer.valueOf(0), rootTreePath);
 				populateChildren(rootTag, _rootNode, rootTreePath);
 				_treeModel.reload();
-				expandAll();
+				expandOne();
 			}
 		}
 	}
@@ -194,6 +194,14 @@ public abstract class AbstractTreeTagPanel extends JPanel
 			_tagTree.expandRow(row);
 			row++;
 		}
+	}
+
+	/**
+	 * Expand first level of the {@link JTree}.
+	 */
+	private void expandOne()
+	{
+		_tagTree.expandRow(0);
 	}
 
 	/**
