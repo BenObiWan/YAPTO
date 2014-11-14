@@ -5,7 +5,7 @@ import javax.management.MBeanServer;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.config.IPictureBankConfiguration;
 import yapto.picturebank.sqlfile.IBufferedImageCacheLoaderConfiguration;
-
+import yapto.picturebank.tag.ITag;
 import common.config.AbstractConfigurationBranch;
 import common.config.IConfiguration;
 import common.config.InvalidConfigurationException;
@@ -57,6 +57,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	 * Leaf configuring the base directory for index.
 	 */
 	private final ConfigurationString _leafIndexDirectory;
+
+	/**
+	 * Leaf configuring the {@link ITag} history size.
+	 */
+	private final ConfigurationInteger _leafTagHistorySize;
 
 	/**
 	 * Short description for the {@link IPictureBank} id.
@@ -164,6 +169,21 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	private final static String INDEX_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the indexes.";
 
 	/**
+	 * Short description for the index directory.
+	 */
+	private final static String TAG_HISTORY_SHORT_DESC = "Tag history size";
+
+	/**
+	 * Long description for the index directory.
+	 */
+	private final static String TAG_HISTORY_LONG_DESC = "Size of the tag history.";
+
+	/**
+	 * Invalid message for the index directory.
+	 */
+	private final static String TAG_HISTORY_INVALID_MESSAGE = "Invalid size of the tag history.";
+
+	/**
 	 * {@link IBufferedImageCacheLoaderConfiguration} for the pictures.
 	 */
 	private final IBufferedImageCacheLoaderConfiguration _pictureCacheLoaderConfiguration;
@@ -225,6 +245,10 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "");
+		_leafTagHistorySize = new ConfigurationInteger(this, TAG_HISTORY_TAG,
+				TAG_HISTORY_SHORT_DESC, TAG_HISTORY_LONG_DESC,
+				TAG_HISTORY_INVALID_MESSAGE, false, IntegerDisplayType.SPINNER,
+				Integer.valueOf(0), Integer.valueOf(100), Integer.valueOf(25));
 		addLeaf(_leafPictureBankId);
 		addLeaf(_leafPictureBankName);
 		addLeaf(_leafDatabaseFileName);
@@ -232,6 +256,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 		addLeaf(_leafSecondaryPictureDirectory);
 		addLeaf(_leafIndexDirectory);
 		addLeaf(_leafThumbnailsDirectory);
+		addLeaf(_leafTagHistorySize);
 		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
 		_secondaryPictureCacheLoaderConfiguration = new SecondaryPictureLoaderConfigurationImpl();
 		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
@@ -277,7 +302,8 @@ public final class SQLFilePictureBankConfigurationImpl extends
 			final String strCommandLinePictureDirectory,
 			final String strCommandLineSecondaryPictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
-			final String strCommandLineIndexDirectory)
+			final String strCommandLineIndexDirectory,
+			final Integer iCommandLineTagHistorySize)
 			throws InvalidConfigurationException
 	{
 		super(parent, SQLFILE_PICTUREBANK_CONFIGURATION_TAG, mBeanServer);
@@ -321,12 +347,18 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE,
 				false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineIndexDirectory);
+		_leafTagHistorySize = new ConfigurationInteger(this, TAG_HISTORY_TAG,
+				TAG_HISTORY_SHORT_DESC, TAG_HISTORY_LONG_DESC,
+				TAG_HISTORY_INVALID_MESSAGE, false, IntegerDisplayType.SPINNER,
+				Integer.valueOf(0), Integer.valueOf(100), Integer.valueOf(25),
+				iCommandLineTagHistorySize);
 		addLeaf(_leafPictureBankId);
 		addLeaf(_leafPictureBankName);
 		addLeaf(_leafDatabaseFileName);
 		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
 		addLeaf(_leafThumbnailsDirectory);
+		addLeaf(_leafTagHistorySize);
 		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
 		_secondaryPictureCacheLoaderConfiguration = new SecondaryPictureLoaderConfigurationImpl();
 		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
@@ -393,20 +425,23 @@ public final class SQLFilePictureBankConfigurationImpl extends
 			final String strCommandLineSecondaryPictureDirectory,
 			final String strCommandLineThumbnailsDirectory,
 			final String strCommandLineIndexDirectory,
+			final Integer iCommandLineTagHistorySize,
 			final Integer iConfigurationPictureBankId,
 			final String strConfigurationPictureBankName,
 			final String strConfigurationDatabaseFileName,
 			final String strConfigurationPictureDirectory,
 			final String strConfigurationSecondaryPictureDirectory,
 			final String strConfigurationThumbnailsDirectory,
-			final String strConfigurationIndexDirectory)
+			final String strConfigurationIndexDirectory,
+			final Integer iConfigurationTagHistorySize)
 			throws InvalidConfigurationException
 	{
 		this(parent, mBeanServer, iCommandLinePictureBankId,
 				strCommandLinePictureBankName, strCommandLineDatabaseFileName,
 				strCommandLinePictureDirectory,
 				strCommandLineSecondaryPictureDirectory,
-				strCommandLineThumbnailsDirectory, strCommandLineIndexDirectory);
+				strCommandLineThumbnailsDirectory,
+				strCommandLineIndexDirectory, iCommandLineTagHistorySize);
 		_leafPictureBankId.setConfigurationValue(iConfigurationPictureBankId);
 		_leafPictureBankName
 				.setConfigurationValue(strConfigurationPictureBankName);
@@ -420,6 +455,7 @@ public final class SQLFilePictureBankConfigurationImpl extends
 				.setConfigurationValue(strConfigurationIndexDirectory);
 		_leafThumbnailsDirectory
 				.setConfigurationValue(strConfigurationThumbnailsDirectory);
+		_leafTagHistorySize.setConfigurationValue(iConfigurationTagHistorySize);
 
 	}
 
@@ -592,5 +628,11 @@ public final class SQLFilePictureBankConfigurationImpl extends
 	public int compareTo(final IPictureBankConfiguration o)
 	{
 		return getPictureBankId() - o.getPictureBankId();
+	}
+
+	@Override
+	public int getTagHistorySize()
+	{
+		return _leafTagHistorySize.getCurrentValue().intValue();
 	}
 }

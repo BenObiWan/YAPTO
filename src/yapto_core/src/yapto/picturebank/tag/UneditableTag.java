@@ -286,11 +286,11 @@ public final class UneditableTag implements ITag
 		iComp -= arg0.getPictureBankId();
 		if (iComp == 0)
 		{
-			iComp += _iTagId;
-			iComp -= arg0.getTagId();
+			iComp = _strName.compareTo(arg0.getName());
 			if (iComp == 0)
 			{
-				iComp = _strName.compareTo(arg0.getName());
+				iComp += _iTagId;
+				iComp -= arg0.getTagId();
 				if (iComp == 0)
 				{
 					iComp = _strDescription.compareTo(arg0.getDescription());
@@ -298,11 +298,9 @@ public final class UneditableTag implements ITag
 					{
 						if (_bSelectable == arg0.isSelectable())
 						{
-							synchronized (_parentLock)
-							{
-								iComp += _iParentTagId;
-								iComp -= arg0.getParentId();
-							}
+
+							iComp += _iParentTagId;
+							iComp -= arg0.getParentId();
 						}
 						else if (_bSelectable)
 						{

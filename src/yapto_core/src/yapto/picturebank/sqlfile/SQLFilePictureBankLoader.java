@@ -68,7 +68,7 @@ public final class SQLFilePictureBankLoader
 				"/home/benobiwan/images/photoDB/photos/",
 				"/home/benobiwan/images/photoDB/secondary/",
 				"/home/benobiwan/images/photoDB/thumbnails/",
-				"/home/benobiwan/images/photoDB/index/"));
+				"/home/benobiwan/images/photoDB/index/", Integer.valueOf(25)));
 		return Collections.unmodifiableSet(confSet);
 	}
 

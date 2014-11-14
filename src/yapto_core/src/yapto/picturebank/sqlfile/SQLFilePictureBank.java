@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -82,7 +83,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	/**
 	 * {@link LoadingCache} used to load the {@link FsPicture}.
 	 */
-	protected final LoadingCache<String, FsPicture> _pictureCache;
+	final LoadingCache<String, FsPicture> _pictureCache;
 
 	/**
 	 * {@link ImageLoader} used to load the {@link BufferedImage}.
@@ -129,7 +130,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	/**
 	 * {@link IWritableTagRepository} used to load and save {@link ITag}s.
 	 */
-	private final IWritableTagRepository _tagRepository;
+	final IWritableTagRepository _tagRepository;
 
 	/**
 	 * Time to wait before writing picture information to the database.
@@ -842,6 +843,18 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		{
 			return _pictureCache.get(pictureId);
 		}
+
+		@Override
+		public SortedSet<ITag> getRecentlyUsed()
+		{
+			return _tagRepository.getRecentlyUsed();
+		}
+
+		@Override
+		public void addLastUsed(ITag tag)
+		{
+			_tagRepository.addLastUsed(tag);
+		}
 	}
 
 	/**
@@ -990,5 +1003,17 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	public int compareTo(final IPictureBank<?> o)
 	{
 		return getId() - o.getId();
+	}
+
+	@Override
+	public SortedSet<ITag> getRecentlyUsed()
+	{
+		return _tagRepository.getRecentlyUsed();
+	}
+
+	@Override
+	public void addLastUsed(ITag tag)
+	{
+		_tagRepository.addLastUsed(tag);
 	}
 }

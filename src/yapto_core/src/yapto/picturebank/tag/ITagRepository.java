@@ -1,6 +1,7 @@
 package yapto.picturebank.tag;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Interface describing an object used to load {@link ITag}s.
@@ -61,4 +62,19 @@ public interface ITagRepository
 	 * @return the root {@link ITag} of this repository.
 	 */
 	ITag getRootTag();
+
+	/**
+	 * Get SortedSet of recently used {@link ITag}.
+	 * 
+	 * @return SortedSet of recently used {@link ITag}.
+	 */
+	SortedSet<ITag> getRecentlyUsed();
+
+	/**
+	 * Mark an {@link ITag} as being the last used {@link ITag}.
+	 * 
+	 * @param tag
+	 *            the last used {@link ITag}.
+	 */
+	void addLastUsed(final ITag tag);
 }

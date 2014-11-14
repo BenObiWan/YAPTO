@@ -295,13 +295,13 @@ public final class EditableTag implements ITag
 		iComp -= arg0.getPictureBankId();
 		if (iComp == 0)
 		{
-			iComp += _iTagId;
-			iComp -= arg0.getTagId();
-			if (iComp == 0)
+			synchronized (_lock)
 			{
-				synchronized (_lock)
+				iComp = _strName.compareTo(arg0.getName());
+				if (iComp == 0)
 				{
-					iComp = _strName.compareTo(arg0.getName());
+					iComp += _iTagId;
+					iComp -= arg0.getTagId();
 					if (iComp == 0)
 					{
 						iComp = _strDescription

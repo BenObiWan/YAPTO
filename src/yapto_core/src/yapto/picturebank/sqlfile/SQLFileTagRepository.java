@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 import yapto.picturebank.tag.EditableTag;
 import yapto.picturebank.tag.ITag;
 import yapto.picturebank.tag.IWritableTagRepository;
+import yapto.picturebank.tag.RecentlyUsedTagSet;
 import yapto.picturebank.tag.TagAddException;
 import yapto.picturebank.tag.TagAddExceptionType;
 import yapto.picturebank.tag.TagRepositoryChangedEvent;
@@ -79,6 +81,8 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	 */
 	private final EventBus _bus;
 
+	private final RecentlyUsedTagSet _recentlyUsedTagSet;
+
 	/**
 	 * Creates a new SQLFileTagRepository.
 	 * 
@@ -101,6 +105,7 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 		_conf = conf;
 		_fileListConnection = fileListConnection;
 		_bus = bus;
+		_recentlyUsedTagSet = new RecentlyUsedTagSet(conf.getTagHistorySize());
 		final ITag rootTag = new UneditableTag(conf.getPictureBankId(), this,
 				0, -1, "/", "Root tag.", false);
 		_tagSet.add(rootTag);
@@ -396,5 +401,17 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 						TagAddExceptionType.SQL_REMOVAL_ERROR, e);
 			}
 		}
+	}
+
+	@Override
+	public SortedSet<ITag> getRecentlyUsed()
+	{
+		return _recentlyUsedTagSet.getAlphabeticTagSet();
+	}
+
+	@Override
+	public void addLastUsed(final ITag tag)
+	{
+		_recentlyUsedTagSet.addLastUsed(tag);
 	}
 }
