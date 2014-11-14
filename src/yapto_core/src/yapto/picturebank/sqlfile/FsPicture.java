@@ -285,6 +285,7 @@ public final class FsPicture implements IPicture
 				_lModifiedTimestamp = System.currentTimeMillis();
 				_bModified = true;
 				_pictureBank.setPictureForUpdating(this);
+				_pictureBank.addLastUsed(newTag);
 			}
 			_tagSet.add(newTag);
 		}
