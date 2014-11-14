@@ -1,5 +1,7 @@
 package yapto.picturebank.tag;
 
+import java.io.IOException;
+
 /**
  * Interface describing an object used to load and save {@link ITag}s.
  * 
@@ -112,4 +114,6 @@ public interface IWritableTagRepository extends ITagRepository
 	 *             if an error occurs during the removal of the {@link ITag}.
 	 */
 	void removeTag(final int iTagId) throws TagAddException;
+	
+	void close() throws IOException;
 }

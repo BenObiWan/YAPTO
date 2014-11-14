@@ -44,7 +44,12 @@ public enum TagAddExceptionType
 	/**
 	 * The specified id isn't a valid tag id, or is root tag id.
 	 */
-	ILLEGAL_TAG_ID("The specified id isn't a valid tag id, or is root tag id.");
+	ILLEGAL_TAG_ID("The specified id isn't a valid tag id, or is root tag id."),
+
+	/**
+	 * Error during the indexing of the tag.
+	 */
+	TAG_INDEXING_ERROR("Error during the indexing of the tag.");
 
 	/**
 	 * Message for this exception type.

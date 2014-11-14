@@ -37,6 +37,7 @@ import yapto.picturebank.PictureAddResult;
 import yapto.picturebank.PictureInformation;
 import yapto.picturebank.PictureListWithIndex;
 import yapto.picturebank.index.lucene.PictureIndexer;
+import yapto.picturebank.index.lucene.TagIndexer;
 import yapto.picturebank.process.PictureProcessor;
 import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
@@ -105,7 +106,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	/**
 	 * Object used to index {@link FsPicture}s.
 	 */
-	private final PictureIndexer _indexer;
+	private final PictureIndexer _pictureIndexer;
 
 	/**
 	 * Queue holding all the {@link FsPicture} to update.
@@ -170,7 +171,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_bus = bus;
 		_conf = conf;
 		_globalConfiguration = globalConfiguration;
-		_indexer = new PictureIndexer(_conf);
+		_pictureIndexer = new PictureIndexer(_conf);
 		_lWaitBeforeWrite = _globalConfiguration.getWaitBeforeWrite() * 1000;
 		_processor = new SQLFilePictureProcessor(conf,
 				_globalConfiguration.getMaxConcurrentIdentifyTask(),
@@ -351,7 +352,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		try
 		{
 			_fileListConnection.insertPicture(picture);
-			_indexer.indexPicture(picture);
+			_pictureIndexer.indexPicture(picture);
 		}
 		catch (final SQLException e)
 		{
@@ -423,8 +424,10 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	{
 		boolean bRes = true;
 		// bRes &= checkDirectory(new File(_conf.g));
-		// create the base picture directory
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
+		bRes &= checkDirectory(new File(_conf.getIndexDirectory(), "picture"));
+		bRes &= checkDirectory(new File(_conf.getIndexDirectory(), "tag"));
+		// create the base picture directory
 		final File fPictureBaseDirectory = new File(_conf
 				.getMainPictureLoaderConfiguration().getPictureDirectory());
 		bRes &= checkDirectory(fPictureBaseDirectory);
@@ -511,7 +514,15 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_processor.shutdown();
 		try
 		{
-			_indexer.close();
+			_pictureIndexer.close();
+		}
+		catch (final IOException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
+		try
+		{
+			_tagRepository.close();
 		}
 		catch (final IOException e)
 		{
@@ -540,8 +551,8 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			final int iLimit, final String strInitialPictureId)
 			throws IOException, ExecutionException
 	{
-		final PictureListWithIndex list = _indexer.searchPicture(query, iLimit,
-				strInitialPictureId);
+		final PictureListWithIndex list = _pictureIndexer.searchPicture(query,
+				iLimit, strInitialPictureId);
 		return new PictureIterator(query, list.getPictureIdList(),
 				list.getIndex());
 	}
@@ -650,7 +661,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				try
 				{
 					_fileListConnection.updatePicture(picture);
-					_indexer.indexPicture(picture);
+					_pictureIndexer.indexPicture(picture);
 					picture.unsetModified();
 				}
 				catch (final SQLException | IOException e)
@@ -690,7 +701,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			final FsPicture picture = _pictureCache.get(strPicId);
 			synchronized (picture)
 			{
-				_indexer.indexPicture(picture);
+				_pictureIndexer.indexPicture(picture);
 			}
 		}
 		catch (final ExecutionException e)
@@ -788,7 +799,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		// delete from index
 		synchronized (picture)
 		{
-			_indexer.unindexPicture(picture);
+			_pictureIndexer.unindexPicture(picture);
 		}
 		// delete display picture
 		if (!picture.getImageType().doesKeepFormat()

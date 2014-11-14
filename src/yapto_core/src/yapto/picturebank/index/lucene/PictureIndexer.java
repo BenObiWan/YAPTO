@@ -32,7 +32,7 @@ import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 import yapto.picturebank.tag.ITag;
 
 /**
- * Object used to interact with the lucene index.
+ * Object used to interact with the lucene index for pictures.
  * 
  * @author benobiwan
  * 
@@ -151,7 +151,7 @@ public final class PictureIndexer
 		_conf = conf;
 
 		final Directory dir = FSDirectory.open(new File(_conf
-				.getIndexDirectory()));
+				.getIndexDirectory(), "picture"));
 
 		// index writer configuration
 		final IndexWriterConfig iwConf = new IndexWriterConfig(

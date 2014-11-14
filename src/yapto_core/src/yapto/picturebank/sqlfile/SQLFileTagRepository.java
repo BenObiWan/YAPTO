@@ -1,5 +1,6 @@
 package yapto.picturebank.sqlfile;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import yapto.picturebank.index.lucene.TagIndexer;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 import yapto.picturebank.tag.EditableTag;
 import yapto.picturebank.tag.ITag;
@@ -84,6 +86,11 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	private final RecentlyUsedTagSet _recentlyUsedTagSet;
 
 	/**
+	 * Object used to index {@link ITag}s.
+	 */
+	private final TagIndexer _tagIndexer;
+
+	/**
 	 * Creates a new SQLFileTagRepository.
 	 * 
 	 * @param conf
@@ -97,15 +104,17 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	 * @throws SQLException
 	 *             if an SQL error occurred during the loading of the tags from
 	 *             the database.
+	 * @throws IOException
 	 */
 	public SQLFileTagRepository(final ISQLFilePictureBankConfiguration conf,
 			final SQLFileListConnection fileListConnection, final EventBus bus)
-			throws SQLException
+			throws SQLException, IOException
 	{
 		_conf = conf;
 		_fileListConnection = fileListConnection;
 		_bus = bus;
 		_recentlyUsedTagSet = new RecentlyUsedTagSet(conf.getTagHistorySize());
+		_tagIndexer = new TagIndexer(_conf);
 		final ITag rootTag = new UneditableTag(conf.getPictureBankId(), this,
 				0, -1, "/", "Root tag.", false);
 		_tagSet.add(rootTag);
@@ -195,11 +204,16 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 				_tagIdMap.get(Integer.valueOf(0)).addChild(newTag);
 			}
 			_iNextTagId++;
+			_tagIndexer.indexTag(newTag);
 			_bus.post(new TagRepositoryChangedEvent());
 		}
 		catch (final SQLException e)
 		{
 			throw new TagAddException(TagAddExceptionType.SQL_INSERT_ERROR, e);
+		}
+		catch (IOException e)
+		{
+			throw new TagAddException(TagAddExceptionType.TAG_INDEXING_ERROR, e);
 		}
 	}
 
@@ -341,12 +355,18 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 				try
 				{
 					_fileListConnection.modifyTagIntoDatabase(editTag);
+					_tagIndexer.indexTag(editTag);
 					_bus.post(new TagRepositoryChangedEvent());
 				}
 				catch (final SQLException e)
 				{
 					throw new TagAddException(
 							TagAddExceptionType.SQL_INSERT_ERROR, e);
+				}
+				catch (IOException e)
+				{
+					throw new TagAddException(
+							TagAddExceptionType.TAG_INDEXING_ERROR, e);
 				}
 			}
 		}
@@ -388,17 +408,23 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 			}
 			// remove tag from repository
 			_tagSet.remove(tagToRemove);
-			_tagIdMap.remove(Integer.valueOf(iTagId));
+			ITag remTag = _tagIdMap.remove(Integer.valueOf(iTagId));
 			_tagNameMap.remove(tagToRemove.getName());
 			// remove tag from database
 			try
 			{
 				_fileListConnection.removeTag(iTagId);
+				_tagIndexer.unindexTag(remTag);
 			}
 			catch (final SQLException e)
 			{
 				throw new TagAddException(
 						TagAddExceptionType.SQL_REMOVAL_ERROR, e);
+			}
+			catch (IOException e)
+			{
+				throw new TagAddException(
+						TagAddExceptionType.TAG_INDEXING_ERROR, e);
 			}
 		}
 	}
@@ -413,5 +439,11 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	public void addLastUsed(final ITag tag)
 	{
 		_recentlyUsedTagSet.addLastUsed(tag);
+	}
+
+	@Override
+	public void close() throws IOException
+	{
+		_tagIndexer.close();
 	}
 }
