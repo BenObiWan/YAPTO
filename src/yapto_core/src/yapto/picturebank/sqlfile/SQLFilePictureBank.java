@@ -37,7 +37,6 @@ import yapto.picturebank.PictureAddResult;
 import yapto.picturebank.PictureInformation;
 import yapto.picturebank.PictureListWithIndex;
 import yapto.picturebank.index.lucene.PictureIndexer;
-import yapto.picturebank.index.lucene.TagIndexer;
 import yapto.picturebank.process.PictureProcessor;
 import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;

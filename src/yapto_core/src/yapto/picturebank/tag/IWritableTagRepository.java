@@ -114,6 +114,12 @@ public interface IWritableTagRepository extends ITagRepository
 	 *             if an error occurs during the removal of the {@link ITag}.
 	 */
 	void removeTag(final int iTagId) throws TagAddException;
-	
+
+	/**
+	 * Close this {@link IWritableTagRepository}.
+	 * 
+	 * @throws IOException
+	 *             if there is an I/O error while closing.
+	 */
 	void close() throws IOException;
 }

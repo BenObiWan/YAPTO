@@ -65,5 +65,6 @@ public interface IPictureBank<PICTURE extends IPicture> extends
 	/**
 	 * Close this {@link IPictureBank}.
 	 */
+	@Override
 	void close();
 }

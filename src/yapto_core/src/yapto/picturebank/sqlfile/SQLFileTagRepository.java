@@ -83,6 +83,9 @@ public final class SQLFileTagRepository implements IWritableTagRepository
 	 */
 	private final EventBus _bus;
 
+	/**
+	 * Object keeping the list of recently used {@link ITag}s.
+	 */
 	private final RecentlyUsedTagSet _recentlyUsedTagSet;
 
 	/**
