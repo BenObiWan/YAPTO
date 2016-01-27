@@ -1,7 +1,7 @@
 package yapto.picturebank.index.lucene;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 
 import yapto.picturebank.index.query.PictureQueryBuilder;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
@@ -92,12 +91,10 @@ public final class TagIndexer
 	{
 		_conf = conf;
 
-		final Directory dir = FSDirectory.open(new File(_conf
-				.getIndexDirectory(), "tag"));
+		final Directory dir = FSDirectory.open(FileSystems.getDefault().getPath(_conf.getIndexDirectory(), "tag"));
 
 		// index writer configuration
-		final IndexWriterConfig iwConf = new IndexWriterConfig(
-				Version.LUCENE_48, null);
+		final IndexWriterConfig iwConf = new IndexWriterConfig(null);
 		iwConf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 
 		_indexWriter = new IndexWriter(dir, iwConf);
