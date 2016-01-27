@@ -1,7 +1,7 @@
 package yapto.picturebank.index.lucene;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +12,6 @@ import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -22,7 +21,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 
 import yapto.picturebank.IPicture;
 import yapto.picturebank.PictureInformation;
@@ -123,20 +121,14 @@ public final class PictureIndexer
 	private final Object _readerLock = new Object();
 
 	/**
-	 * {@link IndexReader} used to write the indexes.
+	 * {@link DirectoryReader} used to read the indexes.
 	 */
-	private IndexReader _indexReader;
+	private DirectoryReader _indexReader;
 
 	/**
 	 * {@link IndexSearcher} used to search the indexes.
 	 */
 	private IndexSearcher _indexSearcher;
-
-	/**
-	 * Boolean telling whether the {@link IndexReader} needs to be updated or
-	 * not.
-	 */
-	private boolean _bReaderNeedsUpdate;
 
 	/**
 	 * Creates a new {@link PictureIndexer}.
@@ -145,17 +137,14 @@ public final class PictureIndexer
 	 *            the configuration.
 	 * @throws IOException
 	 */
-	public PictureIndexer(final ISQLFilePictureBankConfiguration conf)
-			throws IOException
+	public PictureIndexer(final ISQLFilePictureBankConfiguration conf) throws IOException
 	{
 		_conf = conf;
 
-		final Directory dir = FSDirectory.open(new File(_conf
-				.getIndexDirectory(), "picture"));
+		final Directory dir = FSDirectory.open(FileSystems.getDefault().getPath(_conf.getIndexDirectory(), "picture"));
 
 		// index writer configuration
-		final IndexWriterConfig iwConf = new IndexWriterConfig(
-				Version.LUCENE_48, null);
+		final IndexWriterConfig iwConf = new IndexWriterConfig(null);
 		iwConf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 
 		_indexWriter = new IndexWriter(dir, iwConf);
@@ -164,7 +153,6 @@ public final class PictureIndexer
 		{
 			_indexReader = DirectoryReader.open(_indexWriter, true);
 			_indexSearcher = new IndexSearcher(_indexReader);
-			_bReaderNeedsUpdate = false;
 		}
 	}
 
@@ -178,17 +166,12 @@ public final class PictureIndexer
 	 * @throws IOException
 	 *             if there is an I/O error while writing the index.
 	 */
-	public void indexPicture(final IPicture picture)
-			throws CorruptIndexException, IOException
+	public void indexPicture(final IPicture picture) throws CorruptIndexException, IOException
 	{
 		final Term currDoc = new Term(ID_INDEX_FIELD, picture.getId());
 		final Document doc = createDocument(picture);
 
 		_indexWriter.updateDocument(currDoc, doc);
-		synchronized (_readerLock)
-		{
-			_bReaderNeedsUpdate = true;
-		}
 	}
 
 	/**
@@ -202,54 +185,42 @@ public final class PictureIndexer
 	{
 		final Document doc = new Document();
 		// id
-		doc.add(new StringField(ID_INDEX_FIELD, picture.getId(),
-				Field.Store.YES));
+		doc.add(new StringField(ID_INDEX_FIELD, picture.getId(), Field.Store.YES));
 		// grade
-		doc.add(new IntField(GRADE_INDEX_FIELD, picture.getPictureGrade(),
-				Field.Store.YES));
+		doc.add(new IntField(GRADE_INDEX_FIELD, picture.getPictureGrade(), Field.Store.YES));
 		// modified timestamp
-		doc.add(new LongField(MODIFIED_TIMESTAMP_INDEX_FIELD, picture
-				.getModifiedTimestamp(), Field.Store.NO));
+		doc.add(new LongField(MODIFIED_TIMESTAMP_INDEX_FIELD, picture.getModifiedTimestamp(), Field.Store.NO));
 
 		// tags
 		for (final ITag t : picture.getTagSet())
 		{
-			doc.add(new StringField(TAG_INDEX_FIELD, t.getTagIdAsString(),
-					Field.Store.NO));
+			doc.add(new StringField(TAG_INDEX_FIELD, t.getTagIdAsString(), Field.Store.NO));
 		}
 		// informations
 		final PictureInformation info = picture.getPictureInformation();
-		doc.add(new IntField(ORIENTATION_INDEX_FIELD, info.getOrientation(),
-				Field.Store.NO));
-		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(),
-				Field.Store.NO));
+		doc.add(new IntField(ORIENTATION_INDEX_FIELD, info.getOrientation(), Field.Store.NO));
+		doc.add(new IntField(HEIGHT_INDEX_FIELD, info.getHeight(), Field.Store.NO));
 		doc.add(new IntField(WIDTH_INDEX_FIELD, info.getWidth(), Field.Store.NO));
-		doc.add(new LongField(CREATION_TIMESTAMP_INDEX_FIELD, info
-				.getCreationTimestamp(), Field.Store.NO));
+		doc.add(new LongField(CREATION_TIMESTAMP_INDEX_FIELD, info.getCreationTimestamp(), Field.Store.NO));
 		if (info.getMake() != null)
 		{
-			doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(),
-					Field.Store.NO));
+			doc.add(new StringField(MAKE_INDEX_FIELD, info.getMake(), Field.Store.NO));
 		}
 		if (info.getModel() != null)
 		{
-			doc.add(new StringField(MODEL_INDEX_FIELD, info.getModel(),
-					Field.Store.NO));
+			doc.add(new StringField(MODEL_INDEX_FIELD, info.getModel(), Field.Store.NO));
 		}
 		if (info.getExposureTime() != null)
 		{
-			doc.add(new StringField(PICTURE_EXPOSURE_INDEX_FIELD, info
-					.getExposureTime(), Field.Store.NO));
+			doc.add(new StringField(PICTURE_EXPOSURE_INDEX_FIELD, info.getExposureTime(), Field.Store.NO));
 		}
 		if (info.getRelativeAperture() != null)
 		{
-			doc.add(new StringField(MODEL_RELATIVE_APERTURE_FIELD, info
-					.getRelativeAperture(), Field.Store.NO));
+			doc.add(new StringField(MODEL_RELATIVE_APERTURE_FIELD, info.getRelativeAperture(), Field.Store.NO));
 		}
 		if (info.getFocalLength() != null)
 		{
-			doc.add(new StringField(FOCAL_LENGTH_INDEX_FIELD, info
-					.getFocalLength(), Field.Store.NO));
+			doc.add(new StringField(FOCAL_LENGTH_INDEX_FIELD, info.getFocalLength(), Field.Store.NO));
 		}
 
 		// doc.add(new IntField("",
@@ -302,28 +273,27 @@ public final class PictureIndexer
 	 * @throws IOException
 	 *             if an error occurs during the search.
 	 */
-	public PictureListWithIndex searchPicture(final Query query,
-			final int iLimit, final String strInitId) throws IOException
+	public PictureListWithIndex searchPicture(final Query query, final int iLimit, final String strInitId)
+			throws IOException
 	{
 		synchronized (_readerLock)
 		{
 			int iInitIndex = -1;
-			if (_bReaderNeedsUpdate)
+			final DirectoryReader newReader = DirectoryReader.openIfChanged(_indexReader, _indexWriter, true);
+			if (newReader != null)
 			{
 				_indexReader.close();
-				_indexReader = DirectoryReader.open(_indexWriter, true);
+				_indexReader = newReader;
 				_indexSearcher = new IndexSearcher(_indexReader);
-				_bReaderNeedsUpdate = false;
 			}
-			final ScoreDoc[] searchResult = _indexSearcher.search(query,
-					iLimit, PictureQueryBuilder._dateSort).scoreDocs;
+			final ScoreDoc[] searchResult = _indexSearcher.search(query, iLimit,
+					PictureQueryBuilder._dateSort).scoreDocs;
 			final ArrayList<String> result = new ArrayList<>();
 			result.ensureCapacity(searchResult.length);
 			for (final ScoreDoc scoreDoc : searchResult)
 			{
-				final String strPictureId = _indexReader.document(scoreDoc.doc)
-						.get(ID_INDEX_FIELD);
-				if (strInitId.equals(strPictureId))
+				final String strPictureId = _indexReader.document(scoreDoc.doc).get(ID_INDEX_FIELD);
+				if (strInitId != null && strInitId.equals(strPictureId))
 				{
 					iInitIndex = result.size();
 				}
