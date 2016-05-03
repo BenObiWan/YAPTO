@@ -265,8 +265,7 @@ public final class SQLFileListConnection
 	{
 		_conf = conf;
 		Class.forName("org.sqlite.JDBC");
-		_connection = DriverManager.getConnection("jdbc:sqlite:"
-				+ _conf.getDatabaseFileName());
+		_connection = DriverManager.getConnection(_conf.getDatabaseConnection());
 		createTables();
 
 		_psInsertTag = _connection.prepareStatement("INSERT INTO "
