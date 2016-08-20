@@ -21,7 +21,7 @@ public interface ISQLFilePictureBankConfiguration extends
 	String SQLFILE_PICTUREBANK_CONFIGURATION_TAG = "SQLFilePictureBank";
 
 	/**
-	 * Tag for the database file name.
+	 * Tag for the database connection String.
 	 */
 	String DATABASE_CONNECTION_TAG = "DatabaseConnection";
 
@@ -46,9 +46,9 @@ public interface ISQLFilePictureBankConfiguration extends
 	String INDEX_DIRECTORY_TAG = "IndexDirectory";
 
 	/**
-	 * Get the file name of the database.
+	 * Get the connection String of the database.
 	 * 
-	 * @return the file name of the database.
+	 * @return connection String of the database.
 	 */
 	String getDatabaseConnection();
 
