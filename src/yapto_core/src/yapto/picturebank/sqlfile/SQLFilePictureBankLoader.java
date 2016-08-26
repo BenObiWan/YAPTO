@@ -23,8 +23,7 @@ import common.config.InvalidConfigurationException;
  * 
  */
 public final class SQLFilePictureBankLoader
-		implements
-		IPictureBankLoader<ISQLFilePictureBankConfiguration, SQLFilePictureBank>
+		implements IPictureBankLoader<ISQLFilePictureBankConfiguration, SQLFilePictureBank>
 {
 	/**
 	 * Configuration common to every SQLFilePictureBank.
@@ -48,33 +47,27 @@ public final class SQLFilePictureBankLoader
 	 * @throws InvalidConfigurationException
 	 *             the {IGlobalSQLFilePictureBankConfiguration} is invalid.
 	 */
-	public SQLFilePictureBankLoader(final EventBus bus)
-			throws InvalidConfigurationException
+	public SQLFilePictureBankLoader(final EventBus bus) throws InvalidConfigurationException
 	{
 		_bus = bus;
-		_globalConf = new GlobalSQLFilePictureBankConfigurationImpl(null,
-				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(4),
-				Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(4));
+		_globalConf = new GlobalSQLFilePictureBankConfigurationImpl(null, ManagementFactory.getPlatformMBeanServer(),
+				Integer.valueOf(4), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(4));
 	}
 
 	@Override
-	public Set<ISQLFilePictureBankConfiguration> getAllConfiguration()
-			throws InvalidConfigurationException
+	public Set<ISQLFilePictureBankConfiguration> getAllConfiguration() throws InvalidConfigurationException
 	{
 		final Set<ISQLFilePictureBankConfiguration> confSet = new HashSet<>();
-		confSet.add(new SQLFilePictureBankConfigurationImpl(null,
-				ManagementFactory.getPlatformMBeanServer(), Integer.valueOf(1),
-				"local", "/home/benobiwan/images/photoDB/photoDB.sqlite",
-				"/home/benobiwan/images/photoDB/photos/",
-				"/home/benobiwan/images/photoDB/secondary/",
-				"/home/benobiwan/images/photoDB/thumbnails/",
-				"/home/benobiwan/images/photoDB/index/", Integer.valueOf(25)));
+		confSet.add(new SQLFilePictureBankConfigurationImpl(null, ManagementFactory.getPlatformMBeanServer(),
+				Integer.valueOf(1), "local", "/home/benobiwan/images/photoDB/photoDB.sqlite",
+				"/home/benobiwan/images/photoDB/photos/", 10, "/home/benobiwan/images/photoDB/secondary/", 10,
+				"/home/benobiwan/images/photoDB/thumbnails/", 50, "/home/benobiwan/images/photoDB/index/",
+				Integer.valueOf(25)));
 		return Collections.unmodifiableSet(confSet);
 	}
 
 	@Override
-	public SQLFilePictureBank getPictureBank(
-			final ISQLFilePictureBankConfiguration conf)
+	public SQLFilePictureBank getPictureBank(final ISQLFilePictureBankConfiguration conf)
 			throws ClassNotFoundException, SQLException, IOException
 	{
 		return new SQLFilePictureBank(_globalConf, conf, _bus);

@@ -5,14 +5,15 @@ import yapto.picturebank.sqlfile.SQLFilePictureBank;
 
 import com.google.common.cache.CacheLoader;
 
+import common.config.db.IDatabaseConfiguration;
+
 /**
  * Configuration for an {@link SQLFilePictureBank}.
  * 
  * @author benobiwan
  * 
  */
-public interface ISQLFilePictureBankConfiguration extends
-		IPictureBankConfiguration
+public interface ISQLFilePictureBankConfiguration extends IPictureBankConfiguration
 {
 	/**
 	 * Tag of this configuration node.
@@ -84,4 +85,11 @@ public interface ISQLFilePictureBankConfiguration extends
 	 *         thumbnails {@link CacheLoader}.
 	 */
 	IBufferedImageCacheLoaderConfiguration getThumbnailPictureLoaderConfiguration();
+
+	/**
+	 * Get the {@link IDatabaseConfiguration} to connect to the database.
+	 * 
+	 * @return the {@link IDatabaseConfiguration} to connect to the database.
+	 */
+	IDatabaseConfiguration getDatabaseConfiguration();
 }

@@ -35,21 +35,6 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	private final ConfigurationString _leafPictureBankName;
 
 	/**
-	 * Leaf configuring the base directory for pictures.
-	 */
-	protected final ConfigurationString _leafPictureDirectory;
-
-	/**
-	 * Leaf configuring the base directory for secondary pictures.
-	 */
-	protected final ConfigurationString _leafSecondaryPictureDirectory;
-
-	/**
-	 * Leaf configuring the base directory for thumbnails.
-	 */
-	protected final ConfigurationString _leafThumbnailsDirectory;
-
-	/**
 	 * Leaf configuring the base directory for index.
 	 */
 	private final ConfigurationString _leafIndexDirectory;
@@ -88,51 +73,6 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	 * Invalid message for the {@link IPictureBank} name.
 	 */
 	private final static String PICTUREBANK_NAME_INVALID_MESSAGE = "Invalid name for this PictureBank.";
-
-	/**
-	 * Short description for the picture directory.
-	 */
-	private final static String PICTURE_DIRECTORY_SHORT_DESC = "Picture directory";
-
-	/**
-	 * Long description for the picture directory.
-	 */
-	private final static String PICTURE_DIRECTORY_LONG_DESC = "Base directory for the pictures.";
-
-	/**
-	 * Invalid message for the picture directory.
-	 */
-	private final static String PICTURE_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the pictures.";
-
-	/**
-	 * Short description for the picture directory.
-	 */
-	private final static String SECONDARY_PICTURE_DIRECTORY_SHORT_DESC = "Secondary picture directory";
-
-	/**
-	 * Long description for the picture directory.
-	 */
-	private final static String SECONDARY_PICTURE_DIRECTORY_LONG_DESC = "Base directory for the secondary pictures.";
-
-	/**
-	 * Invalid message for the picture directory.
-	 */
-	private final static String SECONDARY_PICTURE_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the secondary pictures.";
-
-	/**
-	 * Short description for the thumbnails directory.
-	 */
-	private final static String THUMBNAILS_DIRECTORY_SHORT_DESC = "Thumbnails directory";
-
-	/**
-	 * Long description for the thumbnails directory.
-	 */
-	private final static String THUMBNAILS_DIRECTORY_LONG_DESC = "Base directory for the thumbnails.";
-
-	/**
-	 * Invalid message for the thumbnails directory.
-	 */
-	private final static String THUMBNAILS_DIRECTORY_INVALID_MESSAGE = "Invalid base directory for the thumbnails.";
 
 	/**
 	 * Short description for the index directory.
@@ -203,15 +143,6 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 		_leafPictureBankName = new ConfigurationString(this, PICTUREBANK_NAME_TAG, PICTUREBANK_NAME_SHORT_DESC,
 				PICTUREBANK_NAME_LONG_DESC, PICTUREBANK_NAME_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
 				"");
-		_leafPictureDirectory = new ConfigurationString(this, PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
-				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
-				"");
-		_leafSecondaryPictureDirectory = new ConfigurationString(this, SECONDARY_PICTURE_DIRECTORY_TAG,
-				SECONDARY_PICTURE_DIRECTORY_SHORT_DESC, SECONDARY_PICTURE_DIRECTORY_LONG_DESC,
-				SECONDARY_PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "");
-		_leafThumbnailsDirectory = new ConfigurationString(this, THUMBNAILS_DIRECTORY_TAG,
-				THUMBNAILS_DIRECTORY_SHORT_DESC, THUMBNAILS_DIRECTORY_LONG_DESC, THUMBNAILS_DIRECTORY_INVALID_MESSAGE,
-				false, StringDisplayType.TEXTFIELD, 0, "");
 		_leafIndexDirectory = new ConfigurationString(this, INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "");
 		_leafTagHistorySize = new ConfigurationInteger(this, TAG_HISTORY_TAG, TAG_HISTORY_SHORT_DESC,
@@ -219,14 +150,14 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 				Integer.valueOf(0), Integer.valueOf(100), Integer.valueOf(25));
 		addLeaf(_leafPictureBankId);
 		addLeaf(_leafPictureBankName);
-		addLeaf(_leafPictureDirectory);
-		addLeaf(_leafSecondaryPictureDirectory);
 		addLeaf(_leafIndexDirectory);
-		addLeaf(_leafThumbnailsDirectory);
 		addLeaf(_leafTagHistorySize);
-		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
-		_secondaryPictureCacheLoaderConfiguration = new SecondaryPictureLoaderConfigurationImpl();
-		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
+		_pictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "PictureCache",
+				mBeanServer);
+		_secondaryPictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this,
+				"SecondaryPictureCache", mBeanServer);
+		_thumbnailCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "ThumbnailCache",
+				mBeanServer);
 		_databaseConfiguration = new SQLiteConfigurationImpl(this, mBeanServer);
 	}
 
@@ -250,12 +181,21 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	 * @param strCommandLinePictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for pictures.
+	 * @param iCommandLinePictureCacheSize
+	 *            the value specified on the command line for the cache size for
+	 *            pictures.
 	 * @param strCommandLineSecondaryPictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for secondary pictures.
+	 * @param iCommandLineSecondaryPictureCacheSize
+	 *            the value specified on the command line for the cache size for
+	 *            secondary pictures.
 	 * @param strCommandLineThumbnailsDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for thumbnails.
+	 * @param iCommandLineThumbnailSize
+	 *            the value specified on the command line for the cache size for
+	 *            thumbnails.
 	 * @param strCommandLineIndexDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for indexes.
@@ -268,9 +208,10 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	public SQLFilePictureBankConfigurationImpl(final IConfiguration parent, final MBeanServer mBeanServer,
 			final Integer iCommandLinePictureBankId, final String strCommandLinePictureBankName,
 			final String strCommandLineDatabaseConnection, final String strCommandLinePictureDirectory,
-			final String strCommandLineSecondaryPictureDirectory, final String strCommandLineThumbnailsDirectory,
-			final String strCommandLineIndexDirectory, final Integer iCommandLineTagHistorySize)
-			throws InvalidConfigurationException
+			final int iCommandLinePictureCacheSize, final String strCommandLineSecondaryPictureDirectory,
+			final int iCommandLineSecondaryPictureCacheSize, final String strCommandLineThumbnailsDirectory,
+			final int iCommandLineThumbnailSize, final String strCommandLineIndexDirectory,
+			final Integer iCommandLineTagHistorySize) throws InvalidConfigurationException
 	{
 		super(parent, SQLFILE_PICTUREBANK_CONFIGURATION_TAG, mBeanServer);
 		_leafPictureBankId = new ConfigurationInteger(this, PICTUREBANK_ID_TAG, PICTUREBANK_ID_SHORT_DESC,
@@ -279,16 +220,6 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 		_leafPictureBankName = new ConfigurationString(this, PICTUREBANK_NAME_TAG, PICTUREBANK_NAME_SHORT_DESC,
 				PICTUREBANK_NAME_LONG_DESC, PICTUREBANK_NAME_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLinePictureBankName);
-		_leafPictureDirectory = new ConfigurationString(this, PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
-				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
-				"", strCommandLinePictureDirectory);
-		_leafSecondaryPictureDirectory = new ConfigurationString(this, SECONDARY_PICTURE_DIRECTORY_TAG,
-				SECONDARY_PICTURE_DIRECTORY_SHORT_DESC, SECONDARY_PICTURE_DIRECTORY_LONG_DESC,
-				SECONDARY_PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
-				strCommandLineSecondaryPictureDirectory);
-		_leafThumbnailsDirectory = new ConfigurationString(this, THUMBNAILS_DIRECTORY_TAG,
-				THUMBNAILS_DIRECTORY_SHORT_DESC, THUMBNAILS_DIRECTORY_LONG_DESC, THUMBNAILS_DIRECTORY_INVALID_MESSAGE,
-				false, StringDisplayType.TEXTFIELD, 0, "", strCommandLineThumbnailsDirectory);
 		_leafIndexDirectory = new ConfigurationString(this, INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineIndexDirectory);
@@ -297,13 +228,15 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 				Integer.valueOf(0), Integer.valueOf(100), Integer.valueOf(25), iCommandLineTagHistorySize);
 		addLeaf(_leafPictureBankId);
 		addLeaf(_leafPictureBankName);
-		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
-		addLeaf(_leafThumbnailsDirectory);
 		addLeaf(_leafTagHistorySize);
-		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
-		_secondaryPictureCacheLoaderConfiguration = new SecondaryPictureLoaderConfigurationImpl();
-		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
+		_pictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "PictureCache",
+				mBeanServer, strCommandLinePictureDirectory, iCommandLinePictureCacheSize);
+		_secondaryPictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this,
+				"SecondaryPictureCache", mBeanServer, strCommandLineSecondaryPictureDirectory,
+				iCommandLineSecondaryPictureCacheSize);
+		_thumbnailCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "ThumbnailCache",
+				mBeanServer, strCommandLineThumbnailsDirectory, iCommandLineThumbnailSize);
 		_databaseConfiguration = new SQLiteConfigurationImpl(this, mBeanServer, strCommandLineDatabaseConnection);
 	}
 
@@ -321,20 +254,30 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	 * @param strCommandLinePictureBankName
 	 *            the value specified on the command line for the
 	 *            {@link IPictureBank} name.
-	 * @param strCommandLineDatabaseFileName
+	 * @param strCommandLineDatabaseConnection
 	 *            the value specified on the command line for the file name of
 	 *            the database.
 	 * @param strCommandLinePictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for pictures.
+	 * @param iCommandLinePictureCacheSize
+	 *            the value specified on the command line for the cache size for
+	 *            pictures.
 	 * @param strCommandLineSecondaryPictureDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for secondary pictures.
+	 * @param iCommandLineSecondaryPictureCacheSize
+	 *            the value specified on the command line for the cache size for
+	 *            secondary pictures.
 	 * @param strCommandLineThumbnailsDirectory
 	 *            the value specified on the command line for the base directory
 	 *            for thumbnails.
+	 * @param iCommandLineThumbnailSize
+	 *            the value specified on the command line for the cache size for
+	 *            thumbnails.
 	 * @param strCommandLineIndexDirectory
 	 *            the value specified on the command line for the base directory
+	 *            for indexes.
 	 * @param iCommandLineTagHistorySize
 	 *            the value specified on the command line for the tag history
 	 *            size.
@@ -344,18 +287,27 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	 * @param strConfigurationPictureBankName
 	 *            the value specified in the configuration file for the
 	 *            {@link IPictureBank} id.
-	 * @param strConfigurationDatabaseFileName
+	 * @param strConfigurationDatabaseConnection
 	 *            the value specified in the configuration file for the file
 	 *            name of the database.
 	 * @param strConfigurationPictureDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for pictures.
+	 * @param iConfigurationPictureCacheSize
+	 *            the value specified in the configuration file for the cache
+	 *            size for pictures.
 	 * @param strConfigurationSecondaryPictureDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for secondary pictures.
+	 * @param iConfigurationSecondaryPictureCacheSize
+	 *            the value specified in the configuration file for the cache
+	 *            size for secondary pictures.
 	 * @param strConfigurationThumbnailsDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for thumbnails.
+	 * @param iConfigurationThumbnailCacheSize
+	 *            the value specified in the configuration file for the cache
+	 *            size for thumbnails.
 	 * @param strConfigurationIndexDirectory
 	 *            the value specified in the configuration file for the base
 	 *            directory for indexes.
@@ -367,12 +319,15 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	 */
 	public SQLFilePictureBankConfigurationImpl(final IConfiguration parent, final MBeanServer mBeanServer,
 			final Integer iCommandLinePictureBankId, final String strCommandLinePictureBankName,
-			final String strCommandLineDatabaseFileName, final String strCommandLinePictureDirectory,
-			final String strCommandLineSecondaryPictureDirectory, final String strCommandLineThumbnailsDirectory,
-			final String strCommandLineIndexDirectory, final Integer iCommandLineTagHistorySize,
-			final Integer iConfigurationPictureBankId, final String strConfigurationPictureBankName,
-			final String strConfigurationDatabaseFileName, final String strConfigurationPictureDirectory,
-			final String strConfigurationSecondaryPictureDirectory, final String strConfigurationThumbnailsDirectory,
+			final String strCommandLineDatabaseConnection, final String strCommandLinePictureDirectory,
+			final int iCommandLinePictureCacheSize, final String strCommandLineSecondaryPictureDirectory,
+			final int iCommandLineSecondaryPictureCacheSize, final String strCommandLineThumbnailsDirectory,
+			final int iCommandLineThumbnailSize, final String strCommandLineIndexDirectory,
+			final Integer iCommandLineTagHistorySize, final Integer iConfigurationPictureBankId,
+			final String strConfigurationPictureBankName, final String strConfigurationDatabaseConnection,
+			final String strConfigurationPictureDirectory, final int iConfigurationPictureCacheSize,
+			final String strConfigurationSecondaryPictureDirectory, final int iConfigurationSecondaryPictureCacheSize,
+			final String strConfigurationThumbnailsDirectory, final int iConfigurationThumbnailCacheSize,
 			final String strConfigurationIndexDirectory, final Integer iConfigurationTagHistorySize)
 			throws InvalidConfigurationException
 	{
@@ -383,16 +338,6 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 		_leafPictureBankName = new ConfigurationString(this, PICTUREBANK_NAME_TAG, PICTUREBANK_NAME_SHORT_DESC,
 				PICTUREBANK_NAME_LONG_DESC, PICTUREBANK_NAME_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLinePictureBankName);
-		_leafPictureDirectory = new ConfigurationString(this, PICTURE_DIRECTORY_TAG, PICTURE_DIRECTORY_SHORT_DESC,
-				PICTURE_DIRECTORY_LONG_DESC, PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
-				"", strCommandLinePictureDirectory);
-		_leafSecondaryPictureDirectory = new ConfigurationString(this, SECONDARY_PICTURE_DIRECTORY_TAG,
-				SECONDARY_PICTURE_DIRECTORY_SHORT_DESC, SECONDARY_PICTURE_DIRECTORY_LONG_DESC,
-				SECONDARY_PICTURE_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0,
-				strCommandLineSecondaryPictureDirectory);
-		_leafThumbnailsDirectory = new ConfigurationString(this, THUMBNAILS_DIRECTORY_TAG,
-				THUMBNAILS_DIRECTORY_SHORT_DESC, THUMBNAILS_DIRECTORY_LONG_DESC, THUMBNAILS_DIRECTORY_INVALID_MESSAGE,
-				false, StringDisplayType.TEXTFIELD, 0, "", strCommandLineThumbnailsDirectory);
 		_leafIndexDirectory = new ConfigurationString(this, INDEX_DIRECTORY_TAG, INDEX_DIRECTORY_SHORT_DESC,
 				INDEX_DIRECTORY_LONG_DESC, INDEX_DIRECTORY_INVALID_MESSAGE, false, StringDisplayType.TEXTFIELD, 0, "",
 				strCommandLineIndexDirectory);
@@ -401,23 +346,24 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 				Integer.valueOf(0), Integer.valueOf(100), Integer.valueOf(25), iCommandLineTagHistorySize);
 		addLeaf(_leafPictureBankId);
 		addLeaf(_leafPictureBankName);
-		addLeaf(_leafPictureDirectory);
 		addLeaf(_leafIndexDirectory);
-		addLeaf(_leafThumbnailsDirectory);
 		addLeaf(_leafTagHistorySize);
-		_pictureCacheLoaderConfiguration = new PictureLoaderConfigurationImpl();
-		_secondaryPictureCacheLoaderConfiguration = new SecondaryPictureLoaderConfigurationImpl();
-		_thumbnailCacheLoaderConfiguration = new ThumbnailLoaderConfigurationImpl();
-		_databaseConfiguration = new SQLiteConfigurationImpl(this, mBeanServer, strCommandLineDatabaseFileName,
-				strConfigurationDatabaseFileName);
+		_pictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "PictureCache",
+				mBeanServer, strCommandLinePictureDirectory, iCommandLinePictureCacheSize,
+				strConfigurationPictureDirectory, iConfigurationPictureCacheSize);
+		_secondaryPictureCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this,
+				"SecondaryPictureCache", mBeanServer, strCommandLineSecondaryPictureDirectory,
+				iCommandLineSecondaryPictureCacheSize, strConfigurationSecondaryPictureDirectory,
+				iConfigurationSecondaryPictureCacheSize);
+		_thumbnailCacheLoaderConfiguration = new BufferedImageCacheLoaderConfigurationImpl(this, "ThumbnailCache",
+				mBeanServer, strCommandLineThumbnailsDirectory, iCommandLineThumbnailSize,
+				strConfigurationThumbnailsDirectory, iConfigurationThumbnailCacheSize);
+		_databaseConfiguration = new SQLiteConfigurationImpl(this, mBeanServer, strCommandLineDatabaseConnection,
+				strConfigurationDatabaseConnection);
 		_leafPictureBankId.setConfigurationValue(iConfigurationPictureBankId);
 		_leafPictureBankName.setConfigurationValue(strConfigurationPictureBankName);
-		_leafPictureDirectory.setConfigurationValue(strConfigurationPictureDirectory);
-		_leafSecondaryPictureDirectory.setConfigurationValue(strConfigurationSecondaryPictureDirectory);
 		_leafIndexDirectory.setConfigurationValue(strConfigurationIndexDirectory);
-		_leafThumbnailsDirectory.setConfigurationValue(strConfigurationThumbnailsDirectory);
 		_leafTagHistorySize.setConfigurationValue(iConfigurationTagHistorySize);
-
 	}
 
 	@Override
@@ -463,123 +409,15 @@ public final class SQLFilePictureBankConfigurationImpl extends AbstractConfigura
 	}
 
 	@Override
+	public IDatabaseConfiguration getDatabaseConfiguration()
+	{
+		return _databaseConfiguration;
+	}
+
+	@Override
 	public String getPictureBankName()
 	{
 		return _leafPictureBankName.getCurrentValue();
-	}
-
-	/**
-	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
-	 * 
-	 * @author benobiwan
-	 * 
-	 */
-	private final class PictureLoaderConfigurationImpl extends AbstractConfigurationBranch
-			implements IBufferedImageCacheLoaderConfiguration
-	{
-		/**
-		 * Creates a new PictureLoaderConfigurationImpl.
-		 */
-		public PictureLoaderConfigurationImpl()
-		{
-			super(SQLFilePictureBankConfigurationImpl.this, "",
-					SQLFilePictureBankConfigurationImpl.this.getMBeanServer());
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "Configuration for the picture loader.";
-		}
-
-		@Override
-		public String getPictureDirectory()
-		{
-			return _leafPictureDirectory.getCurrentValue();
-		}
-
-		@Override
-		public long getCacheSize()
-		{
-			// TODO to change
-			return 10;
-		}
-	}
-
-	/**
-	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
-	 * 
-	 * @author benobiwan
-	 * 
-	 */
-	private final class SecondaryPictureLoaderConfigurationImpl extends AbstractConfigurationBranch
-			implements IBufferedImageCacheLoaderConfiguration
-	{
-		/**
-		 * Creates a new SecondaryPictureLoaderConfigurationImpl.
-		 */
-		public SecondaryPictureLoaderConfigurationImpl()
-		{
-			super(SQLFilePictureBankConfigurationImpl.this, "",
-					SQLFilePictureBankConfigurationImpl.this.getMBeanServer());
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "Configuration for the secondary picture loader.";
-		}
-
-		@Override
-		public String getPictureDirectory()
-		{
-			return _leafSecondaryPictureDirectory.getCurrentValue();
-		}
-
-		@Override
-		public long getCacheSize()
-		{
-			// TODO to change
-			return 10;
-		}
-	}
-
-	/**
-	 * Implementation of {@link IBufferedImageCacheLoaderConfiguration}.
-	 * 
-	 * @author benobiwan
-	 * 
-	 */
-	private final class ThumbnailLoaderConfigurationImpl extends AbstractConfigurationBranch
-			implements IBufferedImageCacheLoaderConfiguration
-	{
-		/**
-		 * Creates a new ThumbnailLoaderConfigurationImpl.
-		 */
-		public ThumbnailLoaderConfigurationImpl()
-		{
-			super(SQLFilePictureBankConfigurationImpl.this, "",
-					SQLFilePictureBankConfigurationImpl.this.getMBeanServer());
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "Configuration for the thumbnail loader.";
-		}
-
-		@Override
-		public String getPictureDirectory()
-		{
-			return _leafThumbnailsDirectory.getCurrentValue();
-		}
-
-		@Override
-		public long getCacheSize()
-		{
-			// TODO to change
-			return 50;
-		}
 	}
 
 	@Override

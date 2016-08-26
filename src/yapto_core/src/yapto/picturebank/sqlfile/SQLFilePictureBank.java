@@ -62,8 +62,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	/**
 	 * Logger object.
 	 */
-	protected static transient final Logger LOGGER = LoggerFactory
-			.getLogger(SQLFilePictureBank.class);
+	protected static transient final Logger LOGGER = LoggerFactory.getLogger(SQLFilePictureBank.class);
 
 	/**
 	 * List of all picture id.
@@ -162,8 +161,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 *             if there is an error in creating the required picture
 	 *             directories.
 	 */
-	public SQLFilePictureBank(
-			final IGlobalSQLFilePictureBankConfiguration globalConfiguration,
+	public SQLFilePictureBank(final IGlobalSQLFilePictureBankConfiguration globalConfiguration,
 			final ISQLFilePictureBankConfiguration conf, final EventBus bus)
 			throws SQLException, ClassNotFoundException, IOException
 	{
@@ -172,34 +170,28 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		_globalConfiguration = globalConfiguration;
 		_pictureIndexer = new PictureIndexer(_conf);
 		_lWaitBeforeWrite = _globalConfiguration.getWaitBeforeWrite() * 1000;
-		_processor = new SQLFilePictureProcessor(conf,
-				_globalConfiguration.getMaxConcurrentIdentifyTask(),
+		_processor = new SQLFilePictureProcessor(conf, _globalConfiguration.getMaxConcurrentIdentifyTask(),
 				_globalConfiguration.getMaxConcurrentOtherTask());
 
 		// create directories
 		if (!checkAndCreateDirectories())
 		{
-			throw new IOException(
-					"Error creating the required picture directories : "
-							+ _conf.getMainPictureLoaderConfiguration()
-									.getPictureDirectory());
+			throw new IOException("Error creating the required picture directories : "
+					+ _conf.getMainPictureLoaderConfiguration().getPictureDirectory());
 		}
 
 		// database connection
-		_fileListConnection = new SQLFileListConnection(_conf);
+		_fileListConnection = new SQLFileListConnection(_conf.getDatabaseConfiguration());
 
 		// tag repository
-		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection,
-				_bus);
+		_tagRepository = new SQLFileTagRepository(_conf, _fileListConnection, _bus);
 
 		_imageLoader = new ImageLoader(_conf);
 		// picture cache
-		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(
-				_fileListConnection, _imageLoader, _tagRepository, this);
-		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(
-				this);
-		_pictureCache = CacheBuilder.newBuilder()
-				.removalListener(pictureListener).build(pictureLoader);
+		final CacheLoader<String, FsPicture> pictureLoader = new FsPictureCacheLoader(_fileListConnection, _imageLoader,
+				_tagRepository, this);
+		final RemovalListener<String, FsPicture> pictureListener = new FsPictureRemovalListener(this);
+		_pictureCache = CacheBuilder.newBuilder().removalListener(pictureListener).build(pictureLoader);
 
 		_fileListConnection.createTables();
 
@@ -216,8 +208,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public void syncAddPicture(final Path pictureFile, final List<ITag> tagList)
-			throws PictureAddException
+	public void syncAddPicture(final Path pictureFile, final List<ITag> tagList) throws PictureAddException
 	{
 		if (!Files.isReadable(pictureFile))
 		{
@@ -236,8 +227,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		}
 		catch (final NoSuchAlgorithmException e)
 		{
-			throw new PictureAddException(
-					PictureAddExceptionType.NO_SUCH_ALGORITHM, e);
+			throw new PictureAddException(PictureAddExceptionType.NO_SUCH_ALGORITHM, e);
 		}
 		try
 		{
@@ -255,8 +245,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			}
 			catch (final FileNotFoundException e)
 			{
-				throw new PictureAddException(
-						PictureAddExceptionType.FILE_NOT_FOUND, e);
+				throw new PictureAddException(PictureAddExceptionType.FILE_NOT_FOUND, e);
 			}
 			finally
 			{
@@ -275,8 +264,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		final StringBuffer sb = new StringBuffer();
 		for (final byte mdbyte : mdbytes)
 		{
-			sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16)
-					.substring(1).toUpperCase());
+			sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1).toUpperCase());
 		}
 
 		final String strPictureId = sb.toString();
@@ -287,8 +275,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			// add the tag to the existing picture
 			try
 			{
-				final FsPicture existingPicture = _pictureCache
-						.get(strPictureId);
+				final FsPicture existingPicture = _pictureCache.get(strPictureId);
 				for (final ITag tag : tagList)
 				{
 					existingPicture.addTag(tag);
@@ -296,11 +283,9 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			}
 			catch (final ExecutionException e)
 			{
-				throw new PictureAddException(strPictureId,
-						PictureAddExceptionType.FILE_ALREADY_EXISTS_NO_OPEN, e);
+				throw new PictureAddException(strPictureId, PictureAddExceptionType.FILE_ALREADY_EXISTS_NO_OPEN, e);
 			}
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.FILE_ALREADY_EXISTS);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.FILE_ALREADY_EXISTS);
 		}
 
 		PictureInformation info;
@@ -310,33 +295,27 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		}
 		catch (InterruptedException | ExecutionException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.IDENTIFY_EXECUTION_ERROR, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.IDENTIFY_EXECUTION_ERROR, e);
 		}
 		// copy file
-		final Path destPath = FileSystems.getDefault()
-				.getPath(
-						_conf.getMainPictureLoaderConfiguration()
-								.getPictureDirectory(),
-						strPictureId.substring(0, 2),
-						strPictureId + '.' + info.getExtension());
+		final Path destPath = FileSystems.getDefault().getPath(
+				_conf.getMainPictureLoaderConfiguration().getPictureDirectory(), strPictureId.substring(0, 2),
+				strPictureId + '.' + info.getExtension());
 		try
 		{
 			Files.copy(pictureFile, destPath);
 		}
 		catch (final FileAlreadyExistsException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.FILE_ALREADY_EXISTS, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.FILE_ALREADY_EXISTS, e);
 		}
 		catch (final IOException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.COPY_ERROR, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.COPY_ERROR, e);
 		}
 		// create object
-		final FsPicture picture = new FsPicture(_imageLoader, this,
-				strPictureId, lAddedTimestamp, lAddedTimestamp, info);
+		final FsPicture picture = new FsPicture(_imageLoader, this, strPictureId, lAddedTimestamp, lAddedTimestamp,
+				info);
 		for (final ITag tag : tagList)
 		{
 			picture.addTag(tag);
@@ -355,25 +334,21 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		}
 		catch (final SQLException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.SQL_INSERT_ERROR, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.SQL_INSERT_ERROR, e);
 		}
 		catch (final CorruptIndexException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.CORRUPT_INDEX_ERROR, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.CORRUPT_INDEX_ERROR, e);
 		}
 		catch (final IOException e)
 		{
-			throw new PictureAddException(strPictureId,
-					PictureAddExceptionType.INDEX_ERROR, e);
+			throw new PictureAddException(strPictureId, PictureAddExceptionType.INDEX_ERROR, e);
 		}
 		_pictureIdList.add(strPictureId);
 	}
 
 	@Override
-	public PictureAddResult asyncAddPicture(final Path picturePath,
-			final List<ITag> tagList) throws PictureAddException
+	public PictureAddResult asyncAddPicture(final Path picturePath, final List<ITag> tagList) throws PictureAddException
 	{
 		final AddingFileVisitor visitor = new AddingFileVisitor(this, tagList);
 		try
@@ -427,8 +402,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory(), "picture"));
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory(), "tag"));
 		// create the base picture directory
-		final File fPictureBaseDirectory = new File(_conf
-				.getMainPictureLoaderConfiguration().getPictureDirectory());
+		final File fPictureBaseDirectory = new File(_conf.getMainPictureLoaderConfiguration().getPictureDirectory());
 		bRes &= checkDirectory(fPictureBaseDirectory);
 		if (bRes)
 		{
@@ -439,13 +413,12 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				{
 					strFileName = '0' + strFileName;
 				}
-				bRes &= checkDirectory(new File(fPictureBaseDirectory,
-						strFileName));
+				bRes &= checkDirectory(new File(fPictureBaseDirectory, strFileName));
 			}
 		}
 		// create the base thumbnail directory
-		final File fThumbnailBaseDirectory = new File(_conf
-				.getThumbnailPictureLoaderConfiguration().getPictureDirectory());
+		final File fThumbnailBaseDirectory = new File(
+				_conf.getThumbnailPictureLoaderConfiguration().getPictureDirectory());
 		bRes &= checkDirectory(fThumbnailBaseDirectory);
 		if (bRes)
 		{
@@ -456,14 +429,13 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				{
 					strFileName = '0' + strFileName;
 				}
-				bRes &= checkDirectory(new File(fThumbnailBaseDirectory,
-						strFileName));
+				bRes &= checkDirectory(new File(fThumbnailBaseDirectory, strFileName));
 			}
 		}
 		// create the base secondary picture directory
 		bRes &= checkDirectory(new File(_conf.getIndexDirectory()));
-		final File fSecondaryPictureBaseDirectory = new File(_conf
-				.getSecondaryPictureLoaderConfiguration().getPictureDirectory());
+		final File fSecondaryPictureBaseDirectory = new File(
+				_conf.getSecondaryPictureLoaderConfiguration().getPictureDirectory());
 		bRes &= checkDirectory(fSecondaryPictureBaseDirectory);
 		if (bRes)
 		{
@@ -474,8 +446,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 				{
 					strFileName = '0' + strFileName;
 				}
-				bRes &= checkDirectory(new File(fSecondaryPictureBaseDirectory,
-						strFileName));
+				bRes &= checkDirectory(new File(fSecondaryPictureBaseDirectory, strFileName));
 			}
 		}
 
@@ -538,27 +509,21 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> getAllPictures(
-			final String strInitialPictureId) throws ExecutionException
+	public IPictureBrowser<FsPicture> getAllPictures(final String strInitialPictureId) throws ExecutionException
 	{
-		return new PictureIterator(null, _pictureIdList,
-				_pictureIdList.indexOf(strInitialPictureId));
+		return new PictureIterator(null, _pictureIdList, _pictureIdList.indexOf(strInitialPictureId));
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> filterPictures(final Query query,
-			final int iLimit, final String strInitialPictureId)
-			throws IOException, ExecutionException
+	public IPictureBrowser<FsPicture> filterPictures(final Query query, final int iLimit,
+			final String strInitialPictureId) throws IOException, ExecutionException
 	{
-		final PictureListWithIndex list = _pictureIndexer.searchPicture(query,
-				iLimit, strInitialPictureId);
-		return new PictureIterator(query, list.getPictureIdList(),
-				list.getIndex());
+		final PictureListWithIndex list = _pictureIndexer.searchPicture(query, iLimit, strInitialPictureId);
+		return new PictureIterator(query, list.getPictureIdList(), list.getIndex());
 	}
 
 	@Override
-	public IPictureBrowser<FsPicture> getRandomPictureList(
-			final int iNbrPicture, final String strInitialPictureId)
+	public IPictureBrowser<FsPicture> getRandomPictureList(final int iNbrPicture, final String strInitialPictureId)
 			throws ExecutionException
 	{
 		int iInitialIndex = -1;
@@ -569,8 +534,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		}
 		else if (iNbrPicture <= 0)
 		{
-			throw new IllegalArgumentException(
-					"Error, can't select less than 1 picture.");
+			throw new IllegalArgumentException("Error, can't select less than 1 picture.");
 		}
 		else
 		{
@@ -611,8 +575,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		final ResultSet resLoad = _fileListConnection.loadPictureList();
 		while (resLoad.next())
 		{
-			final String strId = resLoad
-					.getString(SQLFileListConnection.PICTURE_ID_COLUMN_NAME);
+			final String strId = resLoad.getString(SQLFileListConnection.PICTURE_ID_COLUMN_NAME);
 			_pictureIdList.add(strId);
 		}
 	}
@@ -634,14 +597,13 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			{
 				if (!bImmediat)
 				{
-					final long waitTime = picture.getModifiedTimestamp()
-							+ _lWaitBeforeWrite - System.currentTimeMillis();
+					final long waitTime = picture.getModifiedTimestamp() + _lWaitBeforeWrite
+							- System.currentTimeMillis();
 					if (waitTime > 0)
 					{
 						if (LOGGER.isDebugEnabled())
 						{
-							LOGGER.debug("Waiting for : " + waitTime
-									+ " before updating.");
+							LOGGER.debug("Waiting for : " + waitTime + " before updating.");
 						}
 						try
 						{
@@ -692,8 +654,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 * @throws IOException
 	 *             if there is an error while writing the index.
 	 */
-	public void reIndexPicture(final String strPicId)
-			throws CorruptIndexException, IOException
+	public void reIndexPicture(final String strPicId) throws CorruptIndexException, IOException
 	{
 		try
 		{
@@ -736,8 +697,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 * @throws IOException
 	 *             if there is an error while writing the index.
 	 */
-	public void checkPicture(final String strPicId)
-			throws CorruptIndexException, IOException
+	public void checkPicture(final String strPicId) throws CorruptIndexException, IOException
 	{
 		try
 		{
@@ -747,8 +707,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			{
 				_processor.createThumbnail(picture);
 			}
-			if (!picture.getImageType().doesKeepFormat()
-					&& !_processor.hasDisplayPicture(picture))
+			if (!picture.getImageType().doesKeepFormat() && !_processor.hasDisplayPicture(picture))
 			{
 				_processor.createDisplayPicture(picture);
 			}
@@ -791,8 +750,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 *             if an error occurs while deleting one of the files or
 	 *             deleting the {@link IPicture} from the index.
 	 */
-	public void deletePicture(final String strPicId) throws ExecutionException,
-			SQLException, IOException
+	public void deletePicture(final String strPicId) throws ExecutionException, SQLException, IOException
 	{
 		final FsPicture picture = _pictureCache.get(strPicId);
 		// delete from index
@@ -801,8 +759,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 			_pictureIndexer.unindexPicture(picture);
 		}
 		// delete display picture
-		if (!picture.getImageType().doesKeepFormat()
-				&& _processor.hasDisplayPicture(picture))
+		if (!picture.getImageType().doesKeepFormat() && _processor.hasDisplayPicture(picture))
 		{
 			_processor.deleteDisplayPicture(picture);
 		}
@@ -823,8 +780,7 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	 * @author benobiwan
 	 * 
 	 */
-	private final class PictureIterator extends
-			AbstractIdBasedPictureBrowser<FsPicture>
+	private final class PictureIterator extends AbstractIdBasedPictureBrowser<FsPicture>
 	{
 		/**
 		 * Creates a new {@link PictureIterator}.
@@ -840,16 +796,14 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 		 *             if an Exception was thrown during the loading of the
 		 *             picture.
 		 */
-		public PictureIterator(final Query query, final List<String> idList,
-				final int iInitialIndex) throws ExecutionException
+		public PictureIterator(final Query query, final List<String> idList, final int iInitialIndex)
+				throws ExecutionException
 		{
-			super(SQLFilePictureBank.this, query, SQLFilePictureBank.this._bus,
-					idList, iInitialIndex);
+			super(SQLFilePictureBank.this, query, SQLFilePictureBank.this._bus, idList, iInitialIndex);
 		}
 
 		@Override
-		protected FsPicture getPicture(final String pictureId)
-				throws ExecutionException
+		protected FsPicture getPicture(final String pictureId) throws ExecutionException
 		{
 			return _pictureCache.get(pictureId);
 		}
@@ -963,44 +917,38 @@ public class SQLFilePictureBank implements IPictureBank<FsPicture>
 	}
 
 	@Override
-	public void addTag(final ITag parent, final String strName,
-			final String strDescription, final boolean bSelectable)
+	public void addTag(final ITag parent, final String strName, final String strDescription, final boolean bSelectable)
 			throws TagAddException
 	{
 		_tagRepository.addTag(parent, strName, strDescription, bSelectable);
 	}
 
 	@Override
-	public void addTag(final int iParentId, final String strName,
-			final String strDescription, final boolean bSelectable)
-			throws TagAddException
+	public void addTag(final int iParentId, final String strName, final String strDescription,
+			final boolean bSelectable) throws TagAddException
 	{
 		_tagRepository.addTag(iParentId, strName, strDescription, bSelectable);
 	}
 
 	@Override
-	public void addTag(final String strName, final String strDescription,
-			final boolean bSelectable) throws TagAddException
+	public void addTag(final String strName, final String strDescription, final boolean bSelectable)
+			throws TagAddException
 	{
 		_tagRepository.addTag(strName, strDescription, bSelectable);
 	}
 
 	@Override
-	public void editTag(final int iTagId, final ITag parent,
-			final String strName, final String strDescription,
+	public void editTag(final int iTagId, final ITag parent, final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{
-		_tagRepository.editTag(iTagId, parent, strName, strDescription,
-				bSelectable);
+		_tagRepository.editTag(iTagId, parent, strName, strDescription, bSelectable);
 	}
 
 	@Override
-	public void editTag(final int iTagId, final int iParentId,
-			final String strName, final String strDescription,
+	public void editTag(final int iTagId, final int iParentId, final String strName, final String strDescription,
 			final boolean bSelectable) throws TagAddException
 	{
-		_tagRepository.editTag(iTagId, iParentId, strName, strDescription,
-				bSelectable);
+		_tagRepository.editTag(iTagId, iParentId, strName, strDescription, bSelectable);
 	}
 
 	@Override
