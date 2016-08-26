@@ -14,6 +14,16 @@ public interface IBufferedImageCacheLoaderConfiguration extends
 		IConfigurationBranch
 {
 	/**
+	 * Tag for the picture directory.
+	 */
+	String PICTURE_DIRECTORY_TAG = "PictureDirectory";
+	
+	/**
+	 * Tag for the cache size.
+	 */
+	String CACHE_SIZE_TAG = "CacheSizer";
+	
+	/**
 	 * Get the path for the picture directory.
 	 * 
 	 * @return the path for the picture directory.
