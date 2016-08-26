@@ -11,7 +11,7 @@ import yapto.picturebank.IPictureBankLoader;
 import yapto.picturebank.sqlfile.config.GlobalSQLFilePictureBankConfigurationImpl;
 import yapto.picturebank.sqlfile.config.IGlobalSQLFilePictureBankConfiguration;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
-import yapto.picturebank.sqlfile.config.SQLFilePictureBankConfigurationImpl;
+import yapto.picturebank.sqlfile.config.SQLFilePictureBankConfigurationSQLite;
 
 import com.google.common.eventbus.EventBus;
 import common.config.InvalidConfigurationException;
@@ -58,7 +58,7 @@ public final class SQLFilePictureBankLoader
 	public Set<ISQLFilePictureBankConfiguration> getAllConfiguration() throws InvalidConfigurationException
 	{
 		final Set<ISQLFilePictureBankConfiguration> confSet = new HashSet<>();
-		confSet.add(new SQLFilePictureBankConfigurationImpl(null, ManagementFactory.getPlatformMBeanServer(),
+		confSet.add(new SQLFilePictureBankConfigurationSQLite(null, ManagementFactory.getPlatformMBeanServer(),
 				Integer.valueOf(1), "local", "/home/benobiwan/images/photoDB/photoDB.sqlite",
 				"/home/benobiwan/images/photoDB/photos/", 10, "/home/benobiwan/images/photoDB/secondary/", 10,
 				"/home/benobiwan/images/photoDB/thumbnails/", 50, "/home/benobiwan/images/photoDB/index/",
