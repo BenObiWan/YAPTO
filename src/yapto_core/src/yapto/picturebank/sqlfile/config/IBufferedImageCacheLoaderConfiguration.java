@@ -1,7 +1,8 @@
-package yapto.picturebank.sqlfile;
+package yapto.picturebank.sqlfile.config;
 
 import common.config.IConfiguration;
 import common.config.IConfigurationBranch;
+import yapto.picturebank.sqlfile.BufferedImageCacheLoader;
 
 /**
  * {@link IConfiguration} for {@link BufferedImageCacheLoader}.

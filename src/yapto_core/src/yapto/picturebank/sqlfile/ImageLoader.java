@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import yapto.picturebank.IPicture;
+import yapto.picturebank.sqlfile.config.IBufferedImageCacheLoaderConfiguration;
 import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 
 import com.google.common.cache.CacheBuilder;

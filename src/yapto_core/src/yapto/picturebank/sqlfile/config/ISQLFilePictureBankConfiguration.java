@@ -1,7 +1,6 @@
 package yapto.picturebank.sqlfile.config;
 
 import yapto.picturebank.config.IPictureBankConfiguration;
-import yapto.picturebank.sqlfile.IBufferedImageCacheLoaderConfiguration;
 import yapto.picturebank.sqlfile.SQLFilePictureBank;
 
 import com.google.common.cache.CacheLoader;

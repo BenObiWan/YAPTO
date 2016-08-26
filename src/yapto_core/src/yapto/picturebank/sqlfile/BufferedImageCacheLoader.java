@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 
 import com.google.common.cache.CacheLoader;
 
+import yapto.picturebank.sqlfile.config.IBufferedImageCacheLoaderConfiguration;
+
 /**
  * A {@link CacheLoader} loading {@link BufferedImage} from the file system.
  * 

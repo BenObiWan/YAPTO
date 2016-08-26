@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
+import common.config.db.IDatabaseConfiguration;
 import yapto.picturebank.IPicture;
 import yapto.picturebank.IPictureBank;
 import yapto.picturebank.PictureInformation;
-import yapto.picturebank.sqlfile.config.ISQLFilePictureBankConfiguration;
 import yapto.picturebank.tag.ITag;
 
 /**
@@ -23,9 +23,9 @@ import yapto.picturebank.tag.ITag;
 public final class SQLFileListConnection
 {
 	/**
-	 * Configuration for this {@link SQLFilePictureBank}.
+	 * Configuration for this database.
 	 */
-	private final ISQLFilePictureBankConfiguration _conf;
+	private final IDatabaseConfiguration _dbConf;
 
 	// tag table
 	/**
@@ -252,107 +252,69 @@ public final class SQLFileListConnection
 	/**
 	 * creates a new SQLFileListConnection.
 	 * 
-	 * @param conf
-	 *            configuration for this {@link SQLFileListConnection}.
 	 * @throws SQLException
 	 *             if an SQL error occurred during the connection to the
 	 *             database.
 	 * @throws ClassNotFoundException
 	 *             if the database driver class can't be found.
 	 */
-	public SQLFileListConnection(final ISQLFilePictureBankConfiguration conf)
-			throws ClassNotFoundException, SQLException
+	public SQLFileListConnection(final IDatabaseConfiguration dbConf) throws ClassNotFoundException, SQLException
 	{
-		_conf = conf;
-		Class.forName("org.sqlite.JDBC");
-		_connection = DriverManager.getConnection(_conf.getDatabaseConnection());
+		_dbConf = dbConf;
+		Class.forName(_dbConf.getDatabaseDriver());
+		_connection = DriverManager.getConnection(_dbConf.getDatabaseConnection());
 		createTables();
 
-		_psInsertTag = _connection.prepareStatement("INSERT INTO "
-				+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + ", "
-				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME
-				+ ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
+		_psInsertTag = _connection.prepareStatement("INSERT INTO " + TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + ", "
+				+ TAG_NAME_COLUMN_NAME + ", " + TAG_DESCRIPTION_COLUMN_NAME + ", " + TAG_PARENT_ID_COLUMN_NAME + ", "
 				+ TAG_SELECTABLE_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?)");
-		_psEditTag = _connection.prepareStatement("UPDATE " + TAG_TABLE_NAME
-				+ " SET " + TAG_NAME_COLUMN_NAME + "=?, "
-				+ TAG_DESCRIPTION_COLUMN_NAME + "=?, "
-				+ TAG_PARENT_ID_COLUMN_NAME + "=?, "
-				+ TAG_SELECTABLE_COLUMN_NAME + "=? WHERE " + TAG_ID_COLUMN_NAME
-				+ "=?");
-		_psCountPicturesByTag = _connection.prepareStatement("SELECT COUNT("
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") FROM "
-				+ PICTURE_TAG_TABLE_NAME + " WHERE "
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psSelectPicturesByTag = _connection.prepareStatement("SELECT "
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
-				+ PICTURE_TAG_TABLE_NAME + " WHERE "
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psCountPictures = _connection.prepareStatement("SELECT COUNT("
-				+ PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
-		_psInsertPicture = _connection.prepareStatement("INSERT INTO "
-				+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME + ", "
-				+ PICTURE_GRADE_COLUMN_NAME + ", "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME
-				+ ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
-				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
-				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
-				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
-				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
-				+ PICTURE_FORMAT_COLUMN_NAME
-				+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		_psEditTag = _connection.prepareStatement("UPDATE " + TAG_TABLE_NAME + " SET " + TAG_NAME_COLUMN_NAME + "=?, "
+				+ TAG_DESCRIPTION_COLUMN_NAME + "=?, " + TAG_PARENT_ID_COLUMN_NAME + "=?, " + TAG_SELECTABLE_COLUMN_NAME
+				+ "=? WHERE " + TAG_ID_COLUMN_NAME + "=?");
+		_psCountPicturesByTag = _connection.prepareStatement("SELECT COUNT(" + PICTURE_TAG_PICTURE_ID_COLUMN_NAME
+				+ ") FROM " + PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_psSelectPicturesByTag = _connection.prepareStatement("SELECT " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_psCountPictures = _connection
+				.prepareStatement("SELECT COUNT(" + PICTURE_ID_COLUMN_NAME + ") FROM " + PICTURE_TABLE_NAME);
+		_psInsertPicture = _connection.prepareStatement("INSERT INTO " + PICTURE_TABLE_NAME + " ("
+				+ PICTURE_ID_COLUMN_NAME + ", " + PICTURE_GRADE_COLUMN_NAME + ", "
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", " + PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME + ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", " + PICTURE_ORIENTATION_COLUMN_NAME + ", "
+				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME + ", " + PICTURE_EXPOSURE_COLUMN_NAME
+				+ ", " + PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", " + PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
+				+ PICTURE_FORMAT_COLUMN_NAME + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_psUpdatePictureMarkAndTimestamp = _connection
-				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET "
-						+ PICTURE_GRADE_COLUMN_NAME + "=?, "
-						+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + "=? WHERE "
-						+ PICTURE_ID_COLUMN_NAME + "=?");
-		_psInsertTagForPicture = _connection.prepareStatement("INSERT INTO "
-				+ PICTURE_TAG_TABLE_NAME + " ("
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + ", "
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") VALUES(?, ?)");
-		_psRemoveTagsForPicture = _connection.prepareStatement("DELETE FROM "
-				+ PICTURE_TAG_TABLE_NAME + " WHERE "
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
-		_psLoadPicture = _connection.prepareStatement("SELECT "
-				+ PICTURE_GRADE_COLUMN_NAME + ", " + PICTURE_ORIGINAL_NAME
-				+ ", " + PICTURE_WIDTH_COLUMN_NAME + ", "
-				+ PICTURE_HEIGTH_COLUMN_NAME + ", "
-				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", "
-				+ PICTURE_ORIENTATION_COLUMN_NAME + ", "
-				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME
-				+ ", " + PICTURE_EXPOSURE_COLUMN_NAME + ", "
-				+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", "
-				+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
-				+ PICTURE_FORMAT_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME
-				+ " WHERE " + PICTURE_ID_COLUMN_NAME + " =?");
-		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT "
-				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
-				+ PICTURE_TAG_TABLE_NAME + " WHERE "
-				+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
-		_psLoadTag = _connection.prepareStatement("SELECT "
-				+ TAG_ID_COLUMN_NAME + ", " + TAG_NAME_COLUMN_NAME + ", "
-				+ TAG_DESCRIPTION_COLUMN_NAME + ", "
-				+ TAG_PARENT_ID_COLUMN_NAME + ", " + TAG_SELECTABLE_COLUMN_NAME
-				+ " FROM " + TAG_TABLE_NAME + " where " + TAG_ID_COLUMN_NAME
+				.prepareStatement("UPDATE " + PICTURE_TABLE_NAME + " SET " + PICTURE_GRADE_COLUMN_NAME + "=?, "
+						+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + "=? WHERE " + PICTURE_ID_COLUMN_NAME + "=?");
+		_psInsertTagForPicture = _connection.prepareStatement("INSERT INTO " + PICTURE_TAG_TABLE_NAME + " ("
+				+ PICTURE_TAG_TAG_ID_COLUMN_NAME + ", " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + ") VALUES(?, ?)");
+		_psRemoveTagsForPicture = _connection.prepareStatement(
+				"DELETE FROM " + PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
+		_psLoadPicture = _connection.prepareStatement("SELECT " + PICTURE_GRADE_COLUMN_NAME + ", "
+				+ PICTURE_ORIGINAL_NAME + ", " + PICTURE_WIDTH_COLUMN_NAME + ", " + PICTURE_HEIGTH_COLUMN_NAME + ", "
+				+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + ", " + PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + ", "
+				+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + ", " + PICTURE_ORIENTATION_COLUMN_NAME + ", "
+				+ PICTURE_MAKE_COLUMN_NAME + ", " + PICTURE_MODEL_COLUMN_NAME + ", " + PICTURE_EXPOSURE_COLUMN_NAME
+				+ ", " + PICTURE_RELATIVE_APERTURE_COLUMN_NAME + ", " + PICTURE_FOCAL_LENGTH_COLUMN_NAME + ", "
+				+ PICTURE_FORMAT_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
 				+ " =?");
-		_psListPicture = _connection.prepareStatement("SELECT "
-				+ PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
-		_psRemoveTag = _connection.prepareStatement("DELETE FROM "
-				+ TAG_TABLE_NAME + " WHERE " + TAG_ID_COLUMN_NAME + "=?");
-		_psRemoveTagFromAllPictures = _connection
-				.prepareStatement("DELETE FROM " + PICTURE_TAG_TABLE_NAME
-						+ " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
-		_psRemoveAllTagsForPicture = _connection
-				.prepareStatement("DELETE FROM " + PICTURE_TAG_TABLE_NAME
-						+ " WHERE " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
-		_psRemovePicture = _connection.prepareStatement("DELETE FROM "
-				+ PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME
-				+ "=?");
+		_psLoadTagsOfPicture = _connection.prepareStatement("SELECT " + PICTURE_TAG_TAG_ID_COLUMN_NAME + " FROM "
+				+ PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " =?");
+		_psLoadTag = _connection.prepareStatement("SELECT " + TAG_ID_COLUMN_NAME + ", " + TAG_NAME_COLUMN_NAME + ", "
+				+ TAG_DESCRIPTION_COLUMN_NAME + ", " + TAG_PARENT_ID_COLUMN_NAME + ", " + TAG_SELECTABLE_COLUMN_NAME
+				+ " FROM " + TAG_TABLE_NAME + " where " + TAG_ID_COLUMN_NAME + " =?");
+		_psListPicture = _connection
+				.prepareStatement("SELECT " + PICTURE_ID_COLUMN_NAME + " FROM " + PICTURE_TABLE_NAME);
+		_psRemoveTag = _connection
+				.prepareStatement("DELETE FROM " + TAG_TABLE_NAME + " WHERE " + TAG_ID_COLUMN_NAME + "=?");
+		_psRemoveTagFromAllPictures = _connection.prepareStatement(
+				"DELETE FROM " + PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_TAG_ID_COLUMN_NAME + "=?");
+		_psRemoveAllTagsForPicture = _connection.prepareStatement(
+				"DELETE FROM " + PICTURE_TAG_TABLE_NAME + " WHERE " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + "=?");
+		_psRemovePicture = _connection
+				.prepareStatement("DELETE FROM " + PICTURE_TABLE_NAME + " WHERE " + PICTURE_ID_COLUMN_NAME + "=?");
 	}
 
 	/**
@@ -499,34 +461,21 @@ public final class SQLFileListConnection
 		{
 			statement = _connection.createStatement();
 			// Tag table
-			statement.executeUpdate("create table if not exists "
-					+ TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME + " integer, "
-					+ TAG_NAME_COLUMN_NAME + " text, "
-					+ TAG_DESCRIPTION_COLUMN_NAME + " text, "
-					+ TAG_PARENT_ID_COLUMN_NAME + " integer, "
-					+ TAG_SELECTABLE_COLUMN_NAME + " boolean)");
+			statement.executeUpdate("create table if not exists " + TAG_TABLE_NAME + " (" + TAG_ID_COLUMN_NAME
+					+ " integer, " + TAG_NAME_COLUMN_NAME + " text, " + TAG_DESCRIPTION_COLUMN_NAME + " text, "
+					+ TAG_PARENT_ID_COLUMN_NAME + " integer, " + TAG_SELECTABLE_COLUMN_NAME + " boolean)");
 			// picture table
-			statement.executeUpdate("create table if not exists "
-					+ PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME
-					+ " text, " + PICTURE_GRADE_COLUMN_NAME + " integer, "
-					+ PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME + " integer, "
-					+ PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer, "
-					+ PICTURE_ORIGINAL_NAME + " text, "
-					+ PICTURE_WIDTH_COLUMN_NAME + " integer, "
-					+ PICTURE_HEIGTH_COLUMN_NAME + " integer, "
-					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, "
-					+ PICTURE_ORIENTATION_COLUMN_NAME + " integer, "
-					+ PICTURE_MAKE_COLUMN_NAME + " text, "
-					+ PICTURE_MODEL_COLUMN_NAME + " text, "
-					+ PICTURE_EXPOSURE_COLUMN_NAME + " text, "
-					+ PICTURE_RELATIVE_APERTURE_COLUMN_NAME + " text, "
-					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " text, "
-					+ PICTURE_FORMAT_COLUMN_NAME + " text)");
+			statement.executeUpdate("create table if not exists " + PICTURE_TABLE_NAME + " (" + PICTURE_ID_COLUMN_NAME
+					+ " text, " + PICTURE_GRADE_COLUMN_NAME + " integer, " + PICTURE_MODIFIED_TIMESTAMP_COLUMN_NAME
+					+ " integer, " + PICTURE_ADDING_TIMESTAMP_COLUMN_NAME + " integer, " + PICTURE_ORIGINAL_NAME
+					+ " text, " + PICTURE_WIDTH_COLUMN_NAME + " integer, " + PICTURE_HEIGTH_COLUMN_NAME + " integer, "
+					+ PICTURE_CREATION_TIMESTAMP_COLUMN_NAME + " integer, " + PICTURE_ORIENTATION_COLUMN_NAME
+					+ " integer, " + PICTURE_MAKE_COLUMN_NAME + " text, " + PICTURE_MODEL_COLUMN_NAME + " text, "
+					+ PICTURE_EXPOSURE_COLUMN_NAME + " text, " + PICTURE_RELATIVE_APERTURE_COLUMN_NAME + " text, "
+					+ PICTURE_FOCAL_LENGTH_COLUMN_NAME + " text, " + PICTURE_FORMAT_COLUMN_NAME + " text)");
 			// picture_tag table
-			statement.executeUpdate("create table if not exists "
-					+ PICTURE_TAG_TABLE_NAME + " ("
-					+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " integer, "
-					+ PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " text)");
+			statement.executeUpdate("create table if not exists " + PICTURE_TAG_TABLE_NAME + " ("
+					+ PICTURE_TAG_TAG_ID_COLUMN_NAME + " integer, " + PICTURE_TAG_PICTURE_ID_COLUMN_NAME + " text)");
 		}
 		finally
 		{
@@ -548,12 +497,8 @@ public final class SQLFileListConnection
 	public ResultSet loadTagList() throws SQLException
 	{
 		final Statement statement = _connection.createStatement();
-		return statement
-				.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
-						+ TAG_NAME_COLUMN_NAME + ", "
-						+ TAG_DESCRIPTION_COLUMN_NAME + ", "
-						+ TAG_SELECTABLE_COLUMN_NAME + " from "
-						+ TAG_TABLE_NAME);
+		return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", " + TAG_NAME_COLUMN_NAME + ", "
+				+ TAG_DESCRIPTION_COLUMN_NAME + ", " + TAG_SELECTABLE_COLUMN_NAME + " from " + TAG_TABLE_NAME);
 	}
 
 	/**
@@ -568,8 +513,8 @@ public final class SQLFileListConnection
 	public ResultSet loadParents() throws SQLException
 	{
 		final Statement statement = _connection.createStatement();
-		return statement.executeQuery("select " + TAG_ID_COLUMN_NAME + ", "
-				+ TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
+		return statement.executeQuery(
+				"select " + TAG_ID_COLUMN_NAME + ", " + TAG_PARENT_ID_COLUMN_NAME + " from " + TAG_TABLE_NAME);
 	}
 
 	/**
@@ -657,10 +602,8 @@ public final class SQLFileListConnection
 		synchronized (_psUpdatePictureMarkAndTimestamp)
 		{
 			_psUpdatePictureMarkAndTimestamp.clearParameters();
-			_psUpdatePictureMarkAndTimestamp.setInt(1,
-					picture.getPictureGrade());
-			_psUpdatePictureMarkAndTimestamp.setLong(2,
-					picture.getModifiedTimestamp());
+			_psUpdatePictureMarkAndTimestamp.setInt(1, picture.getPictureGrade());
+			_psUpdatePictureMarkAndTimestamp.setLong(2, picture.getModifiedTimestamp());
 			_psUpdatePictureMarkAndTimestamp.setString(3, picture.getId());
 			_psUpdatePictureMarkAndTimestamp.executeUpdate();
 		}
@@ -758,8 +701,7 @@ public final class SQLFileListConnection
 				response = _psSelectPicturesByTag.executeQuery();
 				while (response.next())
 				{
-					pictureList.add(response
-							.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
+					pictureList.add(response.getString(PICTURE_TAG_PICTURE_ID_COLUMN_NAME));
 				}
 			}
 			finally
@@ -804,8 +746,7 @@ public final class SQLFileListConnection
 	 *             if an SQL error occurred during the interrogation of the
 	 *             database.
 	 */
-	public Integer[] loadTagsOfPicture(final String strPictureId)
-			throws SQLException
+	public Integer[] loadTagsOfPicture(final String strPictureId) throws SQLException
 	{
 		final LinkedList<Integer> tagList = new LinkedList<>();
 		synchronized (_psLoadTagsOfPicture)
@@ -818,8 +759,7 @@ public final class SQLFileListConnection
 				response = _psLoadTagsOfPicture.executeQuery();
 				while (response.next())
 				{
-					tagList.add(Integer.valueOf(response
-							.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
+					tagList.add(Integer.valueOf(response.getInt(PICTURE_TAG_TAG_ID_COLUMN_NAME)));
 				}
 			}
 			finally
